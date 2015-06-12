@@ -1,0 +1,5 @@
+-main Main.hx
+-cp src
+-cp src/cards
+-lib Random
+-neko test.n
