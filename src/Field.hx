@@ -27,21 +27,13 @@ class Field{
         this.playTurn();
     }
 
-    public function getRound():Int{
-        return this._ROUND;
+    private function initPlayer( name : String, deck : Array< Card > ):Player{
+        var newP:Player = new Player( name, this, deck );
+        this._players.set( name, newP );
+        this._pFields.set( name, new Array< Card >() );
+        return newP;
     }
 
-    public function getTurn():Int{
-        return this._TURN;
-    }
-
-    public function getPlayer( name : String ):Player{
-        return this._players.get( name );
-    }
-
-    public function getActiveCards( name : String ):Array< Card >{
-        return this._pFields.get( name );
-    }
 
     private function clearBoard( ?name = "" ):Void{
         if( name.length == 0 ){
@@ -75,7 +67,11 @@ class Field{
         // a recursive call to play rounds until both players are out of cards
         this.playRound();
 
-        // check if game is finished
+        for( p in this._turnOrder ){
+            if( isKill( p ) ){
+
+            }
+        }
 
         this.clearBoard();
 
@@ -110,40 +106,6 @@ class Field{
         }
     }
 
-
-    private function initPlayer( name : String, deck : Array< Card > ):Player{
-        var newP:Player = new Player( name, this, deck );
-        this._players.set( name, newP );
-        this._pFields.set( name, new Array< Card >() );
-        return newP;
-    }
-
-    // returns Bool for whether the target player is killed
-    // functions calling this should check this Bool if they have an additional effect on-kill
-    private function dealDamage( targ : String, amt : Int ):Bool{
-        this._players.get( targ ).chHealth( amt );
-        if( this._players.get( targ ).getHealth() < 1 ){
-            return this.kill( targ );
-        }
-        return false;
-    }
-
-    // called when a player is brought to under 1 health, returns whether the death is true
-    private function kill( targ : String ):Bool{
-        return this._players.get( targ ).die();
-    }
-
-    public function playCard( pl : String, subj : Card ):Void{
-        this._pFields.get( pl ).push( subj );
-        this.activateCard( subj, Triggers.onPlay );
-    }
-
-    private function activateCard( subj : Card, trig : EnumValue ):Void{
-        if( subj.getTriggers().indexOf( trig ) >= 0 ){
-            subj.activate( trig );
-        }
-    }
-
     private function nextRound():Void{
         this._ROUND++;
         this.playRound();
@@ -172,6 +134,43 @@ class Field{
         this.playTurn();
     }
 
+    // returns Bool for whether the target player is killed
+    // functions calling this should check this Bool if they have an additional effect on-kill
+    private function dealDamage( targ : String, amt : Int ):Bool{
+        var target:Player = this._players.get( targ );
+        target.chHealth( amt );
+        if( target.getHealth() < 1 ){
+            target.kill();
+        }
+        return false;
+    }
+
+    public function playCard( pl : String, subj : Card ):Void{
+        // place the card in the player's field, and activate its onPlay trigger
+        this._pFields.get( pl ).push( subj );
+        this.activateCard( subj, Triggers.onPlay );
+    }
+
+    private function activateCard( subj : Card, trig : EnumValue, ?target = "" ):Void{
+        subj.activate( trig, this._players, target );
+    }
+
+    // called to check if a player is dead, returns whether the death is true
+    private function isKill( targ : String ):Bool{
+        return this._players.get( targ ).getDead();
+    }
+
+    private function isWinner():String{
+        // for( cond in winConditions ){
+        //     for( p in _turnOrder ){
+        //         if( cond( p ) ){
+        //             return p;
+        //         }
+        //     }
+        // }
+        return "";
+    }
+
     private function gameOver( ?winner = "" ):String{
         if( winner.length = 0 ){
             return "The game ends in a tie";
@@ -185,5 +184,21 @@ class Field{
     //TODO
     public function toString():String{
 
+    }
+
+    public function getRound():Int{
+        return this._ROUND;
+    }
+
+    public function getTurn():Int{
+        return this._TURN;
+    }
+
+    public function getPlayer( name : String ):Player{
+        return this._players.get( name );
+    }
+
+    public function getActiveCards( name : String ):Array< Card >{
+        return this._pFields.get( name );
     }
 }

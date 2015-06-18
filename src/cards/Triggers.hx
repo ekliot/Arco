@@ -1,7 +1,7 @@
 enum Triggers{
     onPlay;
     onDraw;
-    onFinish;
+    onFinish( dropVal : Int );
     onRound;
     onDiscard;
 }

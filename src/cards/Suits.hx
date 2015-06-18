@@ -1,6 +1,7 @@
 enum Suits{
-    Blades( rank:Int );
-    Bones( rank:Int );
-    Stars( rank:Int );
-    Spirits( rank:Int );
+    Blades; // damage finisher
+    Bones; // discard finisher
+    Stars; //draw finisher
+    Stones; // heal finisher
+    Joker; // special
 }
