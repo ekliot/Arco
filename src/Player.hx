@@ -137,7 +137,7 @@ class Player{
 
     public function activateFinisher( curCard : Card ):Void{
         var drop:Int = this._power - curCard.getRank();
-        this._BOARD.activateCard( this._lastPlayed, Triggers.onFinisher( this._power - this._lastPlayed) );
+        this._BOARD.activateCard( this._lastPlayed, Triggers.onFinisher( drop ) );
     }
 
     public function processEvent( eve : EnumValue ):Void{
