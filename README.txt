@@ -36,3 +36,5 @@ Design player characters (two per suit)
 Implement player characters
 Design game modes
 Implement game modes
+Design RPG progression/gear mechanics
+Implement RPG mechanics

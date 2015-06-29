@@ -1,5 +1,6 @@
 -main Main.hx
 -cp src
 -cp src/cards
+-cp src/cards/library
 -lib Random
 -neko test.n
