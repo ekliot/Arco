@@ -1,0 +1,14 @@
+With a screen size of 1280x720...
+
+A card has a h:w ratio of 5:3.5, and is 150x105px in 720p (15/128 of height, 7/48 of width).
+
+The top 160px (2/9 of height) are reserved for the opponent's card-hand, deck, and vitals area.
+	The deck is located at the leftmost edge, and the cards that are in-hand start next to the deck to its right.
+	The vitals are located at the rightmost edge, and each have a diameter of 70px and a buffer of 5px (so they occupy an 80px square, or half of area height).
+
+The bottom 200px (5/18 of height) are reserved for the player's card-hand, deck, vitals, and commands area.
+	The very bottom 40px (1/15 of height) are for command buttons (PLAY, DISCARD, SORT, PASS) starting from the leftmost edge.
+	The 160px above the buttons are the same as for the opponent's area.
+
+The remaining vertical 360px (1/2 of height) are for the active cards, which start at the leftmost end with the lowest-ranked cards and increment from there.
+	These 360px are divided into two 150px-tall strips with 15px in between each other and in between the strip and the player areas.

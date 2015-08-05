@@ -1,24 +1,14 @@
+/** Copyright (c) 2015 Elijah Kliot*/
+
 import Suits;
 import Triggers;
 import Actions;
 
-class StdCard implements Card{
+class StdCard extends Card{
     // private var _front:CardFace;
     // private var _back:CardFace;
 
-    private var _suit:EnumValue;
-    private var _rank:Int;
-
-    private var _PLAYER:String;
-
-    public function new( pl : String, suit : EnumValue, rank : Int ){
-        this._PLAYER = pl;
-        this._suit = suit;
-        this._rank = rank;
-    }
-
-    // activate can be called with or without a valid target. if without, each event has a default target for this card
-    public function activate( trig : EnumValue, target : String ):EnumValue{
+    override public function activate( trig : EnumValue ):EnumValue{
         var eve:EnumValue = Actions.Nothing;
 
         switch( trig ){
@@ -33,45 +23,60 @@ class StdCard implements Card{
         return eve;
     }
 
-    public function onDraw():EnumValue{
+    override public function onDraw():EnumValue{
         return Nothing;
     }
 
-    public function onPlay():EnumValue{
+    override public function onPlay():EnumValue{
         return Nothing;
     }
 
-    public function onFinish( dropVal : Int ):EnumValue{
-        return Damage( dropVal );
+    override public function onFinish( dropVal : Int ):EnumValue{
+        switch( _suit ){
+        // case Bones:
+        //     return Discard( dropVal );
+        // case Blades:
+        //     return Damage( dropVal );
+        // case Stars:
+        //     return Draw( -dropVal );
+        // case Stones:
+        //     return Heal( dropVal );
+        default:
+            return Damage( dropVal );
+        }
     }
 
-    public function onRound():EnumValue{
+    override public function onRound():EnumValue{
+        switch( _suit ){
+        // case Bones:
+        //     return Discard( 1 );
+        // case Blades:
+        //     return Damage( 1 );
+        // case Stars:
+        //     return Draw( 1 );
+        // case Stones:
+        //     return Heal( 1 );
+        default:
+            return Nothing;
+        }
+    }
+
+    override public function onDiscard():EnumValue{
         return Nothing;
-    }
-    public function onDiscard():EnumValue{
-        return Nothing;
-    }
-
-    public function getSuit():EnumValue{
-        return this._suit;
-    }
-
-    public function getRank():Int{
-        return this._rank;
-    }
-
-    public function getPlayer():String{
-        return this._PLAYER;
     }
 
     //TODO
-    public function toString():String{
-        var ret:String = "CARD{ " + _suit + ", " + _rank + " }";
-        return ret;
+    override public function toString():String{
+        return "STD_CARD{ " + _suit + ", " + _rank + " }";
+    }
+
+    // returns 0 if a == b, >0 if a > b, or <0 if a < b
+    override public function compare( a : Card, b : Card ):Int{
+        return ( a.getRank() - b.getRank() );
     }
 
     //TODO
-    public function equals( c : Card ):Bool{
+    override public function equals( c : Card ):Bool{
         return false;
     }
 }

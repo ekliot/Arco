@@ -1,0 +1,50 @@
+So, a good balance between the effects of suits at all ranks is important. What is also important is which triggers are better for a certain suit (such as drawing a card each time a Stars card is discarded), as well as which trigger is more powerful at a certain rank (such as onRound triggers are drastically more potent for low-rank cards than high-rank cards).
+ 
+An analysis of each suits effect for each trigger in proportion to what they are affecting:
+
+Blades: 	Damage
+	Finisher -- 1:1 ratio of dmg:rank	:::	This is fair, it takes X cards over X rounds to deal X-1 damage.
+	Play     -- 1 dmg per play		:::	This is fair, although it means playing low ranks is more effective than high ranks, perhaps only higher
+							ranked cards will be able to deal damage on play? Although this will mean that lower ranked cards are
+							gimped in that they can only be used to build combos (since you are usually going to finish a combo with a
+							higher ranked card).
+	Draw     -- N/A?			:::	Having damage on draw means potential synergy with Stars cards, though it also means the most effective
+							strategy is to build a deck of exclusively blades cards and passively deal 1 or more damage each turn.
+	Discard  -- N/A				:::	Being able to damage an opponent by removing cards is counterintuitive to both the aesthetic and balance
+							(Although, it will be an effective counter to Bones cards, if certain Blades cards could damage on discard
+							but lack other triggers, something like a trap card. Perhaps there could be a "spikey armour" card which 
+							deals damage when discarded, but only on the opponent's turn)
+	Round    -- N/A?			:::	The options here are for a flat 1dmg/rnd, or for the dmg to scale with rank. The former means that building
+							up a combo chain isn't as effective as simply stacking a field of rank 1 cards which will deal a total of
+							1 damage on round 2, 2 on round 3, 3 on 4, etc. This can be countered with a board clearing effect from
+							Bones cards, or by restricting the onRound damage to high-rank cards (although this is counterintuitive, as
+							higher ranked cards will rarely stay on the board for long, so in that case it is better to have damage
+							scale with rank). A third option to balance the flat dmg/rnd is to restrict how many cards can be in play
+							of a certain rank/suit (i.e. only one card of each rank can be on the board at a time **CONSIDER THIS**).
+
+Bones:	 	Discard (cards in play, not hand)
+	Finisher -- cards of rank are discarded	:::	Any cards in play of a rank less than or equal to the drop value are discarded.
+	Play     -- cards of rank are discarded	:::	Any card in play of rank equivalent to half the played card's (round down) is discarded.
+							So if Bones5 is played, cards of rank 2 are discarded.
+	Draw     -- N/A				:::	The aesthetic of bones is results upon acting, or brute force, and having draw effects goes against that.
+	Discard  -- 1 dmg on discard		:::	This has multiple flavours. One is that a combo with Bones cards expresses to some extent an all-out attack
+							where the player finally cashes in on all the spent energy in one burst. On the other hand it also
+							expresses the volatility of fighting fire with fire, where two Bones-dominant players will need to
+							calculate the risk of beating each other up
+	Round    -- N/A				:::	Doesn't fit the Bones aesthetic. Perhaps there can be rare/expensive blocker cards which discard any card
+							played of a certain rank (i.e. a certain Rank X blocker, as long as it is in play, will prevent an opponent
+							from keeping Rank Y cards in play, where X>=Y)
+
+Stars:	 	Draw
+	Finisher -- 1:2 ratio of draw:rank	:::	round up?
+	Play     -- N/A
+	Draw     -- 
+	Discard  -- 1:4 ratio of draw:rank	:::	round up?
+	Round    -- 
+
+Stones: 	Heal (Maximum health capacity?)
+	Finisher -- 1:1 ratio of heal:rank	:::	round up?
+	Play     -- 
+	Draw     -- 
+	Discard  -- 
+	Round    -- 1 hp per round		:::	round up?

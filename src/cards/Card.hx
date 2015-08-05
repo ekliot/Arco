@@ -1,8 +1,14 @@
+/** Copyright (c) 2015 Elijah Kliot*/
+
 import Suits;
 import Triggers;
 import Actions;
 
-interface Card{
+import CardOptions;
+
+import luxe.Sprite;
+
+class Card extends Sprite{
     // private var _front:CardFace;
     // private var _back:CardFace;
 
@@ -11,52 +17,74 @@ interface Card{
 
     private var _PLAYER:String;
 
-    // public function new( pl : String, suit : EnumValue, ?rank : Int = -1 ){
-    //     this._PLAYER = pl;
-    //     this._suit = suit;
-    //     if( rank < 0 ){
-    //         this._rank = suit.enumParameters()[ 0 ];
-    //     }
-    //     else{
-    //         this._rank = rank;
-    //     }
-    // }
+    public function new( options : CardOptions ){
+        super( options );
+        this._PLAYER = options.played_from;
+        this._suit = options.suit;
+        this._rank = options.rank;
+    }
 
-    // activate can be called with or without a target. if without, each event has a default target for this card
-    public function activate( trig : EnumValue, target : String ):EnumValue;
-        // var eve:EnumValue = Nothing;
-        //
-        // switch( trig ){
-        //     case Triggers.onPlay: eve = this.onPlay();
-        //     case Triggers.onDraw: eve = this.onDraw();
-        //     case Triggers.onFinish( dropVal ): eve = this.onFinish( dropVal );
-        //     case Triggers.onRound: eve = this.onRound();
-        //     case Triggers.onDiscard: eve = this.onDiscard();
-        //     default: trace( "Invalid card trigger" );
-        // }
-        //
-        // return eve;
+    public function activate( trig : EnumValue ):EnumValue{
+        var eve:EnumValue = Actions.Nothing;
 
+        switch( trig ){
+            case Triggers.onPlay: eve = this.onPlay();
+            case Triggers.onDraw: eve = this.onDraw();
+            case Triggers.onFinish( dropVal ): eve = this.onFinish( dropVal );
+            case Triggers.onRound: eve = this.onRound();
+            case Triggers.onDiscard: eve = this.onDiscard();
+            default: trace( "Invalid card trigger" );
+        }
 
-    public function onDraw():EnumValue;
+        return eve;
+    }
 
-    public function onPlay():EnumValue;
+    public function onDraw():EnumValue{
+        return Nothing;
+    }
 
-    public function onFinish( dropVal : Int ):EnumValue;
+    public function onPlay():EnumValue{
+        return Nothing;
+    }
 
-    public function onRound():EnumValue;
+    public function onFinish( dropVal : Int ):EnumValue{
+        return Nothing;
+    }
 
-    public function onDiscard():EnumValue;
+    public function onRound():EnumValue{
+        return Nothing;
+    }
 
-    public function getSuit():EnumValue;
+    public function onDiscard():EnumValue{
+        return Nothing;
+    }
 
-    public function getRank():Int;
+    public function getSuit():EnumValue{
+        return _suit;
+    }
 
-    public function getPlayer():String;
+    public function getRank():Int{
+        return _rank;
+    }
+
+    public function getPlayer():String{
+        return _PLAYER;
+    }
 
     //TODO
-    public function toString():String;
+    public function toString():String{
+        return "CARD{ " + _suit + ", " + _rank + " }";
+    }
+
+    // returns 0 if a == b, >0 if a > b, or <0 if a < b
+    // returns 0 if a == b, >0 if a > b, or <0 if a < b
+    public function compare( a : Card, b : Card ):Int{
+        return ( a.getRank() - b.getRank() );
+    }
 
     //TODO
-    public function equals( c : Card ):Bool;
+    public function equals( c : Card ):Bool{
+        return false;
+    }
+
 }
