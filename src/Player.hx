@@ -22,13 +22,13 @@ class Player extends Entity{
     private var _hand:Array< Card > = new Array< Card >();
 
     public var _states:States;
-        // _playing
-        // _living
-        // _passed
+        // LIVING
+        // PASSED
     public var _pMove:States;
         // PLAY
         // DISCARD
         // DECIDING
+        // WAITING
 
     private var _health:Int;
     private var _power:Int;
@@ -57,7 +57,6 @@ class Player extends Entity{
     private function initStates():Void{
         this._states = new States( { name : _NAME + "::player_states" } );
         _states.add( new State( { name : "LIVING" } ) );
-        _states.add( new State( { name : "PLAYING" } ) );
         _states.add( new State( { name : "PASSED" } ) );
 
         _states.enable( "LIVING" );
@@ -66,6 +65,9 @@ class Player extends Entity{
         _pMove.add( new State( { name : "PLAY" } ) );
         _pMove.add( new State( { name : "DISCARD" } ) );
         _pMove.add( new State( { name : "DECIDING" } ) );
+        _pMove.add( new State( { name : "WAITING" } ) );
+
+        _pMove.set( "WAITING" );
     }
 
     public function joinGame( game : Board ):Void{
@@ -82,10 +84,10 @@ class Player extends Entity{
         var ret:Array< Card > = new Array< Card >();
         for( i in 1...14 ){
             var temp:Array< Card > = new Array< Card >();
-            temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME } ) );
-            temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME } ) );
-            temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME } ) );
-            temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME } ) );
+            temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME, visible : false } ) );
+            temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME, visible : false } ) );
+            temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME, visible : false } ) );
+            temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME, visible : false } ) );
             trace( temp.toString() );
             ret = ret.concat( temp );
             trace( i );
@@ -118,15 +120,34 @@ class Player extends Entity{
         return ret;
     }
 
-    // called once a card is validated by the board
-    public function playCard( subj : Card ):Void{
+    // method to play a card as a move
+    public function movePlayCard( subj : Card ):Void{
         // if you can remove this card from the hand (i.e. it IS in your hand, isn't it?)
         if( _hand.remove( subj ) ){
             trace( _NAME + " has chosen to play " + subj.toString() );
-            _BOARD.playCard( _NAME, subj );
+            Luxe.events.fire( "Player." + _NAME + ".move.playing_card." + subj, { card : subj } );
+            // _BOARD.playCard( _NAME, subj );
             trace( _NAME + "'s last card played is " + subj.toString() );
             _lastPlayed = subj;
             chPower( subj.getRank() );
+        }
+    }
+
+    // method to discard a number of cards as a move
+    public function moveDiscardCards( ?dCards : Array< Card > = null ):Void{
+        if( dCards == null ){ dCards = _toDiscard; }
+        if( dCards.length < 2 || dCards.length < _power - 1 ){ return; }
+
+        var count:Int = 0;
+        for( c in dCards ){
+            if( _hand.indexOf( c ) >= 0 ){
+                count += 1;
+            }
+            else{ break; }
+        }
+        
+        if( count == dCards.length ){
+            Luxe.events.fire( "Player." + _NAME + ".move.discarding_cards.[" + dCards.length + "]", { cards : dCards } );
         }
     }
 
@@ -149,7 +170,7 @@ class Player extends Entity{
     }
 
     // discard a specified or random card from the hand without triggering onDiscard
-    public function discard( ?dCard = null ):Void{
+    public function discard( ?dCard = null ):Bool{
         // if no card is specified, pick a random card from this player's hand
         if( dCard == null ){
             if( _hand.length == 0 ){
@@ -162,6 +183,7 @@ class Player extends Entity{
                 trace( "Discarded: " + dCard.toString() );
                 if( this._hand.remove( dCard ) ){
                     pushDiscard( dCard, false );
+                    return true;
                 }
             }
         }
@@ -175,8 +197,10 @@ class Player extends Entity{
             if( check ){
                 trace( _NAME + "is discarding " + dCard.toString() + "..." );
                 pushDiscard( dCard, false );
+                return true;
             }
         }
+        return false;
     }
 
     public function shuffleDeck():Void{
@@ -199,8 +223,7 @@ class Player extends Entity{
             pushHand( _deck.shift() ); // the draw() function is not used here in order to avoid activating onDraw effects
         }
 
-        _states.disable( "_passed" );
-        _states.enable( "_playing" );
+        _states.disable( "PASSED" );
 
 
 
@@ -234,6 +257,8 @@ class Player extends Entity{
         // ########################
         // Player decisions begin
             else{
+
+
                 // displayHand();
                 //
                 // trace( "WOULD YOU LIKE TO REDRAW ANY CARDS? Y/N" );
@@ -287,22 +312,20 @@ class Player extends Entity{
         // ########################
         // Player decisions end
 
-        _states.disable( "_playing" );
-
-        trace( _NAME + " status... Health:" + _health + " -- Power:" + _power );
+        trace( _NAME + " status... Health:" + _health + " :: Power:" + _power );
     }
 
     // this is assuming that a card has been drawn at the beginning of the round
     public function makeMove():Bool{
         /**
-            Play card => Which card? => Validate power level => activate current finisher (if card power < player power) => playCard( card )
+            Play card => Which card? => Validate power level => activate current finisher (if card power < player power) => movePlayCard( card )
             Discard cards => Which cards? => Validate amount vs power level => discard cards => activate current finisher (if #cards < player power)
          */
 
         var moveMade:Bool = false;
         var ret:Move;
 
-        _states.enable( "_playing" );
+        _pMove.set( "DECIDING" );
 
         // ########################
         // AI decisions begin
@@ -320,7 +343,7 @@ class Player extends Entity{
             // if a move hasn't been made, power drops down to 1 and all cards in hand are discarded
             if( !moveMade ){
                 moveMade = _BOARD.validatePass( _NAME );
-                if( _states.enabled( "_passed" ) ){
+                if( _states.enabled( "PASSED" ) ){
                     chPower( 1 );
                     _discard = _discard.concat( _hand );
                     _hand = new Array< Card >();
@@ -337,8 +360,9 @@ class Player extends Entity{
         // ########################
         // Player decisions begin
         else{
-            _pMove.enable( "DECIDING" );
+            _pMove.set( "DECIDING" );
             while( _pMove.enabled( "DECIDING" ) ){}
+
             // while( !moveMade ){
             //     displayStatus();
             //     displayHand();
@@ -373,8 +397,6 @@ class Player extends Entity{
         }
         // ########################
         // Player decisions end
-
-        _states.disable( "_playing" );
 
         return true;
     }
@@ -416,7 +438,7 @@ class Player extends Entity{
         //
         // else{
         //     if( _BOARD.validateMove( new Move( _NAME, "PLAY", playable[ind].getRank() ) ) ){
-        //         playCard( playable[ind] );
+        //         movePlayCard( playable[ind] );
         //         return true;
         //     }
         // }
@@ -525,7 +547,7 @@ class Player extends Entity{
                 _discard = _discard.concat( _hand );
                 _hand = new Array< Card >();
             }
-            return _states.enabled( "_passed" );
+            return _states.enabled( "PASSED" );
         }
 
         // otherwise, declare that passing is invalid, return false
@@ -560,7 +582,7 @@ class Player extends Entity{
         sortRank( true );
         for( c in _hand ){
             if( c.getRank() == ( _power + 1 ) ){
-                playCard( c );
+                movePlayCard( c );
                 return true;
             }
         }
@@ -711,7 +733,6 @@ class Player extends Entity{
             count += 1;
         }
 
-
         // return that min
         return min;
     }
@@ -728,15 +749,16 @@ class Player extends Entity{
 
     // function that is called when something is happening to this player
     public function processEvent( eve : EnumValue ):Void{
+        // TODO :: refactor this for event listening
         switch( eve ){
         case Nothing:
             trace( "Empty event" );
         case Damage( amount ):
             chHealth( amount );
-        case Draw( amount ):
-            draw( amount );
         case Heal( amount ):
             chHealth( amount );
+        case Draw( amount ):
+            draw( amount );
         case Discard( amount ):
             _BOARD.trimBoard( _NAME, amount );
         default:
@@ -744,11 +766,12 @@ class Player extends Entity{
         }
     }
 
-    public function getDead():Bool{ return !_states.enabled( "_living" ); }
+    public function getDead():Bool{ return !_states.enabled( "LIVING" ); }
 
     public function killMe():Void{
         trace( _NAME + " has been killed!" );
-        _states.disable( "_living" );
+        _states.disable( "LIVING" );
+        Luxe.events.fire( "Player." + _NAME + ".death", { name : _NAME } );
     }
 
     // sorts the player's hand in place using insertion sort, with choice of ascending or descending rank
@@ -820,9 +843,15 @@ class Player extends Entity{
         return ret;
     }
 
+    public function getDiscardSelection():Array< Card >{
+        var ret:Array< Card > = new Array< Card >();
+        ret = ret.concat( _toDiscard );
+        return ret;
+    }
+
     public function getName():String{ return _NAME; }
 
-    public function getPass():Bool{ return _states.enabled( "_passed" ); }
+    public function getPass():Bool{ return _states.enabled( "PASSED" ); }
 
     public function getDeck():Array< Card >{
         var ret:Array< Card > = new Array< Card >();
@@ -864,29 +893,40 @@ class Player extends Entity{
         }
     }
 
-    public function onmouseevent( e:MouseEvent ){
+    override public function onmouseup( e:MouseEvent ){
         // if the MouseEvent happened in the player area...
         if( e.pos.y > 519 ){
-            // if the event is in the button area...
-            if( e.pos.y > 579 ){
-                // do shit
-            }
+            // if the event is in the card area...
+            if( e.pos.y <= 580 ){
+                // instead of the for statement below, check instead the cursor's
+                // horizontal coordinate and select the card at the approptiate index in the hand
+                    // i.e. if cards are 20px wide and the card at index 0 starts at a pos.x of 0, a MouseEvent with pos.x of 46 will be selecting the third card
 
-            // instead of this for statement below, check instead the cursor's
-            // horizontal coordinate and select the card at the approptiate index in the hand
-                // i.e. if cards are 20px wide and the card at index 0 starts at a pos.x of 0, a MouseEvent with pos.x of 46 will be selecting the third card
+                var cWidth:Float = ( Luxe.screen.width * ( 21 / 256 ) ) + 10;
+                    // width of each card in the player's card-row (including the deck)
+                var x:Float = ( e.pos.x - cWidth ) / cWidth;
+                    // the xth card that the cursor is on (excluding the deck)
 
-            for( card in _hand ){
-                // if it's inside a card...
-                if( card.point_inside( e.pos ) ){
-                    // and the game is waiting for an action from this player...
-                    if( _pMove.enabled( "DECIDING" ) ){
-                        switch( _pMove.current_state.name ){
-                        case "PLAY":
-                            playCard( card ); return;
-                        case "DISCARD":
-                            process_discard_command( card );
-                        }
+                if( x >= 0 ){
+                    // if( Math.fround( x ) - x > 0 ){
+                    //     x = Math.fround( x ) - 1;
+                    // }
+                    // else{ x = Math.fround( x ); }
+
+                    x = Math.ffloor( x );
+                    var select:Card = null;
+
+                    if( x <= _hand.length - 1 ){
+                        select = _hand[Std.int(x)];
+                    }
+
+                    if( select == null ){ return; }
+
+                    switch( _pMove.current_state.name ){
+                    case "PLAY":
+                        movePlayCard( select ); return;
+                    case "DISCARD":
+                        process_discard_command( select );
                     }
                 }
             }

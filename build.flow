@@ -4,8 +4,8 @@
 
         window : {
 
-            width:960,
-            height:640,
+            width:1280,
+            height:720,
             title:'Arco 0.0.1',
             fullscreen:false,
             resizable:true,

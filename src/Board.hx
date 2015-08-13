@@ -7,12 +7,14 @@ import Actions;
 import luxe.States;
 import luxe.Scene;
 import luxe.Sprite;
+import luxe.Visual;
 import luxe.Text;
 
 import phoenix.Color;
 import phoenix.geometry.*;
 import phoenix.Rectangle;
 import phoenix.Circle;
+import phoenix.BitmapFont;
 
 import luxe.Input;
 import luxe.Events;
@@ -73,6 +75,8 @@ class Board extends State{
         // place the barebones version of the Scene, without specific Sprites
         setBoard( /*gameType*/ );
 
+        initUI( /*gameType*/ );
+
         // set up the player's Sprites
         setPlayer( _human );
         // set up the cpu's Sprites
@@ -90,79 +94,208 @@ class Board extends State{
     private var _oppPow:Sprite;
     private var _oppDeck:Sprite;
 
+    private var _FONT:BitmapFont;
+
+    private var _buttonPLAY:Sprite;
+    private var _buttonDISCARD:Sprite;
+    private var _buttonPASS:Sprite;
+    private var _buttonSORT:Sprite;
+
     // lays out everything to be a game session sans cards and player values
     //      this includes what are basically templates for HP, Pow, and Deck
     // the way these are set can vary by gameType
     // this is (can be) called before Players are set up
     private function setBoard( /*gameType : String*/ ):Void{
         _SCENE.add( new Sprite( { name : "boardBack", size : Luxe.screen.size,
-                                  color : new Color( 1, 1, 1 ) } ) );
-
-        initUI( /*gameType*/ );
+                                  color : new Color( 1, 0, 1 ),
+                                  pos: new Vector(Luxe.screen.mid.x, Luxe.screen.mid.y),
+                                  depth : -100 } ) );
     }
 
     private function initUI( /*gameType : String*/ ):Void{
-        // HPVital sprite will have a 5px buffer for a total 80x80px
-        _playerHP = new Sprite( { name : "playerHP", scene : _UIScene,
-                                  pos : new Vector( Luxe.screen.width - 80, Luxe.screen.height - 200 ),
-                                  geometry : new CircleGeometry( { x:_playerHP.pos.x,
-                                                                   y:_playerHP.pos.y,
-                                                                   color: new Color( 1, 0, 0 ) } ) } );
-        // PowerVital sprite will have a 5px buffer for a total 80x80px
-        _playerPow = new Sprite( { name : "playerHP", scene : _UIScene,
-                                   pos : new Vector( Luxe.screen.width - 80, Luxe.screen.height - 120 ),
-                                   geometry : new CircleGeometry( { x:_playerPow.pos.x,
-                                                                    y:_playerPow.pos.y,
-                                                                    color: new Color( 0, 1, 0 ) } ) } );
-        // Deck sprite will have a 5px buffer for a total 115x160px
-        _playerDeck = new Sprite( { name : "playerDeck", scene : _UIScene,
-                                    pos : new Vector( 0, Luxe.screen.height - 200 ),
-                                    geometry : new RectangleGeometry( { x:_playerDeck.pos.x,
-                                                                        y:_playerDeck.pos.y,
-                                                                        w:150,
-                                                                        h:105,
-                                                                        color: new Color( 0, 0, 1 ) } ) } );
+        this._FONT = Luxe.renderer.font;
+        trace( _FONT );
+
+        var dims:Array< Float > = cardDim();
+        trace( "card dims :: " + dims );
+        var cardH:Float = dims[ 0 ];
+        var cardW:Float = dims[ 1 ];
+
+                // the smallest y-val that the player active area permeates to (the border between the active area and the player-hand area)
+            var pActiveBounds:Float = Luxe.screen.height - ( Luxe.screen.height * ( 5 / 18 ) );
+        trace( "pActiveBounds :: " + pActiveBounds );
+
+                // the biggest y-val the opponent's active area permeates to
+            var oActiveBounds:Float = Luxe.screen.height * ( 2 / 9 );
+        trace( "oActiveBounds :: " + oActiveBounds );
+
+                // the smallest x-val both players' vitals will permeate to
+            var vitalsBounds:Float = Luxe.screen.width - ( Luxe.screen.width * ( 1 / 16 ) );
+        trace( "vitalsBounds :: " + vitalsBounds );
+
+                // vitals are vitalsDims x vitalsDims in size
+            var vitalsDims:Float = Luxe.screen.width * ( 1 / 16 );
+        trace( "vitalsDims :: " + vitalsDims );
+
+        Luxe.draw.line( { p0 : new Vector( 0, pActiveBounds ), p1 : new Vector( Luxe.screen.width, pActiveBounds ) } );
+        Luxe.draw.line( { p0 : new Vector( 0, oActiveBounds ), p1 : new Vector( Luxe.screen.width, oActiveBounds ) } );
 
 
-        // HPVital sprite will have a 5px buffer for a total 80x80px
-        _oppHP = new Sprite( { name : "oppHP", scene : _UIScene,
-                               pos : new Vector( Luxe.screen.width - 80, 0 ),
-                               geometry : new CircleGeometry( { x:_oppHP.pos.x,
-                                                                y:_oppHP.pos.y,
-                                                                color: new Color( 1, 0, 0 ) } ) } );
-        // PowerVital sprite will have a 5px buffer for a total 80x80px
-        _oppPow = new Sprite( { name : "oppHP", scene : _UIScene,
-                                pos : new Vector( Luxe.screen.width - 80, 80 ),
-                                geometry : new CircleGeometry( { x:_oppPow.pos.x,
-                                                                 y:_oppPow.pos.y,
-                                                                 color: new Color( 0, 1, 0 ) } ) } );
-        // Deck sprite will have a 5px buffer for a total 115x160px
-        _oppDeck = new Sprite( { name : "oppDeck", scene : _UIScene,
-                                 pos : new Vector( 0, 0 ),
-                                 geometry : new RectangleGeometry( { x:_oppDeck.pos.x,
-                                                                     y:_oppDeck.pos.y,
-                                                                     w:150,
-                                                                     h:105,
-                                                                     color: new Color( 0, 0, 1 ) } ) } );
 
-        // each button has a 5px buffer for a total height of 40px
-        // the text bounds are assuming each character has a width of 20px, with 10px added to the total for the buffer space
-        var buttonTextPlay:Text =    new Text( { name : "buttonPLAY", text : "PLAY", scene : _UIScene,
-                                                 bounds : new Rectangle( 0, Luxe.screen.height - 40, 90, 40 ),
-                                                 bounds_wrap : false, letter_spacing : 0.0,
-                                                 align : 2, align_vertical : 2 } );
-        var buttonTextDiscard:Text = new Text( { name : "buttonDISCARD", text : "DISCARD", scene : _UIScene,
-                                                 bounds : new Rectangle( 90, Luxe.screen.height - 40, 150, 40 ),
-                                                 bounds_wrap : false, letter_spacing : 0.0,
-                                                 align : 2, align_vertical : 2 } );
-        var buttonTextPass:Text =    new Text( { name : "buttonPASS", text : "PASS", scene : _UIScene,
-                                                 bounds : new Rectangle( 260, Luxe.screen.height - 40, 90, 40 ),
-                                                 bounds_wrap : false, letter_spacing : 0.0,
-                                                 align : 2, align_vertical : 2 } );
-        var buttonTextSort:Text =    new Text( { name : "buttonSORT", text : "SORT", scene : _UIScene,
-                                                 bounds : new Rectangle( 350, Luxe.screen.height - 40, 90, 40 ),
-                                                 bounds_wrap : false, letter_spacing : 0.0,
-                                                 align : 2, align_vertical : 2 } );
+        // PLAYER UI ELEMENTS
+        // ##################
+
+            // var hpGeom:CircleGeometry = new CircleGeometry( { id : "hpVitalGeom",
+            //                                                   x : vitalsBounds,
+            //                                                   y : pActiveBounds,
+            //                                                   r : 40,
+            //                                                   color : new Color( 1, 0, 0 ) } );
+
+            // HPVital sprite will have a 5px buffer for a total 80x80px
+            _playerHP = new Sprite( { name : "playerHP", scene : _UIScene,
+                                      size : new Vector( vitalsDims - 10, vitalsDims - 10 ),
+                                      centered : false,
+                                      pos : new Vector( vitalsBounds + 5, pActiveBounds + 5 ),
+                                      depth : 1.1,
+                                      color : new Color( 1, 0, 0 ) } );
+            trace( "new _playerHP ping" );
+
+            // var powGeom:CircleGeometry = new CircleGeometry( { id : "powVitalGeom",
+            //                                                    x : vitalsBounds,
+            //                                                    y : pActiveBounds + vitalsBounds,
+            //                                                    color : new Color( 0, 1, 0 ) } );
+
+            // PowerVital sprite will have a 5px buffer for a total 80x80px
+            _playerPow = new Sprite( { name : "playerPow", scene : _UIScene,
+                                       size : new Vector( vitalsDims - 10, vitalsDims - 10 ),
+                                       centered : false,
+                                       pos : new Vector( vitalsBounds + 5, pActiveBounds + vitalsDims + 5 ),
+                                       depth : 1.1,
+                                       color : new Color( 0, 1, 0 ) } );
+            trace( "new _playerPow ping" );
+
+            // Deck sprite will have a 5px buffer for a total 115x160px
+            _playerDeck = new Sprite( { name : "playerDeck", scene : _UIScene,
+                                        size : new Vector( cardW, cardH ),
+                                        centered : false,
+                                        pos : new Vector( 5, pActiveBounds + 5 ),
+                                        depth : 1.1,
+                                        color : new Color( 0, 0, 1 ) } );
+                                        // geometry : new RectangleGeometry( { x : 0,
+                                        //                                     y : pActiveBounds,
+                                        //                                     w : cardW,
+                                        //                                     h : cardH,
+                                        //                                     color : new Color( 0, 0, 1 ) } ) } );
+            trace( "new _playerDeck ping" );
+        // ##################
+        // PLAYER UI ELEMENTS
+
+        // OPPONENT UI ELEMENTS
+        // ####################
+
+            // var o_hpGeom:CircleGeometry = new CircleGeometry( { id : "o_hpVitalGeom",
+            //                                                     x : vitalsBounds,
+            //                                                     y : oActiveBounds,
+            //                                                     r : 40,
+            //                                                     color : new Color( 1, 0, 0 ) } );
+
+            // HPVital sprite will have a 5px buffer for a total 80x80px
+            _oppHP = new Sprite( { name : "oppHP", scene : _UIScene,
+                                   size : new Vector( vitalsDims - 10, vitalsDims - 10 ),
+                                   centered : false,
+                                   pos : new Vector( vitalsBounds + 5, 5 ),
+                                   depth : 1.1,
+                                   color : new Color( 1, 0, 0 ) } );
+            trace( "new _oppHP ping" );
+
+            // var o_powGeom:CircleGeometry = new CircleGeometry( { id : "o_powVitalGeom",
+            //                                                      x : vitalsBounds,
+            //                                                      y : pActiveBounds + vitalsBounds,
+            //                                                      color : new Color( 0, 1, 0 ) } );
+
+            // PowerVital sprite will have a 5px buffer for a total 80x80px
+            _oppPow = new Sprite( { name : "oppPow", scene : _UIScene,
+                                    size : new Vector( vitalsDims - 10, vitalsDims - 10 ),
+                                    centered : false,
+                                    pos : new Vector( vitalsBounds + 5, vitalsDims + 5 ),
+                                    depth : 1.1,
+                                    color : new Color( 0, 1, 0 ) } );
+            trace( "new _oppPow ping" );
+
+            // Deck sprite will have a 5px buffer for a total 115x160px
+            _oppDeck = new Sprite( { name : "oppDeck", scene : _UIScene,
+                                     size : new Vector( cardW, cardH ),
+                                     centered : false,
+                                     pos : new Vector( 5, 5 ),
+                                     depth : 1.1,
+                                     color : new Color( 0, 0, 1 ) } );
+                                    //  geometry : new RectangleGeometry( { x : 0,
+                                    //                                      y : 0,
+                                    //                                      w : cardW,
+                                    //                                      h : cardH,
+                                    //                                      color : new Color( 0, 0, 1 ) } ) } );
+            trace( "new _oppDeck ping" );
+        // ####################
+        // OPPONENT UI ELEMENTS
+
+        // BUTTONS
+        // #######
+
+            var pointSize:Float = 30 * ( _FONT.info.point_size / _FONT.info.line_height ); // _FONT.line_height_to_point_height( 30, 0 )
+
+            var widthPLAY:Float    = Math.fround( _FONT.width_of_line( "PLAY", pointSize ) );
+            var widthDISCARD:Float = Math.fround( _FONT.width_of_line( "DISCARD", pointSize ) );
+            var widthPASS:Float    = Math.fround( _FONT.width_of_line( "PASS", pointSize ) );
+            var widthSORT:Float    = Math.fround( _FONT.width_of_line( "SORT", pointSize ) );
+
+            trace( [ widthPLAY, widthDISCARD, widthPASS, widthSORT ] );
+
+            _buttonPLAY     = new Sprite( { name : "buttonPLAY", scene : _UIScene,
+                                            size : new Vector( widthPLAY, 30 ),
+                                            pos : new Vector( 5, Luxe.screen.height - 35 ),
+                                            centered : false,
+                                            depth : 1.31,
+                                            color : new Color( 1, 1, 0 ) } );
+            _buttonDISCARD  = new Sprite( { name : "buttonDISCARD", scene : _UIScene,
+                                            size : new Vector( widthDISCARD, 30 ),
+                                            pos : new Vector( _buttonPLAY.pos.x + _buttonPLAY.size.x + 10, Luxe.screen.height - 35 ),
+                                            centered : false,
+                                            depth : 1.31,
+                                            color : new Color( 1, 1, 0 ) } );
+            _buttonPASS     = new Sprite( { name : "buttonPASS", scene : _UIScene,
+                                            size : new Vector( widthPASS, 30 ),
+                                            pos : new Vector( _buttonDISCARD.pos.x + _buttonDISCARD.size.x + 10, Luxe.screen.height - 35 ),
+                                            centered : false,
+                                            depth : 1.31,
+                                            color : new Color( 1, 1, 0 ) } );
+            _buttonSORT     = new Sprite( { name : "buttonSORT", scene : _UIScene,
+                                            size : new Vector( widthSORT, 30 ),
+                                            pos : new Vector( _buttonPASS.pos.x + _buttonPASS.size.x + 10, Luxe.screen.height - 35 ),
+                                            centered : false,
+                                            depth : 1.31,
+                                            color : new Color( 1, 1, 0 ) } );
+
+            // each button has a 5px buffer for a total height of 40px
+            // the text bounds are assuming each character has a width of 20px, with 10px added to the total for the buffer space
+            var buttonTextPlay:Text =    new Text( { name : "textPLAY", text : "PLAY", font : _FONT,
+                                                     parent : _buttonPLAY,
+                                                     point_size : pointSize, letter_spacing : 0.0,
+                                                     depth : 1.32 } );
+            var buttonTextDiscard:Text = new Text( { name : "textDISCARD", text : "DISCARD", font : _FONT,
+                                                     parent : _buttonDISCARD,
+                                                     point_size : pointSize, letter_spacing : 0.0,
+                                                     depth : 1.32 } );
+            var buttonTextPass:Text =    new Text( { name : "textPASS", text : "PASS", font : _FONT,
+                                                     parent : _buttonPASS,
+                                                     point_size : pointSize, letter_spacing : 0.0,
+                                                     depth : 1.32 } );
+            var buttonTextSort:Text =    new Text( { name : "textSORT", text : "SORT", font : _FONT,
+                                                     parent : _buttonSORT,
+                                                     point_size : pointSize, letter_spacing : 0.0,
+                                                     depth : 1.32 } );
+
+        // #######
+        // BUTTONS
     }
 
     private var _playerHPText:Text;
@@ -178,18 +311,36 @@ class Board extends State{
         if( name != "" ){
             var pl:Player = _players.get( name );
             if( name == _human ){
-                _playerHPText   = new Text( { name : "playerHPText", text : Std.string( pl.getHealth() ), parent : _playerHP } );
-                _playerPowText  = new Text( { name : "playerPowText", text : Std.string( pl.getPower() ), parent : _playerPow } );
-                _playerDeckText = new Text( { name : "playerDeckText", text : Std.string( pl.getDeck().length ), parent : _playerDeck } );
+                _playerHPText   = new Text( { name : "playerHPText",
+                                              text : Std.string( pl.getHealth() ),
+                                              parent : _playerHP,
+                                              depth : 1.2 } );
+                _playerPowText  = new Text( { name : "playerPowText",
+                                              text : Std.string( pl.getPower() ),
+                                              parent : _playerPow,
+                                              depth : 1.2 } );
+                _playerDeckText = new Text( { name : "playerDeckText",
+                                              text : Std.string( pl.getDeck().length ),
+                                              parent : _playerDeck,
+                                              depth : 1.2 } );
 
-                // set up listeners \\
+                // set up listeners :: HP Change, Pow Change, Deck Change \\
             }
             else if( name == _opponent ){
-                _oppHPText   = new Text( { name : "oppHPText", text : Std.string( pl.getHealth() ), parent : _oppHP } );
-                _oppPowText  = new Text( { name : "oppPowText", text : Std.string( pl.getPower() ), parent : _oppPow } );
-                _oppDeckText = new Text( { name : "oppDeckText", text : Std.string( pl.getDeck().length ), parent : _oppDeck } );
+                _oppHPText   = new Text( { name : "oppHPText",
+                                           text : Std.string( pl.getHealth() ),
+                                           depth : 1.2,
+                                           parent : _oppHP } );
+                _oppPowText  = new Text( { name : "oppPowText",
+                                           text : Std.string( pl.getPower() ),
+                                           depth : 1.2,
+                                           parent : _oppPow } );
+                _oppDeckText = new Text( { name : "oppDeckText",
+                                           text : Std.string( pl.getDeck().length ),
+                                           depth : 1.2,
+                                           parent : _oppDeck } );
 
-                // set up listeners \\
+                // set up listeners :: HP Change, Pow Change, Deck Change \\
             }
         }
     }
@@ -562,8 +713,30 @@ class Board extends State{
 
     }
 
-    override public function onmousedown( e:MouseEvent ){
-        if( _STATES.enabled( "in_progress" ) ){
+    override public function onmouseup( e:MouseEvent ){
+        var p:Player = _players.get( _curPlayer );
+
+        if( _STATES.enabled( "in_progress" ) && !p.isCPU() ){
+            if( _buttonPLAY.point_inside( e.pos ) ){
+                p._pMove.set( "PLAY" );
+                // change color
+            }
+            else if( _buttonDISCARD.point_inside( e.pos ) ){
+                if( p._pMove.current_state.name == "DISCARD" ){
+                    if( validateDiscard( _curPlayer, p.getDiscardSelection().length ) ){
+                        p.moveDiscardCards();
+                    }
+                }
+                else{
+                    p._pMove.set( "DISCARD" );
+                }
+            }
+            else if( _buttonPASS.point_inside( e.pos ) ){
+
+            }
+            else if( _buttonSORT.point_inside( e.pos ) ){
+
+            }
         }
     }
 
@@ -613,6 +786,14 @@ class Board extends State{
     public function getActiveCards( name : String ):Map< Int, Card >{
         return this._pFields.get( name );
     }
+
+    // returns an Array, where [ height, width ]
+    public function cardDim():Array< Float >{
+        var h:Float = Luxe.screen.height * ( 5 / 24 );
+        var w:Float = Luxe.screen.width * ( 21 / 256 );
+        return [ h, w ];
+    }
+
 
     // ##########
     // DEPRACATED

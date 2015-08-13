@@ -23,12 +23,13 @@ class Splash extends State{
         this._SCENE = new Scene( "SPLASH" );
 
         _SCENE.add( new Sprite( { size : Luxe.screen.size,
-                                  color : new Color( 1, 0, 0 ) } ) );
+                                  color : new Color( 1, 0, 0 ),
+                                  pos: new Vector(Luxe.screen.mid.x, Luxe.screen.mid.y) } ) );
 
         _SCENE.add( new Text( { text: 'Press Enter to Continue',
                                 align: center,
                                 align_vertical: center,
-                                pos: new Vector(Luxe.screen.mid.x, -171) } ) );
+                                pos: new Vector(Luxe.screen.mid.x, Luxe.screen.mid.y) } ) );
     }
 
     override function onkeyup( e:KeyEvent ){
