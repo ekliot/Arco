@@ -46,11 +46,13 @@ class Main extends Game{
 
     override function ready(){
         state = new States( { name : "GameState" } );
-        state.add( new Splash() );
+        state.add( new Menu() );
+        state.add( new Session() );
+        state.add( new Options() );
 
         initGame();
 
-        state.set( 'splash' );
+        state.set( 'main_menu' );
     }
 
     public function initGame():Void{

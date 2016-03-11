@@ -13,6 +13,7 @@ import luxe.Entity;
 import luxe.Input;
 
 class Player extends Entity{
+    private var _SESSION:Session;
     private var _BOARD:Board;
     private var _NAME:String;
     private var _CPU:Bool;
@@ -70,11 +71,12 @@ class Player extends Entity{
         _pMove.set( "WAITING" );
     }
 
-    public function joinGame( game : Board ):Void{
+    public function joinGame( game : Session ):Void{
         trace( _NAME + " is trying to join the game...");
         if( game.join( this ) ){
             trace( _NAME + " has joined the game..." );
-            this._BOARD = game;
+            this._BOARD = game.getBoard();
+            this._SESSION = game;
         }
         else{ trace( _NAME + " could not join the game" ); }
     }
@@ -145,7 +147,7 @@ class Player extends Entity{
             }
             else{ break; }
         }
-        
+
         if( count == dCards.length ){
             Luxe.events.fire( "Player." + _NAME + ".move.discarding_cards.[" + dCards.length + "]", { cards : dCards } );
         }

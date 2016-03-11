@@ -22,7 +22,7 @@ import luxe.Events;
 import luxe.Screen;
 import luxe.Vector;
 
-class Board{
+class Board extends State{
     private var _STATES:States;
         // in_progress
         // paused
@@ -33,12 +33,20 @@ class Board{
     private var _ROUND:Int = 0;
     private var STARTINGHANDSIZE:Int = 6;
 
+    private var _SCENE:Scene;
+    private var _UIScene:Scene;
+
+
     private var _human:String = "";
     private var _opponent:String = "";
 
         // < playerName, < cardRank, card > >
     private var _players:Map< String, Player > = new Map< String, Player >();
     private var _pFields:Map< String, Map< Int, Card > > = new Map< String, Map< Int, Card > >();
+    private var _playerHand:Scene;
+    private var _playerActive:Scene;
+    private var _oppHand:Scene;
+    private var _oppActive:Scene;
 
     private var _turnOrder:Array< String >;
     private var _curPlayer:String;
@@ -47,15 +55,39 @@ class Board{
     private var totRNDS:Int = 0;
 
     // initializes the board
-    public function new(){
+    public function new( /* gameType : String */ ){
         super( { name : "playing_field" } );
+        this._SCENE = new Scene( "board" );
+        this._UIScene = new Scene( "UI" );
+
+        this._playerHand = new Scene( "playerHand" );
+        this._playerActive = new Scene( "playerActive" );
+        this._oppHand = new Scene( "oppHand" );
+        this._oppActive = new Scene( "oppActive" );
 
         this._STATES = new States( { name : "field states" } );
         _STATES.add( new State( { name : "in_progress" } ) );
         _STATES.add( new State( { name : "paused" } ) );
     }
 
-    public function playGame():Void{
+    // upon entering this State, set up the scenes and start the game
+    // it is expected that before entering the State, the players are already initialized
+    override function onenter< String >( gameType : String ){
+        // place the barebones version of the Scene, without specific Sprites
+        setBoard( /*gameType*/ );
+
+        initUI( /*gameType*/ );
+
+        // set up the player's Sprites
+        setPlayer( _human );
+        // set up the cpu's Sprites
+        setPlayer( _opponent );
+
+        // start the game
+        playGame( /*gameType*/ );
+    }
+
+    public function playGame( /*gType : String*/ ):Void{
         var names:Iterator< String > = _players.keys();
 
         var p1:String = names.next();
