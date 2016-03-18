@@ -27,7 +27,7 @@
             package : 'com.ekliot.arco',
             output : 'bin',
             main : 'Main',
-            codepaths : ['src','src/cards','src/cards/library','src/PlayerStates']
+            codepaths : ['src','src/cards','src/cards/library','src/gamestates']
 
         },
 
@@ -35,7 +35,8 @@
 
             dependencies : {
                 random : '*',
-                luxe : '*'
+                luxe : '*',
+                mint : '*'
             }
 
         },

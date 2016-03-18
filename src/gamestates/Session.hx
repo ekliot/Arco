@@ -1,3 +1,5 @@
+package gamestates;
+
 class Session extends State{
 
     private var _players:Map<String, Player>
@@ -22,7 +24,12 @@ class Session extends State{
     private var _oppHand:Scene;
     private var _oppActive:Scene;
 
+    /**
+     *
+     */
     public function new( /* single or multiplayer */ ){
+        super( { name : "game_session" } );
+
         this._BOARD = new Board();
 
         this._SCENE = new Scene( "board" );
@@ -38,23 +45,37 @@ class Session extends State{
         _STATES.add( new State( { name : "paused" } ) );
     }
 
-      // returns true if the player can and did join the game, or false if not (the game is full)
+    /**
+     *
+     *
+     * @param  :: Player :: pl ::
+     *
+     * @return :: Bool :: false if the game is full, or the player already exists
+     *                    true otherwise (player successfully joined)
+     */
     public function join( pl : Player ):Bool{
+          // is the player already in the game?
         if( !_players.exists( pl.getName() ) ){
-            var check:Int = 0;
 
                 // Maps don't have a size method, nor do Iterators, which is
-                // the return of keys()...
+                // the return of keys()... so unfortunately this is necessary
+            var check:Int = 0;
             for( name in _players.keys() ){ check += 1; }
 
+              // if there aren''t already two players...
             if( check < 2 ){
+                  // add the player to the scene
                 _SCENE.add( pl );
 
+                  // add the player to the player Map
                 _players.set( pl.getName(), pl );
+                  // add the player's card stack
                 _pFields.set( pl.getName(), new Map<Int, Card>() );
 
+                  // trace, THIS SHOULD BE DONE THROUGH A LOGGER
                 trace( pl.getName() + " has joined the game..." );
 
+                  // add the active state for this player
                 _STATES.add( new State( { name : pl.getName() + "_active" } ) );
 
                 return true;

@@ -1,5 +1,9 @@
 /** Copyright (c) 2015 Elijah Kliot*/
 
+import gamestates.Menu;
+// import gamestates.Session;
+// import gamestates.Options;
+
 import luxe.Game;
 import luxe.States;
 import luxe.Scene;
@@ -35,58 +39,16 @@ import luxe.ParcelProgress;
 
 
 class Main extends Game{
-    private var _SPLASH:State;
-    private var _session:Board; // extends State
-
     private var state:States;
 
-    private var _player1:Player;
-    private var _player2:Player;
-
-
     override function ready(){
-        state = new States( { name : "GameState" } );
+        Luxe.renderer.clear_color.rgb(0x121219);
+        
+        state = new States( { name : "MAIN" } );
         state.add( new Menu() );
-        state.add( new Session() );
-        state.add( new Options() );
-
-        initGame();
+        // state.add( new Session() );
+        // state.add( new Options() );
 
         state.set( 'main_menu' );
     }
-
-    public function initGame():Void{
-        // make p1
-        // make p1's deck
-        var d1:Array< Card > = new Array< Card >();
-        trace( "First player's name: ");
-        // var p1:String = Sys.stdin().readLine();
-        var p1:String = "YOU";
-        this._player1 = initPlayer( p1, d1, false );
-
-        // make p2
-        // make p2's deck
-        var d2:Array< Card > = new Array< Card >();
-        trace( "Second player's name: ");
-        // var p2:String = Sys.stdin().readLine();
-        var p2:String = "CPU";
-        this._player2 = initPlayer( p2, d2, true );
-
-        this._session = new Board();
-
-        _player1.joinGame( _session );
-        _player2.joinGame( _session );
-
-        state.add( this._session );
-    }
-
-    private static function initPlayer( name : String, deck : Array< Card >, cpu : Bool ):Player{
-        var newP:Player = new Player( name, deck, cpu );
-
-        trace( "Player " + name + " initialized" );
-        trace( newP );
-
-        return newP;
-    }
-
 }

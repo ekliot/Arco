@@ -9,3 +9,5 @@ How? The Board listens for Events from Players. The Board validates these Events
 | Model | View | Controller |
 | :
 | Board | Session | Player |
+
+user selects game from Menu, which initializes two Players, then a Session, then adds the players to the Session and switches to the Session State
