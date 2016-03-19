@@ -6,15 +6,7 @@ import gamestates.Menu;
 
 import luxe.Game;
 import luxe.States;
-import luxe.Scene;
 import luxe.Color;
-import luxe.Text;
-import luxe.options.TextOptions;
-
-import luxe.Input;
-
-import luxe.Parcel;
-import luxe.ParcelProgress;
 
 // show a scene of the board
 // bottom is player's side, top is CPU
@@ -43,7 +35,7 @@ class Main extends Game{
 
     override function ready(){
         Luxe.renderer.clear_color.rgb(0x121219);
-        
+
         state = new States( { name : "MAIN" } );
         state.add( new Menu() );
         // state.add( new Session() );

@@ -16,7 +16,6 @@ import mint.layout.margins.Margins;
 import mint.focus.Focus;
 import mint.List;
 import mint.Button;
-// import mint.types.TextAlign;
 
 import mint.render.luxe.LuxeMintRender;
 
@@ -43,9 +42,9 @@ class Menu extends State{
         var canv_opt:CanvasOptions = {
             name : "main_menu",
             rendering : _rendering_,
-            x : mid.x,         y : mid.y,
+            x : 0,         y : 0,
             w : Luxe.screen.w, h : Luxe.screen.h,
-            visible     : true,
+            // visible     : true,
             mouse_input : true,
             key_input   : true };
 
@@ -56,18 +55,11 @@ class Menu extends State{
           //this is required to handle input focus in the default way
         _focus_ = new Focus( _canvas_ );
 
-        // var scene : Scene  = new Scene( );
-
-        var backg : Sprite = new Sprite( {
-            size  : Luxe.screen.size,
-            color : new Color( 1, 1, 1 ),
-            pos   : mid } );
-
         text_title = new Text( {
             name : "title-text",
-            pos : new Vector( mid.x, Luxe.screen.h * .05 ),
+            pos : new Vector( mid.x, mid.y - 200 ),
             align : luxe.TextAlign.center,
-            point_size : 24,
+            point_size : 72,
             text : "ARCO" } );
 
         make_buttons();
@@ -78,8 +70,8 @@ class Menu extends State{
         var _menu = new List( {
             parent : _canvas_,
             name   : 'main_menu_list',
-            x : mid.x,  y : mid.y,
-            w : 360, h : 34*4 + 10 } );
+            x : mid.x - 120,  y : mid.y-42,
+            w : 240, h : (48+24)*4 } );
 
         var bttn_names  = [ 'bttn_sngl', 'bttn_mult', 'bttn_opt', 'bttn_exit' ];
         var bttn_labels = [ 'Single Player', 'Multiplayer', 'Options', 'Exit' ];
@@ -89,13 +81,13 @@ class Menu extends State{
                 parent : _menu,
                 name : bttn_names[i],
                 text : bttn_labels[i],
-                text_size : 18,
+                text_size : 36,
                 align : 3, // TextAlign.center,
-                w : 240,        h : 24,
+                w : 240,        h : 48,
                 onclick : function(e,c) { button_handle( i ); }
             }
 
-            _menu.add_item( new Button( bttn_opt ), 0, (24 * i) + 10 );
+            _menu.add_item( new Button( bttn_opt ), 0, (i == 0) ? 0 : 24 );
         }
 
     }
@@ -111,7 +103,7 @@ class Menu extends State{
             case 2:
                 trace( "BEEPBOOP OPTIONS" );
             case 3:
-                trace( "BEEPBOOP EXIT" );
+                Luxe.shutdown();
         }
 
     }
