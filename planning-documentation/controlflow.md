@@ -8,6 +8,6 @@ How? The Board listens for Events from Players. The Board validates these Events
 
 | Model | View | Controller |
 | :
-| Board | Session | Player |
+| BoardModel | BoardView | Player |
 
-user selects game from Menu, which initializes two Players, then a Session, then adds the players to the Session and switches to the Session State
+user selects game from Menu, which initializes two Players, then a Session,  then adds the players to the Session and switches to the Session State, which will initialize a BoardModel (which in turn initializes a BoardView)

@@ -1,7 +1,7 @@
 /** Copyright (c) 2015 Elijah Kliot*/
 
 import gamestates.Menu;
-// import gamestates.Session;
+import gamestates.Session;
 // import gamestates.Options;
 
 import luxe.Game;
@@ -38,9 +38,17 @@ class Main extends Game{
 
         state = new States( { name : "MAIN" } );
         state.add( new Menu() );
-        // state.add( new Session() );
+        state.add( new Session() );
         // state.add( new Options() );
 
         state.set( 'main_menu' );
+    }
+
+    override function config(config:luxe.AppConfig) {
+
+        config.preload.textures.push({ id:'assets/blue-grid-720.png' });
+
+        return config;
+
     }
 }

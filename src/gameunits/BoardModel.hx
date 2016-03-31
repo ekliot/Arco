@@ -1,98 +1,138 @@
-// /** Copyright (c) 2015 Elijah Kliot*/
-//
+package gameunits;
+
 // import Suits;
 // import Triggers;
 // import Actions;
+
+import gameunits.cards.Card;
+
+import haxe.ds.GenericStack;
+
+import luxe.Input;
+import luxe.Events;
+import luxe.States;
+
+import luxe.Screen;
+import luxe.Vector;
+
+class BoardModel{
+
+    private var _view_:BoardView;
+
+    private var _states_:States;
+        // in_progress
+        // paused
+        // '$_human' + '_active'
+        // '$_opponent' + '_active'
+
+    private var _turn_:Int = 0;
+    private var _round_:Int = 0;
+    private var _handsize_:Int = 6;
+
+    private var _P1_:String;
+    private var _P2_:String;
+
+        // < playerName, < cardRank, card > >
+    private var _players_:Map< String, Player >
+                    = new Map< String, Player >();
+    private var _pFields_:Map< String, GenericStack<Card> >
+                    = new Map< String, GenericStack<Card> >();
+
+    private var _turn_order_:Array<String>;
+    private var _cur_player_:String;
+    private var _winner_:String = "";
+
+    private var round_count:Int = 0;
+
+    // initializes the board
+    /**
+     *
+     */
+    public function new( /* gameType : String */ ){
+        this._states_ = new States( { name : "field states" } );
+        
+        _states_.add( new State( { name : "in_progress" } ) );
+        _states_.add( new State( { name : "paused" } ) );
+    }
+
+    /**
+     *
+     */
+    public function add_player( p : Player, top : Bool ):Void{
+        _players_.set( p.name, p );
+
+        if( top ){
+            _P2_ = p.name;
+        } else{
+            _P1_ = p.name;
+        }
+
+        p.set__board_( this );
+    }
+
+      // upon entering this State, set up the scenes and start the game
+      // it is expected that before entering the State, the players are already initialized
+    /**
+     *
+     */
+    public function setGame(){
+
+          // initialize the BoardView
+        _view_ = new BoardView( _players_.get(_P1_), _players_.get(_P2_) );
+
+          // start the game
+        // playGame( /*gameType*/ );
+    }
 //
-// import luxe.States;
-// import luxe.Scene;
-// import luxe.Sprite;
-// import luxe.Visual;
-// import luxe.Text;
+//     /**
+//      *
+//      */
+//     public function playGame( /*gType : String*/ ):Void{
+//         _states_.set( "in_progress" );
 //
-// import phoenix.Color;
-// import phoenix.geometry.*;
-// import phoenix.Rectangle;
-// import phoenix.Circle;
-// import phoenix.BitmapFont;
-//
-// import luxe.Input;
-// import luxe.Events;
-//
-// import luxe.Screen;
-// import luxe.Vector;
-//
-// class Board{
-//     private var _STATES:States;
-//         // in_progress
-//         // paused
-//         // '$_human' + '_active'
-//         // '$_opponent' + '_active'
-//
-//     private var _TURN:Int = 0;
-//     private var _ROUND:Int = 0;
-//     private var STARTINGHANDSIZE:Int = 6;
-//
-//     private var _human:String = "";
-//     private var _opponent:String = "";
-//
-//         // < playerName, < cardRank, card > >
-//     private var _players:Map< String, Player > = new Map< String, Player >();
-//     private var _pFields:Map< String, Map< Int, Card > > = new Map< String, Map< Int, Card > >();
-//
-//     private var _turnOrder:Array< String >;
-//     private var _curPlayer:String;
-//     private var _winner:String = "";
-//
-//     private var totRNDS:Int = 0;
-//
-//     // initializes the board
-//     public function new(){
-//         super( { name : "playing_field" } );
-//
-//         this._STATES = new States( { name : "field states" } );
-//         _STATES.add( new State( { name : "in_progress" } ) );
-//         _STATES.add( new State( { name : "paused" } ) );
-//     }
-//
-//     public function playGame():Void{
-//         var names:Iterator< String > = _players.keys();
-//
-//         var p1:String = names.next();
-//         var p2:String = names.next();
-//
-//         if( Random.bool() ){
-//             _turnOrder = [ p1, p2 ];
-//         }
-//         else{
-//             _turnOrder = [ p2, p1 ];
-//         }
-//
-//         _STATES.set( "in_progress" );
-//
-//         while( _STATES.enabled( "in_progress" ) ){
+//         while( _states_.enabled( "in_progress" ) ){
 //             playTurn();
 //         };
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function playTurn():Void{
-//         _TURN += 1;
-//         _ROUND = 1;
+//         _turn_++;
+//         _round_ = 1;
+//
+//           // reroll the turn order
+//         if( Random.bool() ){
+//             _turnOrder = [ _P1_, _P2_ ];
+//         }
+//         else{
+//             _turnOrder = [ _P2_, _P1_ ];
+//         }
+//
 //         for( p in _turnOrder ){
-//             _STATES.enable( p + "_active" );
-//             _players.get( p ).newTurn( STARTINGHANDSIZE );
-//             _STATES.disable( p + "_active" );
+//
+//             // PLAYERS DRAW STARTING HAND
+//
+//             // _states_.enable( p + "_active" );
+//             // _players.get( p ).newTurn( STARTINGHANDSIZE );
+//             // _states_.disable( p + "_active" );
 //         }
 //
 //         var passed:Array< String > = new Array< String >();
 //         var isDead:Bool = false;
-//             var loser:String = "";
+//         var loser:String = "";
 //
 //         while( passed.length < 2 ){
 //             var p1:String = _turnOrder[0];
 //             var p2:String = _turnOrder[1];
 //
-//             //
+//
+//
+//
+//
+//
+//
 //             if( passed.indexOf( p1 ) != -1 ){
 //                 playRound( p1 );
 //             }
@@ -136,7 +176,7 @@
 //         // is someone dead?
 //             // if they are, declare the game won
 //         if( isDead ){
-//             _STATES.disable( "in_progress" );
+//             _states_.disable( "in_progress" );
 //             gameOver( decideOpp( loser ) );
 //             return;
 //         }
@@ -144,19 +184,25 @@
 //         clearBoard();
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function playRound( activePlayer : String ):Void{
 //         var p:Player = _players.get( activePlayer );
 //
 //         _curPlayer = activePlayer;
-//         _STATES.enable( activePlayer + "_active" );
+//         _states_.enable( activePlayer + "_active" );
 //
 //         p.events.listen( "Player." + activePlayer + ".move.*", processMove ); // listen for a move action from the active player
 //
-//         while( _STATES.enabled( _turnOrder[0] + "_active" ) ){}
+//         while( _states_.enabled( _turnOrder[0] + "_active" ) ){}
 //
 //         p.events.unlisten( "Player." + activePlayer + ".move.*" );
 //     }
 //
+//     /**
+//      *
+//      */
 //     private function processMove( mv : Dynamic ):Void{
 //         var cp:String = _curPlayer;
 //
@@ -166,6 +212,9 @@
 //     }
 //
 //     // validates whether a Move from a player is in line with the game's rules
+//     /**
+//      *
+//      */
 //     public function validateMove( mv : Move ):Bool{
 //         // switch( mv.getType().toUpperCase() ){
 //         // case "PLAY":
@@ -184,6 +233,9 @@
 //         return false;
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function validatePlay( p : String, val : Int ):Bool{
 //         var player:Player = _players.get( p );
 //         if( player.getPower() >= val - 1 ){
@@ -193,6 +245,9 @@
 //         return false;
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function validateDiscard( p : String, val : Int ):Bool{
 //         var player:Player = _players.get( p );
 //         if( player.getPower() <= val + 1 ){
@@ -202,6 +257,9 @@
 //         return false;
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function validatePass( p : String ):Bool{
 //         var player:Player = _players.get( p );
 //
@@ -225,6 +283,9 @@
 //     }
 //
 //     // functions calling this should check this for whether the target player is killed if they have an additional effect on-kill
+//     /**
+//      *
+//      */
 //     private function dealDamage( targ : String, amt : Int ):Void{
 //         trace( targ + " is being dealt " + amt + " damage...");
 //         var target:Player = _players.get( targ );
@@ -232,6 +293,9 @@
 //     }
 //
 //     // place the card in the player's field, and activate its onPlay trigger
+//     /**
+//      *
+//      */
 //     public function playCard( pl : String, subj : Card ):Void{
 //
 //         trace( pl + " is playing: " + subj.toString() );
@@ -240,6 +304,9 @@
 //         activateCard( subj, onPlay );
 //     }
 //
+//     /**
+//      *
+//      */
 //     public function activateCard( subj : Card, trig : EnumValue, ?target = "" ):Void{
 //         trace( "Activating " + subj + " with " + trig + "trigger..." );
 //
@@ -272,6 +339,9 @@
 //     // clears all cards on the board to appropriate players' discard piles
 //     // can specify which player's board to clear, or all boards if none specified
 //     // calls the trimBoard function with parameters to clear cards of all ranks
+//     /**
+//      *
+//      */
 //     private function clearBoard( ?name = "" ):Void{
 //         trimBoard( name, 0, -1 );
 //
@@ -304,6 +374,9 @@
 //     // any min value is valid. if the max is less than the min, there is no upper limit
 //     // by default the min is 0 and the max is -1
 //     // if min == max and min,max <= 0, no cards are discarded (unless the card's rank == max)
+//     /**
+//      *
+//      */
 //     public function trimBoard( ?name = "", ?threshMin : Int = 0, ?threshMax : Int = -1 ):Void{
 //         if( !_players.exists( name ) ){
 //             trace( "Trimming all cards in play between $threshMin and $threshMax" );
@@ -344,18 +417,10 @@
 //         }
 //     }
 //
-//     // given a map of the players in this card's game and this card's player, what is this card's player's opponent's name?
-//     public function decideOpp( pl : String ):String{
-//         var players:Iterator< String > = this._players.keys();
-//         var p1:String = players.next();
-//         var p2:String = players.next();
-//         if( p1 == pl ){
-//             return p2;
-//         }
-//         return p1;
-//     }
-//
 //     // called to check if a player is dead, returns whether the death is true
+//     /**
+//      *
+//      */
 //     private function isKill( targ : String ):Bool{
 //         var ret:Bool = this._players.get( targ ).getDead();
 //         trace( "Is " + targ + " dead: " + ret );
@@ -372,6 +437,9 @@
 //     //     }
 //     // }
 //
+//     /**
+//      *
+//      */
 //     private function gameOver( ?winner = "" ):String{
 //         if( winner.length == 0 ){
 //             return "The game ends in a tie";
@@ -387,11 +455,11 @@
 // // listeners
 //     override function onkeyup( ev:KeyEvent ){
 //         if( ev.keycode == Key.escape ){
-//             if( !_STATES.enabled( "paused" ) ){
-//                 _STATES.enable( "paused" );
+//             if( !_states_.enabled( "paused" ) ){
+//                 _states_.enable( "paused" );
 //             }
 //             else{
-//                 _STATES.disable( "paused" );
+//                 _states_.disable( "paused" );
 //             }
 //         }
 //     }
@@ -403,7 +471,7 @@
 //     override public function onmouseup( e:MouseEvent ){
 //         var p:Player = _players.get( _curPlayer );
 //
-//         if( _STATES.enabled( "in_progress" ) && !p.isCPU() ){
+//         if( _states_.enabled( "in_progress" ) && !p.isCPU() ){
 //             if( _buttonPLAY.point_inside( e.pos ) ){
 //                 p._pMove.set( "PLAY" );
 //                 // change color
@@ -443,7 +511,7 @@
 // // #########
 //
 //     override public function update( dt:Float ){
-//         if( _STATES.enabled( "paused" ) ){
+//         if( _states_.enabled( "paused" ) ){
 //             return;
 //         }
 //
@@ -472,13 +540,6 @@
 //
 //     public function getActiveCards( name : String ):Map< Int, Card >{
 //         return this._pFields.get( name );
-//     }
-//
-//     // returns an Array, where [ height, width ]
-//     public function cardDim():Array< Float >{
-//         var h:Float = Luxe.screen.height * ( 5 / 24 );
-//         var w:Float = Luxe.screen.width * ( 21 / 256 );
-//         return [ h, w ];
 //     }
 //
 //
@@ -612,4 +673,4 @@
 //
 //     // DEPRACATED
 //     // ##########
-// }
+}

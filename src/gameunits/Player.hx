@@ -1,62 +1,67 @@
-// /** Copyright (c) 2015 Elijah Kliot*/
-//
+package gameunits;
+
 // import Suits;
 // import Triggers;
 // import Actions;
-//
-// import Random;
-//
-// import luxe.Events;
-// import luxe.States;
-// import luxe.Entity;
-//
-// import luxe.Input;
-//
-// class Player extends Entity{
-//     // private var _SESSION:Session;
-//     private var _BOARD:Board;
-//     private var _NAME:String;
-//     private var _CPU:Bool;
-//
-//     private var _deck:Array< Card >;
-//     private var _discard:Array< Card > = new Array< Card >();
-//     private var _hand:Array< Card > = new Array< Card >();
-//
-//     public var _states:States;
-//         // LIVING
-//         // PASSED
-//     public var _pMove:States;
-//         // PLAY
-//         // DISCARD
-//         // DECIDING
-//         // WAITING
-//
-//     private var _health:Int;
-//     private var _power:Int;
-//
-//     public var _toDiscard:Array< Card > = new Array< Card >();
-//     private var _lastPlayed:Card;
-//
-//     /**
-//      *
-//      */
-//     public function new( n : String, deck:Array< Card >, cpu:Bool ){
-//         super( { name : n, no_scene : true } );
-//         this._NAME = n;
-//
-//         if( deck.length < 50 ){
-//             deck = deck.concat( this.stdDeck() );
-//         }
-//         this._deck = deck;
-//         trace( this._deck );
-//
-//         this._health = 12; // 24hp default, 12 for testing
-//         this._power = 1;
-//
-//         this._CPU = cpu;
-//
-//         initStates();
-//     }
+
+import gameunits.cards.Card;
+
+import Random;
+
+import luxe.Events;
+import luxe.States;
+import luxe.Entity;
+
+import luxe.Input;
+
+typedef PlayerOptions = {
+    var n : String;
+    var cpu : Bool;
+    var deck : Array<Card>;
+}
+
+class Player extends Entity{
+    private var _board_:BoardModel;
+    private var   _cpu_:Bool;
+
+    private var    _deck_:Array<Card>;
+    private var    _hand_:Array<Card> = new Array<Card>();
+    private var _discard_:Array<Card> = new Array<Card>();
+
+    // public var _states:States;
+    //     // LIVING
+    //     // PASSED
+    // public var _pMove:States;
+    //     // PLAY
+    //     // DISCARD
+    //     // DECIDING
+    //     // WAITING
+
+    private var _health_:Int;
+    private var _power_:Int;
+
+    // private var _toDiscard_:Array<Card> = new Array<Card>();
+    // private var _lastPlayed_:Card;
+
+    /**
+     *
+     */
+    public function new( opt : PlayerOptions ){
+        super( { name : "player." + opt.n, no_scene : true } );
+
+        if( opt.deck.length == 0 ){
+            _deck_ = stdDeck();
+        } else{ _deck_ = opt.deck; }
+
+        trace( _deck_ );
+
+        _health_ = 12; // 24hp default, 12 for testing
+        _power_ = 1;
+
+        _cpu_ = opt.cpu;
+
+        // initStates();
+    }
 //
 //     /**
 //      *
@@ -76,43 +81,43 @@
 //
 //         _pMove.set( "WAITING" );
 //     }
-//
-//     public function joinGame( game : Session ):Void{
-//         trace( _NAME + " is trying to join the game...");
-//         if( game.join( this ) ){
-//             trace( _NAME + " has joined the game..." );
-//             this._BOARD = game.getBoard();
-//             this._SESSION = game;
-//         }
-//         else{ trace( _NAME + " could not join the game" ); }
-//     }
-//
-//     public function stdDeck():Array< Card >{
-//         trace( "Building standard deck..." );
-//         var ret:Array< Card > = new Array< Card >();
-//         for( i in 1...14 ){
-//             var temp:Array< Card > = new Array< Card >();
-//             temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME, visible : false } ) );
-//             temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME, visible : false } ) );
-//             temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME, visible : false } ) );
-//             temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME, visible : false } ) );
-//             trace( temp.toString() );
-//             ret = ret.concat( temp );
-//             trace( i );
-//         }
-//         trace( "Shuffling deck..." );
-//         Random.shuffle( ret );
-//         trace( "Deck shuffled" );
-//         return ret;
-//     }
-//
+
+    public function stdDeck():Array<Card>{
+        trace( "Building standard deck..." );
+
+        var ret:Array<Card> = new Array<Card>();
+
+        // for( i in 1...14 ){
+        //     var temp:Array<Card> = new Array<Card>();
+        //
+        //     temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME, visible : false } ) );
+        //     temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME, visible : false } ) );
+        //     temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME, visible : false } ) );
+        //     temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME, visible : false } ) );
+        //
+        //     trace( temp.toString() );
+        //
+        //     ret = ret.concat( temp );
+        //
+        //     trace( i );
+        // }
+        //
+        // trace( "Shuffling deck..." );
+        //
+        // Random.shuffle( ret );
+        //
+        // trace( "Deck shuffled" );
+
+        return ret;
+    }
+
 //     // draws i number of cards (default is 1) and pushes them into the hand
 //     /**
 //      *
 //      */
-//     public function draw( ?i = 1 ):Array< Card >{
+//     public function draw( ?i = 1 ):Array<Card>{
 //         trace( _NAME + " is drawing " + i + " card(s)..." );
-//         var ret:Array< Card > = new Array< Card >();
+//         var ret:Array<Card> = new Array<Card>();
 //         while( i > 0 ){
 //             var dr:Card = _deck.shift();
 //             if( dr == null ){
@@ -151,7 +156,7 @@
 //     /**
 //      *
 //      */
-//     public function moveDiscardCards( ?dCards : Array< Card > = null ):Void{
+//     public function moveDiscardCards( ?dCards : Array<Card> = null ):Void{
 //         if( dCards == null ){ dCards = _toDiscard; }
 //         if( dCards.length < 2 || dCards.length < _power - 1 ){ return; }
 //
@@ -172,7 +177,7 @@
 //     /**
 //      *
 //      */
-//     public function redraw( ?i = -1 ):Array< Card >{
+//     public function redraw( ?i = -1 ):Array<Card>{
 //         trace( _NAME + " is redrawing " + i + " cards..." );
 //         // you can't redraw less than 0 cards, or more cards than are in
 //         // your hand, so just asssume as many cards as possible/are in your hand
@@ -242,8 +247,8 @@
 //         trace( _NAME + " is getting ready for a new turn..." );
 //         _deck = _deck.concat( _discard );
 //         _deck = _deck.concat( _hand );
-//         _discard = new Array< Card >();
-//         _hand = new Array< Card >();
+//         _discard = new Array<Card>();
+//         _hand = new Array<Card>();
 //
 //         shuffleDeck();
 //
@@ -260,7 +265,7 @@
 //         // AI decisions begin
 //         if( _CPU ){
 //             var count:Int = 0;
-//             var outgoing:Array< Card > = new Array< Card >();
+//             var outgoing:Array<Card> = new Array<Card>();
 //
 //             for( c in _hand ){
 //                 if( c.getRank() > handSize ){
@@ -297,7 +302,7 @@
 //                 //     trace( "Select card indices separated by spaces");
 //                 //     var indices:Array< String > = Sys.stdin().readLine().split( " " );
 //                 //     var record:Array< Int > = new Array< Int >();
-//                 //     var outgoing:Array< Card > = new Array< Card >();
+//                 //     var outgoing:Array<Card> = new Array<Card>();
 //                 //
 //                 //     for( i in 0...indices.length ){
 //                 //         var ind:String = indices[i];
@@ -375,7 +380,7 @@
 //                 if( _states.enabled( "PASSED" ) ){
 //                     chPower( 1 );
 //                     _discard = _discard.concat( _hand );
-//                     _hand = new Array< Card >();
+//                     _hand = new Array<Card>();
 //                 }
 //                 else{
 //                     trace( _NAME + " COULD NOT MAKE A DECISION, THE PUNISHMENT IS DEATH" );
@@ -432,7 +437,7 @@
 //
 //     // return false if a play is impossible or decided against, true if play is made
 //     private function playCMD():Bool{
-//         // var playable:Array< Card > = checkPlayable();
+//         // var playable:Array<Card> = checkPlayable();
 //         //
 //         // if( playable.length == 0 ){
 //         //     trace( "NO CARDS IN HAND AVAILABLE TO PLAY" );
@@ -476,8 +481,8 @@
 //     }
 //
 //     // return an array of the cards in hand that are valid to play
-//     public function checkPlayable():Array< Card >{
-//         var ret:Array< Card > = new Array< Card >();
+//     public function checkPlayable():Array<Card>{
+//         var ret:Array<Card> = new Array<Card>();
 //         for( c in _hand ){
 //             if( c.getRank() <= _power + 1 ){
 //                 ret.push( c );
@@ -522,7 +527,7 @@
 //         //
 //         //         else{
 //         //             var record:Array< Int > = new Array< Int >();
-//         //             var outgoing:Array< Card > = new Array< Card >();
+//         //             var outgoing:Array<Card> = new Array<Card>();
 //         //
 //         //             for( ind in indices ){
 //         //                 var n:Int = Std.parseInt( ind );
@@ -574,7 +579,7 @@
 //             if( _BOARD.validatePass( _NAME ) ){
 //                 chPower( 1 );
 //                 _discard = _discard.concat( _hand );
-//                 _hand = new Array< Card >();
+//                 _hand = new Array<Card>();
 //             }
 //             return _states.enabled( "PASSED" );
 //         }
@@ -643,7 +648,7 @@
 //
 //         // cards already parsed in a streak
 //         // i.e. in hand[ 1 2 3 ], after 1 is parsed (not in ignore list), 2 and 3 are added because they are part of 1's streak. this eliminates overlaps between streaks
-//         var ignore:Array< Card > = new Array< Card >();
+//         var ignore:Array<Card> = new Array<Card>();
 //         // streaks of cards available in the hand
 //         // < K = streak root, V = highest rank in streak >
 //         var streaks:Map< Card, Int > = new Map< Card, Int >();
@@ -689,12 +694,12 @@
 //         // the cards that ARE part of the streak are those with a rank r, where K.getRank() <= r <= V
 //         // if not, find the next highest streak
 //
-//         var rootHierarchy:Array< Array< Card > > = new Array< Array< Card > >();
+//         var rootHierarchy:Array< Array<Card> > = new Array< Array<Card> >();
 //
 //         for( root in streaks.keys() ){
 //             var max:Int = streaks.get( root );
 //             while( rootHierarchy.length - 1 <= max ){
-//                 rootHierarchy.push( new Array< Card >() );
+//                 rootHierarchy.push( new Array<Card>() );
 //             }
 //             rootHierarchy[max].push( root );
 //         }
@@ -706,7 +711,7 @@
 //                 for( root in rootHierarchy[i] ){
 //                     // i is the max for that root
 //                     // root.get
-//                     var trash:Array< Card > = new Array< Card >();
+//                     var trash:Array<Card> = new Array<Card>();
 //                     // count how many cards in the hand are okay to discard to start that streak
 //                     for( c in _hand ){
 //                         if( c.getRank() > i || c.getRank() < root.getRank() ){
@@ -738,7 +743,7 @@
 //         // discard the minimum number of cards (2, or _power-1, whichever is higher), starting with those of a rank farthest from the minimum
 //
 //         // assign an Int to each card in the hand of Math.abs( min - card.getRank() )
-//         var trash:Array< Card > = new Array< Card >();
+//         var trash:Array<Card> = new Array<Card>();
 //
 //         for( c in _hand ){
 //             var idx:Int = 0;
@@ -863,27 +868,36 @@
 //     public function getPower():Int{ return _power; }
 //
 //     public function isDeckEmpty():Bool{ return ( _deck.length == 0 ); }
-//
-//     public function isCPU():Bool{ return _CPU; }
-//
-//     public function getHand():Array< Card >{
-//         var ret:Array< Card > = new Array< Card >();
-//         ret = ret.concat( _hand );
-//         return ret;
-//     }
-//
-//     public function getDiscardSelection():Array< Card >{
-//         var ret:Array< Card > = new Array< Card >();
-//         ret = ret.concat( _toDiscard );
-//         return ret;
-//     }
-//
-//     public function getName():String{ return _NAME; }
-//
+
+    public function set__board_( b : BoardModel ):BoardModel{
+        _board_ = b;
+        return _board_;
+    }
+
+    public function get__cpu_():Bool{ return _cpu_; }
+
+    public function get__deck_():Array<Card>{
+        var ret:Array<Card> = new Array<Card>();
+        ret = ret.concat( _deck_ );
+        return ret;
+    }
+
+    public function get__hand_():Array<Card>{
+        var ret:Array<Card> = new Array<Card>();
+        ret = ret.concat( _hand_ );
+        return ret;
+    }
+
+    public function get__discard_():Array<Card>{
+        var ret:Array<Card> = new Array<Card>();
+        ret = ret.concat( _discard_ );
+        return ret;
+    }
+
 //     public function getPass():Bool{ return _states.enabled( "PASSED" ); }
 //
-//     public function getDeck():Array< Card >{
-//         var ret:Array< Card > = new Array< Card >();
+//     public function getDeck():Array<Card>{
+//         var ret:Array<Card> = new Array<Card>();
 //         ret = ret.concat( _deck );
 //         return ret;
 //     }
@@ -970,4 +984,4 @@
 //             _toDiscard.push( card );
 //         }
 //     }
-// }
+}

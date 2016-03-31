@@ -1,5 +1,8 @@
 package gamestates;
 
+import gameunits.Player;
+import gameunits.cards.Card;
+
 import luxe.Input;
 import luxe.States;
 import luxe.Text;
@@ -29,6 +32,7 @@ class Menu extends State{
 
     private var _rendering_ : LuxeMintRender;
 
+    private var _menu_ : List;
     private var text_title : Text;
 
     public function new(){
@@ -67,7 +71,7 @@ class Menu extends State{
 
     private function make_buttons():Void{
 
-        var _menu = new List( {
+        _menu_ = new List( {
             parent : _canvas_,
             name   : 'main_menu_list',
             x : mid.x - 120,  y : mid.y-42,
@@ -78,7 +82,7 @@ class Menu extends State{
 
         for( i in 0 ... 4){
             var bttn_opt:ButtonOptions = {
-                parent : _menu,
+                parent : _menu_,
                 name : bttn_names[i],
                 text : bttn_labels[i],
                 text_size : 36,
@@ -87,7 +91,7 @@ class Menu extends State{
                 onclick : function(e,c) { button_handle( i ); }
             }
 
-            _menu.add_item( new Button( bttn_opt ), 0, (i == 0) ? 0 : 24 );
+            _menu_.add_item( new Button( bttn_opt ), 0, (i == 0) ? 0 : 24 );
         }
 
     }
@@ -95,11 +99,11 @@ class Menu extends State{
     private function button_handle( id : Int ):Void{
         switch ( id ) {
             case 0:
-                // initGame( /* false */ );
                 trace( "BEEPBOOP SINGLEPLAYER" );
+                initGame( false );
             case 1:
-                // initGame( /* true */ );
                 trace( "BEEPBOOP MULTIPLAYER" );
+                // initGame( true );
             case 2:
                 trace( "BEEPBOOP OPTIONS" );
             case 3:
@@ -108,64 +112,81 @@ class Menu extends State{
 
     }
 
-    // public function initGame( /* gametype : Bool */ ):Void{
-    //
-    //     /*
-    //       trace( "First player's name: ");
-    //       var p1:String = Sys.stdin().readLine();
-    //
-    //       PROMPT FOR PLAYER NAME
-    //      */
-    //
-    //     var p1:String = "YOU";
-    //
-    //       // make p1's deck
-    //     var d1:Array< Card > = new Array< Card >();
-    //
-    //       // make p1
-    //     var player1:Player = initPlayer( p1, d1, false );
-    //
-    //     /*
-    //         if multiplayer, PROMPT FOR
-    //         trace( "Second player's name: ");
-    //      */
-    //       // var p2:String = Sys.stdin().readLine();
-    //     var p2:String = "CPU";
-    //
-    //       // make p2's deck
-    //     var d2:Array< Card > = new Array< Card >();
-    //
-    //       // make p2
-    //     var player2:Player = initPlayer( p2, d2, true );
-    //
-    //     var session:Session = this.machine._states.get( 'game_session' );
-    //
-    //     player1.joinGame( session );
-    //     player2.joinGame( session );
-    //
-    //     this.machine.set( 'game_session' );
-    // }
-    //
-    // private static function initPlayer( name : String, deck : Array< Card >, cpu : Bool ):Player{
-    //     var newP:Player = new Player( name, deck, cpu );
-    //
-    //     trace( "Player " + name + " initialized" );
-    //     trace( newP );
-    //
-    //     return newP;
-    // }
+    public function initGame( multi : Bool ):Void{
+
+        /*
+          trace( "First player's name: ");
+          var p1:String = Sys.stdin().readLine();
+
+          PROMPT FOR PLAYER NAME
+         */
+
+        var p1:String = "YOU";
+
+          // make p1's deck
+        var d1:Array<Card> = new Array<Card>();
+
+          // make p1
+        var player1:Player = initPlayer( { n : p1, deck : d1, cpu : false } );
+
+        var p2:String;
+        var d2:Array<Card>;
+
+        if( multi ){
+            /* multiplayer logic */
+
+            p2 = "CPU";
+
+              // make p2's deck
+            d2 = new Array<Card>();
+        }
+
+        else{
+            p2 = "CPU";
+
+              // make p2's deck
+            d2 = new Array<Card>();
+        }
+
+          // make p2
+        var player2:Player = initPlayer( { n : p2, deck : d2, cpu : true } );
+
+        var session:Session = cast this.machine._states.get( 'game_session' );
+
+        if( session.enterPlayer( player1, false ) &&
+            session.enterPlayer( player2, true  ) ){
+            this.machine.set( 'game_session' );
+        } else{ session.destroy(); }
+    }
+
+    private static function initPlayer( opt : PlayerOptions ):Player{
+        var newP:Player = new Player( opt );
+
+        trace( "Player " + opt.n + " initialized" );
+        trace( newP );
+
+        return newP;
+    }
 
     override function onleave<T>( t : T ){
-        // _scene_.destroy();
+        _menu_.destroy();
+        _menu_      = null;
+
+        text_title.destroy();
+        text_title  = null;
+
+        _focus_.destroy();
+        _focus_     = null;
+
+        _rendering_ = null;
+        _layout_    = null;
+        _canvas_    = null;
     }
 
     override function onkeyup( e:KeyEvent ){
         if( e.keycode == Key.escape ){
             /* CONFIRM EXIT? */
             Luxe.shutdown();
-        }
-        if( e.keycode == Key.enter ){
-            machine.set( "playing_field" );
         }
     }
 }
