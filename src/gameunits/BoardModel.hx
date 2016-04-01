@@ -17,24 +17,32 @@ import luxe.Vector;
 
 class BoardModel{
 
+      // the view associated with this model
     private var _view_:BoardView;
 
+      // states to keep track of where in the game-flow the Bord is in
     private var _states_:States;
         // in_progress
         // paused
         // '$_human' + '_active'
         // '$_opponent' + '_active'
 
+      // turn counter
     private var _turn_:Int = 0;
+      // round counter
     private var _round_:Int = 0;
-    private var _handsize_:Int = 6;
+      // the stnadard starting hand size
+    private static var _handsize_:Int = 6;
 
+      // who is player 1? (bottom)
     private var _P1_:String;
+      // who is player 2? (top)
     private var _P2_:String;
 
-        // < playerName, < cardRank, card > >
+      // Player.name => Player
     private var _players_:Map< String, Player >
                     = new Map< String, Player >();
+      // Player.name => currently played cards
     private var _pFields_:Map< String, GenericStack<Card> >
                     = new Map< String, GenericStack<Card> >();
 
@@ -42,21 +50,25 @@ class BoardModel{
     private var _cur_player_:String;
     private var _winner_:String = "";
 
+      // something to keep track of how many rounds have elapsed
     private var round_count:Int = 0;
 
-    // initializes the board
     /**
-     *
+     * initializes the board
      */
     public function new( /* gameType : String */ ){
         this._states_ = new States( { name : "field states" } );
-        
+
         _states_.add( new State( { name : "in_progress" } ) );
         _states_.add( new State( { name : "paused" } ) );
     }
 
     /**
+     * adds a player to the board and sets the Player board var to this
      *
+     * @param :: Player :: p :: the Player that is being added
+     * @param :: Bool :: top :: whether they are to be rendered at the top or
+     *                          bottom of the board
      */
     public function add_player( p : Player, top : Bool ):Void{
         _players_.set( p.name, p );
@@ -67,13 +79,11 @@ class BoardModel{
             _P1_ = p.name;
         }
 
-        p.set__board_( this );
+        p.set_board( this );
     }
 
-      // upon entering this State, set up the scenes and start the game
-      // it is expected that before entering the State, the players are already initialized
     /**
-     *
+     *  initialize the BoardView and start the game
      */
     public function setGame(){
 

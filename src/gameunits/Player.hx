@@ -869,26 +869,26 @@ class Player extends Entity{
 //
 //     public function isDeckEmpty():Bool{ return ( _deck.length == 0 ); }
 
-    public function set__board_( b : BoardModel ):BoardModel{
+    public function set_board( b : BoardModel ):BoardModel{
         _board_ = b;
         return _board_;
     }
 
-    public function get__cpu_():Bool{ return _cpu_; }
+    public function get_cpu():Bool{ return _cpu_; }
 
-    public function get__deck_():Array<Card>{
+    public function get_deck():Array<Card>{
         var ret:Array<Card> = new Array<Card>();
         ret = ret.concat( _deck_ );
         return ret;
     }
 
-    public function get__hand_():Array<Card>{
+    public function get_hand():Array<Card>{
         var ret:Array<Card> = new Array<Card>();
         ret = ret.concat( _hand_ );
         return ret;
     }
 
-    public function get__discard_():Array<Card>{
+    public function get_discard():Array<Card>{
         var ret:Array<Card> = new Array<Card>();
         ret = ret.concat( _discard_ );
         return ret;

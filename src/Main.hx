@@ -1,5 +1,3 @@
-/** Copyright (c) 2015 Elijah Kliot*/
-
 import gamestates.Menu;
 import gamestates.Session;
 // import gamestates.Options;
@@ -29,10 +27,20 @@ import luxe.Color;
 //      "pass" will pass the move, but will only show if it is valid
 //          after selecting "play" and "discard" there is a "back" button, which returns to the move selection
 
-
+/**
+ * Main class encapsulates the game, manages the overarching states
+ * and hangles congigs
+ */
 class Main extends Game{
     private var state:States;
+      // main_menu
+      // game_session
+      // game_options (not implemented)
 
+    /**
+     * the logic to run when the game starts, initializes
+     * States and enters main menu
+     */
     override function ready(){
         Luxe.renderer.clear_color.rgb(0x121219);
 
@@ -44,6 +52,9 @@ class Main extends Game{
         state.set( 'main_menu' );
     }
 
+    /**
+     * currently just manages the preloading of assets
+     */
     override function config(config:luxe.AppConfig) {
 
         config.preload.textures.push({ id:'assets/blue-grid-720.png' });

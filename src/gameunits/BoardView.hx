@@ -29,6 +29,8 @@ class BoardView extends Scene{
       // vitals are vitalsDims x vitalsDims in size (this includes buffer space)
     var _vitalsDims_:Float;
 
+    var _cardDims_:Vector;
+
     var _ui_scene_:Scene;
     var _card_scene_:Scene;
 
@@ -63,13 +65,16 @@ class BoardView extends Scene{
     // the way these are set can vary by gameType
     // this is (can be) called before Players are set up
     private function setBoard( p1 : Player, p2 : Player /*, gameType : String*/ ):Void{
+        var _2deep4me = -999;
+
         var bg:Sprite = new Sprite( {
                     name : "boardBack",
                     texture : Luxe.resources.texture( 'assets/blue-grid-720.png' ),
                     centered : false,
-                    depth : -420 } );
+                    depth : _2deep4me } );
 
         initUI();
+        
         // setPlayer( p1, false );
         // setPlayer( p2, true );
     }
@@ -77,11 +82,11 @@ class BoardView extends Scene{
     private function initUI( /*gameType : String*/ ):Void{
         this._font_ = Luxe.renderer.font;
 
-        var dims:Array< Float > = cardDim();
+        _cardDims_ = cardDim();
         trace( "card dims :: " + dims );
 
-        var cardH:Float = dims[ 0 ];
-        var cardW:Float = dims[ 1 ];
+        var cardW:Float = _cardDims_.x;
+        var cardH:Float = _cardDims_.y;
 
 
         /**********************
@@ -165,15 +170,10 @@ class BoardView extends Scene{
 
             // Deck sprite will have a 5px buffer for a total 115x160px
             _playerDeck_ = new Sprite( { name : "playerDeck", scene : _ui_scene_,
-                                        size : new Vector( cardW, cardH ),
+                                        size : _cardDims_,
                                         centered : false,
                                         pos : new Vector( 5, _pActiveBounds_ + 5 ),
                                         color : new Color( 0, 0, 1 ) } );
-                                        // geometry : new RectangleGeometry( { x : 0,
-                                        //                                     y : pActiveBounds,
-                                        //                                     w : cardW,
-                                        //                                     h : cardH,
-                                        //                                     color : new Color( 0, 0, 1 ) } ) } );
             trace( "new _playerDeck ping" );
         // ##################
         // PLAYER UI ELEMENTS
@@ -210,7 +210,7 @@ class BoardView extends Scene{
 
             // Deck sprite will have a 5px buffer for a total 115x160px
             _oppDeck_ = new Sprite( { name : "oppDeck", scene : _ui_scene_,
-                                     size : new Vector( cardW, cardH ),
+                                     size : _cardDims_,
                                      centered : false,
                                      pos : new Vector( 5, 5 ),
                                      color : new Color( 0, 0, 1 ) } );
@@ -324,9 +324,9 @@ class BoardView extends Scene{
 
 
     // returns an Array, where [ height, width ]
-    public function cardDim():Array< Float >{
-        var h:Float = Luxe.screen.height * ( 5 / 24 );
+    public function cardDim():Vector{
         var w:Float = Luxe.screen.width * ( 21 / 256 );
-        return [ h, w ];
+        var h:Float = Luxe.screen.height * ( 5 / 24 );
+        return new Vector( w, h );
     }
 }

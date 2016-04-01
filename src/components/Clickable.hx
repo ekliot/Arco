@@ -1,4 +1,5 @@
-/* https://github.com/Zielak/4Simon/blob/master/src/components/Clickable.hx */
+/*  Source by Darek Greenly: 
+    https://github.com/Zielak/4Simon/blob/master/src/components/Clickable.hx */
 
 package components;
 
