@@ -1,37 +1,44 @@
-import states.Menu;
-import states.Play;
-import states.Pause;
-import states.Options;
+
+
+import arco.states.Menu;
+import arco.states.Selection;
+import arco.states.Play;
+import arco.states.Pause;
+import arco.states.Options;
 
 import luxe.Game;
 import luxe.States;
-import luxe.Color;
+
 
 /**
  * Main class encapsulates the game, manages the overarching states
  * and hangles congigs
  */
 class Main extends Game{
+
+
     private var state:States;
-      // main_menu
-      // game_session
-      // game_options (not implemented)
+
 
     /**
      * the logic to run when the game starts, initializes
      * States and enters main menu
      */
     override function ready(){
+
+            // <TODO> what is this for?
         Luxe.renderer.clear_color.rgb(0x121219);
 
-        state = new States( { name : "MAIN" } );
+        state = new States( { name : "machine.core" } );
         state.add( new Menu() );
         state.add( new Selection() );
-        state.add( new Pause() );
+        state.add( new Play() );
         state.add( new Options() );
+        state.add( new Pause() );
 
-        state.set( 'MAIN_MENU' );
-    }
+        state.set( 'state.main_menu' );
+
+    } // ready()
 
     /**
      * currently just manages the preloading of assets
@@ -41,5 +48,8 @@ class Main extends Game{
         config.preload.textures.push( { id:'assets/blue-grid-720.png' } );
 
         return config;
-    }
-}
+
+    } // config()
+
+
+} // Main

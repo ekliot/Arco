@@ -1,53 +1,41 @@
-package gameunits;
+package arco.beings;
 
-// import Suits;
-// import Triggers;
-// import Actions;
 
-import gameunits.cards.Card;
 
-import Random;
-
-import luxe.Events;
-import luxe.States;
-import luxe.Entity;
 
 import luxe.Input;
 
-typedef PlayerOptions = {
-    var n : String;
-    var cpu : Bool;
-    var deck : Array<Card>;
-}
 
-class Player extends Entity{
-    private var _board_:BoardModel;
-    private var   _cpu_:Bool;
+class Adversary {
 
-    private var    _deck_:Array<Card>;
-    private var    _hand_:Array<Card> = new Array<Card>();
-    private var _discard_:Array<Card> = new Array<Card>();
 
-    // public var _states:States;
+    private var deck (get) : Deck;
+    private var hand (get) : Array<Card> = new Array<Card>();
+    private var discard (get) : Array<Card> = new Array<Card>();
+
+    private var cpu (get) : Bool;
+
+    /* <TODO> implement these properly */
+    private var states : States;
     //     // LIVING
     //     // PASSED
-    // public var _pMove:States;
+    private var pMove : States;
     //     // PLAY
     //     // DISCARD
     //     // DECIDING
     //     // WAITING
 
-    private var _health_:Int;
-    private var _power_:Int;
+    private var health (get) : Int;
+    private var momentum (get) : Int;
 
-    // private var _toDiscard_:Array<Card> = new Array<Card>();
-    // private var _lastPlayed_:Card;
+    private var discarding (get) : Array<Card> = new Array<Card>();
+    private var last_played (get) : Card;
+
 
     /**
-     *
+     * <TODO>
      */
-    public function new( opt : PlayerOptions ){
-        super( { name : "player." + opt.n, no_scene : true } );
+    public function new( opt : PlayerOptions ) {
 
         if( opt.deck.length == 0 ){
             _deck_ = stdDeck();
@@ -61,55 +49,59 @@ class Player extends Entity{
         _cpu_ = opt.cpu;
 
         // initStates();
-    }
-//
-//     /**
-//      *
-//      */
-//     private function initStates():Void{
-//         this._states = new States( { name : _NAME + "::player_states" } );
-//         _states.add( new State( { name : "LIVING" } ) );
-//         _states.add( new State( { name : "PASSED" } ) );
-//
-//         _states.enable( "LIVING" );
-//
-//         this._pMove = new States( { name : _NAME + "::move_states" } );
-//         _pMove.add( new State( { name : "PLAY" } ) );
-//         _pMove.add( new State( { name : "DISCARD" } ) );
-//         _pMove.add( new State( { name : "DECIDING" } ) );
-//         _pMove.add( new State( { name : "WAITING" } ) );
-//
-//         _pMove.set( "WAITING" );
-//     }
 
-    public function stdDeck():Array<Card>{
-        trace( "Building standard deck..." );
+    } // new
 
-        var ret:Array<Card> = new Array<Card>();
+    /**
+     * <TODO>
+     */
+    private function initStates():Void{
 
-        // for( i in 1...14 ){
-        //     var temp:Array<Card> = new Array<Card>();
+        /* <TODO> */
+        // this.states = new States( { name : _NAME + "::player_states" } );
+        // states.add( new State( { name : "LIVING" } ) );
+        // states.add( new State( { name : "PASSED" } ) );
         //
-        //     temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME, visible : false } ) );
-        //     temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME, visible : false } ) );
-        //     temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME, visible : false } ) );
-        //     temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME, visible : false } ) );
+        // states.enable( "LIVING" );
         //
-        //     trace( temp.toString() );
+        // this.pMove = new States( { name : _NAME + "::move_states" } );
+        // pMove.add( new State( { name : "PLAY" } ) );
+        // pMove.add( new State( { name : "DISCARD" } ) );
+        // pMove.add( new State( { name : "DECIDING" } ) );
+        // pMove.add( new State( { name : "WAITING" } ) );
         //
-        //     ret = ret.concat( temp );
-        //
-        //     trace( i );
-        // }
-        //
-        // trace( "Shuffling deck..." );
-        //
-        // Random.shuffle( ret );
-        //
-        // trace( "Deck shuffled" );
+        // pMove.set( "WAITING" );
 
-        return ret;
-    }
+    } // initStates
+
+    // public function stdDeck() : Array<Card> {
+    //     trace( "Building standard deck..." );
+    //
+    //     var ret:Array<Card> = new Array<Card>();
+    //
+    //     // for( i in 1...14 ){
+    //     //     var temp:Array<Card> = new Array<Card>();
+    //     //
+    //     //     temp.push( new StdCard( { rank : i, suit : Blades, played_from : _NAME, visible : false } ) );
+    //     //     temp.push( new StdCard( { rank : i, suit : Stars, played_from : _NAME, visible : false } ) );
+    //     //     temp.push( new StdCard( { rank : i, suit : Stones, played_from : _NAME, visible : false } ) );
+    //     //     temp.push( new StdCard( { rank : i, suit : Bones, played_from : _NAME, visible : false } ) );
+    //     //
+    //     //     trace( temp.toString() );
+    //     //
+    //     //     ret = ret.concat( temp );
+    //     //
+    //     //     trace( i );
+    //     // }
+    //     //
+    //     // trace( "Shuffling deck..." );
+    //     //
+    //     // Random.shuffle( ret );
+    //     //
+    //     // trace( "Deck shuffled" );
+    //
+    //     return ret;
+    // }
 
 //     // draws i number of cards (default is 1) and pushes them into the hand
 //     /**
@@ -864,44 +856,16 @@ class Player extends Entity{
 //         // clear all cards on board that are greater than the new power level
 //         _BOARD.trimBoard( _NAME, _power );
 //     }
-//
-//     public function getPower():Int{ return _power; }
-//
-//     public function isDeckEmpty():Bool{ return ( _deck.length == 0 ); }
 
-    public function set_board( b : BoardModel ):BoardModel{
-        _board_ = b;
-        return _board_;
-    }
+    /**
+     * <TODO>
+     */
+    public function is_deckEmpty(): Bool {
 
-    public function get_cpu():Bool{ return _cpu_; }
+        return deck.length == 0;
 
-    public function get_deck():Array<Card>{
-        var ret:Array<Card> = new Array<Card>();
-        ret = ret.concat( _deck_ );
-        return ret;
-    }
+    } // is_deckEmpty
 
-    public function get_hand():Array<Card>{
-        var ret:Array<Card> = new Array<Card>();
-        ret = ret.concat( _hand_ );
-        return ret;
-    }
-
-    public function get_discard():Array<Card>{
-        var ret:Array<Card> = new Array<Card>();
-        ret = ret.concat( _discard_ );
-        return ret;
-    }
-
-//     public function getPass():Bool{ return _states.enabled( "PASSED" ); }
-//
-//     public function getDeck():Array<Card>{
-//         var ret:Array<Card> = new Array<Card>();
-//         ret = ret.concat( _deck );
-//         return ret;
-//     }
-//
 //     // if discarding a card from the hand, it must be removed prior to calling this function
 //     // if that is the case, call discard( Card ), unless the onDiscard trigger is to be activated
 //     public function pushDiscard( c : Card, trig : Bool ):Void{
@@ -984,4 +948,26 @@ class Player extends Entity{
 //             _toDiscard.push( card );
 //         }
 //     }
+
+
+} // class Adversary
+
+
+/**
+ * <TODO>
+ */
+typedef AdversaryOptions = {
+
+    var name : String;
+        /* <TODO> */
+    var class : String;
+        /* <TODO> */
+    // var deck : Deck;
+        /* <TODO> */
+    var ability1 : String;
+        /* <TODO> */
+    var ability2 : String;
+        /* <TODO> */
+    var ability3 : String;
+
 }
