@@ -15,6 +15,9 @@ import mint.render.luxe.List;
 import mint.render.luxe.Button;
 
 
+/**
+ * <TODO>
+ */
 class MenuView {
 
 
@@ -181,8 +184,8 @@ class MenuView {
 
             btn_control = new mint.Button( btn_opt );
 
-              // this helps add a little extra spacing between list elements
-              /* <TODO> replace 24 with something more programmatic */
+                // this helps add a little extra spacing between list elements
+                /* <TODO> replace 24 with something more programmatic */
             y_offset = ( i == 0 ) ? 0 : 24;
 
                 // add the button to the menu
@@ -191,6 +194,51 @@ class MenuView {
         } // for( i in 0 ... 5 )
 
     } // make_menu()
+
+    /**
+     * <TODO>
+     */
+    private function cursor_up(): Void {
+
+        return;
+
+    } // cursor_up()
+
+    /**
+     * <TODO>
+     */
+    private function cursor_down(): Void {
+
+        return;
+
+    } // cursor_down()
+
+    /**
+     * <TODO>
+     */
+    private function cursor_left(): Void {
+
+        return;
+
+    } // cursor_left()
+
+    /**
+     * <TODO>
+     */
+    private function cursor_right(): Void {
+
+        return;
+
+    } // cursor_right()
+
+    /**
+     * <TODO>
+     */
+    private function cursor_select(): Void {
+
+        return;
+
+    } // cursor_select()
 
 
 } // class MenuView

@@ -22,15 +22,15 @@ import mint.render.luxe.TextEdit;
  */
 class SelectionView {
 
+        /* <TODO> */
+    public var destroyed : Bool = false;
 
         // a shortcut to getting the middle of the screen
     private var MID : Vector = Luxe.screen.mid;
-        //
+        /* <TODO> */
     private var COMPASS_RADIUS : Int = 50;
-        //
+        /* <TODO> */
     private var SELECTION : Selection;
-
-    public var destroyed : Bool = false;
 
         // uses the AutoCanvas from mint's test_luxe example for
         // compatibility b/w luxe and mint
@@ -43,9 +43,9 @@ class SelectionView {
     private var rendering : LuxeMintRender;
 
         // the input for the player's name
-    private var input_name : TextEdit;
+    private var input_name (get) : TextEdit;
         // an object holding the eight points of the class selection compass
-    private var class_compass : ClassCompass;
+    private var class_compass (get) : ClassCompass;
 
 
     /**
@@ -91,17 +91,12 @@ class SelectionView {
 
     public function destroy(): Void {
 
+        trace( "SelectionView.destroy() :: starting" )
+
         input_name.destroy();
         input_name = null;
 
-        class_compass.north.destroy();
-        class_compass.south.destroy();
-        class_compass.east.destroy();
-        class_compass.west.destroy();
-        class_compass.northeast.destroy();
-        class_compass.northwest.destroy();
-        class_compass.southeast.destroy();
-        class_compass.southwest.destroy();
+        class_compass.destroy();
         class_compass = null;
 
         focus.destroy();
@@ -115,12 +110,16 @@ class SelectionView {
 
         destroyed = true;
 
+        trace( "SelectionView.destroy() :: finished" )
+
     } // destroy()
 
     /**
      * <TODO>
      */
     private function make_nameInput(): Void {
+
+        trace( "SelectionView.make_nameInput() :: starting" );
 
         /**
          * <TODO> make a label for this input
@@ -144,15 +143,19 @@ class SelectionView {
             // text_size : size,
 
                 // LuxeMintTextEditOptions
-            // color : PINK;
-            // color_hover : PINK;
-            // color_cursor : PURPLE;
-            // cursor_blink_rate : PINK;
+            // color : XXXX;
+            // color_hover : XXXX;
+            // color_cursor : XXXX;
+            // cursor_blink_rate : XXXX;
 
         }; // input_opt = { ... }
 
+        trace( "SelectionView.make_nameInput() :: using text edit options :> $input_opt" );
+
         var control : mint.TextEdit = new mint.TextEdit( input_opt );
         this.input_name = new TextEdit( rendering, control );
+
+        trace( "SelectionView.make_nameInput() :: finished" );
 
     } // make_nameInput()
 
@@ -161,40 +164,85 @@ class SelectionView {
      */
     private function make_compass(): Void {
 
-        var comp : ClassCompass = {
-
-                // the north-facing class -- BLADES
-            north : make_compassButton( "north" ),
-                // the south-facing class -- BONES
-            south : make_compassButton( "south" ),
-                // the east-facing class -- STARS
-            east : make_compassButton( "east" ),
-                // the west-facing class -- STONES
-            west : make_compassButton( "west" ),
-                // the northeast-facing class -- BLADES/STARS
-            northeast : make_compassButton( "northeast" )
-                // the northwest-facing class -- BLADES/STONES
-            northwest : make_compassButton( "northwest" ),
-                // the southeast-facing class -- BONES/STARS
-            southeast : make_compassButton( "southeast" ),
-                // the southeast-facing class -- BONES/STONES
-            southwest : make_compassButton( "southwest" ),
-
-            /* <TODO> make vertical line */
-            // line_v : ,
-            /* <TODO> make horizontal line */
-            // line_h :
-
-        }; // comp = { ... }
-
-        this.class_compass = comp;
+        this.class_compass = new ClassCompass( COMPASS_RADIUS );
 
     } // make_compass()
 
     /**
      * <TODO>
      */
+    private function make_buttons(): Void {
+
+        /* <TODO> */
+
+    } // make_buttons
+
+
+} // class SelectionView
+
+
+/**
+ * <TODO>
+ */
+private class ClassCompass {
+
+
+        /* <TODO> */
+    public var destroyed : Bool = false;
+
+        /* <TODO> */
+    private var MID : Vector = Luxe.screen.mid;
+
+        /* <TODO> */
+    private var COMPASS_RADIUS: Int;
+
+        // the north-facing class -- BLADES
+    private var north : SelectionCompassSprite;
+        // the south-facing class -- BONES
+    private var south : SelectionCompassSprite;
+        // the east-facing class -- STARS
+    private var east : SelectionCompassSprite;
+        // the west-facing class -- STONES
+    private var west : SelectionCompassSprite;
+        // the northeast-facing class -- BLADES/STARS
+    private var northeast : SelectionCompassSprite;
+        // the northwest-facing class -- BLADES/STONES
+    private var northwest : SelectionCompassSprite;
+        // the southeast-facing class -- BONES/STARS
+    private var southeast : SelectionCompassSprite;
+        // the southeast-facing class -- BONES/STONES
+    private var southwest : SelectionCompassSprite;
+        // the north-south line
+    private var line_v : LineGeometry;
+        // the east-west line
+    private var line_h : LineGeometry;
+
+    public function new( radius : Int ): Void {
+
+        this.COMPASS_RADIUS = radius;
+
+        this.north = make_compassButton( "north" );
+        this.south = make_compassButton( "south" );
+        this.east  = make_compassButton( "east" );
+        this.west  = make_compassButton( "west" );
+        this.northeast = make_compassButton( "northeast" );
+        this.northwest = make_compassButton( "northwest" );
+        this.southeast = make_compassButton( "southeast" );
+        this.southwest = make_compassButton( "southwest" );
+
+        /* <TODO> make vertical line */
+        // this.line_v = ;
+        /* <TODO> make horizontal line */
+        // this.line_h = ;
+
+    } // new()
+
+    /**
+     * <TODO>
+     */
     private function make_compassButton( dir : String ): SelectionCompassSprite {
+
+        trace( "ClassCompass.make_compassButton( $dir ) :: starting" );
 
         var posx : Int;
         var posy : Int;
@@ -228,6 +276,8 @@ class SelectionView {
 
         } // switch ( dir )
 
+        trace( "ClassCompass.make_compassButton( $dir ) :: (x,y) :> ($posx,$posy)" );
+
         var sprite_opt = {
 
                 // TransformProperties
@@ -236,6 +286,7 @@ class SelectionView {
                 // EntityOptions
             name : "sprite.selection.compass." + dir,
 
+                /* <TODO> figure out the proper vector size */
                 // VisualOptions
             size : new Vector( 128, 128 ),
                 /* <TODO> set the texture to the class sprite, remove the color option */
@@ -247,7 +298,11 @@ class SelectionView {
 
         }; // sprite_opt = { ... }
 
+        trace( "ClassCompass.make_compassButton( $dir ) :: using sprite options :> $sprite_opt" );
+
         var sprite = new SelectionCompassSprite( SELECTION, sprite_opt );
+
+        trace( "ClassCompass.make_compassButton( $dir ) :: finished" );
 
         return sprite;
 
@@ -256,48 +311,26 @@ class SelectionView {
     /**
      * <TODO>
      */
-    private function make_buttons(): Void {
+    public function destroy(): Void {
 
-        /* <TODO> */
+        trace( "ClassCompass.destroy() :: starting" );
 
-    } // make_buttons
+        this.north.destroy();
+        this.south.destroy();
+        this.east.destroy();
+        this.west.destroy();
+        this.northeast.destroy();
+        this.northwest.destroy();
+        this.southeast.destroy();
+        this.southwest.destroy();
+        this.line_v.destroy();
+        this.line_h.destroy();
 
-    /**
-     * <TODO>
-     */
-    private function selectDefaults(): Void {
+        this.destroyed = true;
 
-        /* <TODO> */
+        trace( "ClassCompass.destroy() :: starting" );
 
-    } // selectDefaults
+    }
 
 
-} // class SelectionView
-
-
-/**
- * <TODO>
- */
-typedef ClassCompass = {
-
-        // the north-facing class -- BLADES
-    var north : SelectionCompassSprite;
-        // the south-facing class -- BONES
-    var south : SelectionCompassSprite;
-        // the east-facing class -- STARS
-    var east : SelectionCompassSprite;
-        // the west-facing class -- STONES
-    var west : SelectionCompassSprite;
-        // the northeast-facing class -- BLADES/STARS
-    var northeast : SelectionCompassSprite;
-        // the northwest-facing class -- BLADES/STONES
-    var northwest : SelectionCompassSprite;
-        // the southeast-facing class -- BONES/STARS
-    var southeast : SelectionCompassSprite;
-        // the southeast-facing class -- BONES/STONES
-    var southwest : SelectionCompassSprite;
-
-    var line_v : LineGeometry;
-    var line_h : LineGeometry;
-
-} // ClassCompass
+} // class ClassCompass

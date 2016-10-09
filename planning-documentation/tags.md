@@ -1,0 +1,44 @@
+ELEMENT NAMES/IDS
+---
+  - state
+    - main_menu
+    - selection
+    - play
+    - options
+    - pause
+  - canvas
+    - main_menu
+    - selection
+  - button
+    - main_menu
+      - single
+      - multi
+      - chars
+      - opt
+      - exit
+    - selection
+    - options
+    - pause
+  - sprite
+    - selection
+      - compass
+        - north
+        - south
+        - east
+        - west
+        - northeast
+        - northwest
+        - southeast
+        - southwest
+  - list
+    - main_menu
+      - menu
+  - text
+    - main_menu
+      - title
+  - input
+    - text
+      - selection
+        - name
+  - class
+    -

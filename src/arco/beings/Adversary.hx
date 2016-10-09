@@ -1,78 +1,313 @@
 package arco.beings;
 
 
-
-
 import luxe.Input;
 
 
+/**
+ * <TODO>
+ */
+typedef AdversaryOptions = {
+
+        /* <TODO> */
+    var cpu : Bool;
+        /* <TODO> */
+    var name : String;
+        /* <TODO> */
+    var archetype : String;
+        /* <TODO> */
+    // var deck : Deck;
+        /* <TODO> */
+    var abilities : Map<Int, String>;
+
+} // typedef AdversaryOptions
+
+
+/**
+ * <TODO>
+ */
+typedef AdversaryStatus = {
+
+        /* <TODO> */
+    var name : String;
+        /* <TODO> */
+    var health : Int;
+        /* <TODO> */
+    var momentum : Int;
+        /* <TODO> */
+    var last_played : Card;
+        /* <TODO> */
+    @:optional var deck : Deck;
+        /* <TODO> */
+    @:optional var hand : Array<Card>;
+        /* <TODO> */
+    @:optional var discard : Array<Card>;
+        /* <TODO> */
+    @:optional var on_board : Map<Int, Card>;
+
+} // typedef AdversaryStatus
+
+
+/**
+ * <TODO>
+ */
 class Adversary {
 
 
-    private var deck (get) : Deck;
-    private var hand (get) : Array<Card> = new Array<Card>();
-    private var discard (get) : Array<Card> = new Array<Card>();
+        // the Game this Adversary is playing in
+    public var GAME (get, set) : Game;
 
+        // the listener IDs for easy cleanup, <Event, ID>
+    private var LISTENING: Map<String, String>;
+
+        // this Adversary's name
+    private var name (get): String;
+
+        // whether this Adversary is computer controlled
     private var cpu (get) : Bool;
 
-    /* <TODO> implement these properly */
-    private var states : States;
-    //     // LIVING
-    //     // PASSED
-    private var pMove : States;
-    //     // PLAY
-    //     // DISCARD
-    //     // DECIDING
-    //     // WAITING
+        // this Adversary's Deck
+    private var deck (get) : Deck;
+        // this Adversary's hand
+    private var hand (get) : Array<Card> = new Array<Card>();
+        // this Adversary's discard pile
+    private var discard (get) : Array<Card> = new Array<Card>();
 
+        // the cards this Adversary is discarding
+    private var discarding (get) : Array<Card> = new Array<Card>();
+        // the last card that this Adversary played
+    private var last_played (get) : Card;
+
+        // the states that the Adversary can be in, listed out below
+    private var states : States;
+        /**
+         * dead
+         *  -> when in this state, the Adversary is static and has (usually) lost
+         * passed
+         *  -> the Adversary has passed their turn, and cannot take actions until
+         *     the other Adversary passes and the next round round starts
+         * waiting
+         *  -> it is not currently the Adversary's turn, and they are waiting for
+         *     their turn to start
+         * playing
+         *  -> it is the Adversary's turn, and they are not actively doing an action
+         * choosing
+         *  -> the Adversary is deciding something (picking cards to discard from
+         *     a draw, confirming an action)
+         * discarding
+         *  -> the Adversary is selecting cards to discard
+         */
+
+        // this Adversary's health
     private var health (get) : Int;
+        // this Adversary's momentum
     private var momentum (get) : Int;
 
-    private var discarding (get) : Array<Card> = new Array<Card>();
-    private var last_played (get) : Card;
+        // this Adversary's Archetype
+    private var archetype (get): Archetype;
+        // this Adversary's Abilities, mapped from <Momentum Threshhold, Ability>
+    private var abilities (get): Map<Int, Ability>;
 
 
     /**
      * <TODO>
      */
-    public function new( opt : PlayerOptions ) {
+    public function new( opt : AdversaryOptions ) {
 
-        if( opt.deck.length == 0 ){
-            _deck_ = stdDeck();
-        } else{ _deck_ = opt.deck; }
+        trace( 'Adversary :: creating new adversary with options :> $opt' );
 
-        trace( _deck_ );
+        this.name = opt.name;
 
-        _health_ = 12; // 24hp default, 12 for testing
-        _power_ = 1;
+        this.cpu = opt.cpu;
 
-        _cpu_ = opt.cpu;
+            /* <TODO> make these based from constants */
+        this.health = 24;
+        this.momentum = 0;
 
-        // initStates();
+        this.deck = opt.deck;
+
+        init_states();
+
+        init_archetype( opt );
+
+        init_listeners( opt );
 
     } // new
 
     /**
      * <TODO>
      */
-    private function initStates():Void{
+    private function init_states(): Void {
 
-        /* <TODO> */
-        // this.states = new States( { name : _NAME + "::player_states" } );
-        // states.add( new State( { name : "LIVING" } ) );
-        // states.add( new State( { name : "PASSED" } ) );
-        //
-        // states.enable( "LIVING" );
-        //
-        // this.pMove = new States( { name : _NAME + "::move_states" } );
-        // pMove.add( new State( { name : "PLAY" } ) );
-        // pMove.add( new State( { name : "DISCARD" } ) );
-        // pMove.add( new State( { name : "DECIDING" } ) );
-        // pMove.add( new State( { name : "WAITING" } ) );
-        //
-        // pMove.set( "WAITING" );
+        this.states = new States( { name : 'machine.adversary.$name' } );
+        this.states.add( new State( { name : "dead" } ) );
+        this.states.add( new State( { name : "passed" } ) );
+        this.states.add( new State( { name : "playing" } ) );
+        this.states.add( new State( { name : "choosing" } ) );
+        this.states.add( new State( { name : "discarding" } ) );
+        this.states.add( new State( { name : "waiting" } ) );
 
-    } // initStates
+        this.states.set( "waiting" );
+
+    } // init_states()
+
+    /**
+     * sets up the Adversary's Archetype and Abilities
+     */
+    private function init_archetype( opt : AdversaryOptions ): Void {
+
+        // this.archetype = opt.archetype
+
+        // set up abilities
+
+        return;
+
+    } // init_archetype()
+
+    private function init_listeners(): Void {
+
+        this.LISTENERS = new Map<String, String>();
+
+        this.LISTENERS.set( "draw", Luxe.events.listen( 'adversary.$name.draw', draw ));
+        this.LISTENERS.set( "play", Luxe.events.listen( 'adversary.$name.play.card', play_card ) );
+        this.LISTENERS.set( "discard", Luxe.events.listen( 'adversary.$name.play.discard', play_discard ) );
+
+    } // init_listeners()
+
+    /**
+     * gets a status of this Adversary
+     *
+     * @param deck :: Bool :: whether to include this Adversary's current deck in the status
+     * @param hand :: Bool :: whether to include this Adversary's current hand in the status
+     * @param discard :: Bool ::whether to include this Adversary's current discard pile in the status
+     *
+     * @return AdversaryStatus :: this Adversary's status
+     */
+    public function get_status( ?deck = false, ?hand = false, ?discard = false, ?on_board = false ): AdversaryStatus {
+
+        var status = new AdversaryStatus( {
+
+            name : this.name,
+            health : this.health,
+            momentum : this.momentum,
+            last_played : this.last_played
+
+        } ); // status = { ... }
+
+        if ( deck ) {
+
+            status.deck = this.deck;
+
+        } // if deck
+
+        if ( hand ) {
+
+            status.hand = this.hand;
+
+        } // if hand
+
+        if ( discard ) {
+
+            status.discard = this.discard;
+
+        } // if discard
+
+        if ( on_board ) {
+
+            status.on_board = this.GAME.BOARD.field.get( this.name );
+
+        } // if on_board
+
+        return status;
+
+    } // get_status()
+
+    /**
+     * <TODO>
+     */
+    private function play_card( evt : PlayEvent ): Void {
+
+        trace( 'Adversary.play_card :: $name heard event $evt' );
+
+        var card : Card = evt.card;
+
+        if( this.hand.indexOf( card ) == -1 ) {
+
+            trace( 'Adversary :: $name cannot play card :> ${card.toString()} that does not exist in hand :> ${this.hand}' );
+            return;
+
+        } // if card in hand
+
+        this.hand.remove( card );
+
+        Luxe.events.queue( 'adversary.$name.played', { card : card, status : get_status( true, true, true, true ) } );
+
+    } // play_card()
+
+    /**
+     * <TODO>
+     */
+    private function play_discard( evt : DiscardEvent ): Void {
+
+        trace( 'Adversary.play_discard :: $name heard event $evt' );
+
+        var cards : Array<Card> = evt.cards;
+
+        // verify cards are in hand
+
+        Luxe.events.queue( 'adversary.$name.discarded', { cards : cards, status : get_status( true, true, true, true ) } );
+
+    } // play_card()
+
+    /**
+     * draws i number of cards (default is 1) and pushes them into the hand
+     *
+     * @param :: i :: Int :: how many cards to draw (default 1)
+     *
+     * @return
+     */
+    private function draw( evt : DrawEvent ): Void {
+
+        trace( 'Adversary.draw :: $name heard event $evt' );
+
+        var count : Int = evt.count;
+
+        if( count < 1 ) {
+
+            trace( 'Adversary :: $name received an invalid number of cards to draw :> $count' );
+
+            Luxe.events.queue( 'adversary.$name.drew', { card : null } );
+
+            return;
+
+        } // if count < 1
+
+        trace( 'Adversary :: $name is drawing $count card(s)' );
+
+        var dr : Card;
+
+        for( i in 0...count ) {
+
+            dr = deck.draw();
+
+            if( dr == null ) {
+
+                trace( 'Adversary :: $name attempted to draw from an empty deck' );
+                break;
+
+            } else {
+
+                trace( 'Adversary :: $name drew the card :> ${dr.toString()}' );
+
+                this.hand.push( dr );
+
+                Luxe.events.queue( 'adversary.$name.drew', { card : dr } );
+
+            }
+
+        } // for i in 0...count
+
+    } // draw()
 
     // public function stdDeck() : Array<Card> {
     //     trace( "Building standard deck..." );
@@ -103,46 +338,6 @@ class Adversary {
     //     return ret;
     // }
 
-//     // draws i number of cards (default is 1) and pushes them into the hand
-//     /**
-//      *
-//      */
-//     public function draw( ?i = 1 ):Array<Card>{
-//         trace( _NAME + " is drawing " + i + " card(s)..." );
-//         var ret:Array<Card> = new Array<Card>();
-//         while( i > 0 ){
-//             var dr:Card = _deck.shift();
-//             if( dr == null ){
-//                 trace( "\t" + _NAME + "'s deck is empty" );
-//                 _hand = _hand.concat( ret );
-//                 return ret;
-//             }
-//             else{
-//                 trace( "\t" + _NAME + " draws " + dr.toString() );
-//                 this._BOARD.activateCard( dr, onDraw );
-//                 ret.push( dr );
-//             }
-//             i--;
-//         }
-//         _hand = _hand.concat( ret );
-//         return ret;
-//     }
-//
-//     // method to play a card as a move
-//     /**
-//      *
-//      */
-//     public function movePlayCard( subj : Card ):Void{
-//         // if you can remove this card from the hand (i.e. it IS in your hand, isn't it?)
-//         if( _hand.remove( subj ) ){
-//             trace( _NAME + " has chosen to play " + subj.toString() );
-//             Luxe.events.fire( "Player." + _NAME + ".move.playing_card." + subj, { card : subj } );
-//             // _BOARD.playCard( _NAME, subj );
-//             trace( _NAME + "'s last card played is " + subj.toString() );
-//             _lastPlayed = subj;
-//             chPower( subj.getRank() );
-//         }
-//     }
 //
 //     // method to discard a number of cards as a move
 //     /**
@@ -951,23 +1146,3 @@ class Adversary {
 
 
 } // class Adversary
-
-
-/**
- * <TODO>
- */
-typedef AdversaryOptions = {
-
-    var name : String;
-        /* <TODO> */
-    var class : String;
-        /* <TODO> */
-    // var deck : Deck;
-        /* <TODO> */
-    var ability1 : String;
-        /* <TODO> */
-    var ability2 : String;
-        /* <TODO> */
-    var ability3 : String;
-
-}

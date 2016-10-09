@@ -14,7 +14,7 @@ import luxe.States;
  * Main class encapsulates the game, manages the overarching states
  * and hangles congigs
  */
-class Main extends Game{
+class Main extends Game {
 
 
     private var state:States;
@@ -24,9 +24,9 @@ class Main extends Game{
      * the logic to run when the game starts, initializes
      * States and enters main menu
      */
-    override function ready(){
+    override function ready() {
 
-            // <TODO> what is this for?
+            /* <TODO> what is this for? */
         Luxe.renderer.clear_color.rgb(0x121219);
 
         state = new States( { name : "machine.core" } );
@@ -43,9 +43,9 @@ class Main extends Game{
     /**
      * currently just manages the preloading of assets
      */
-    override function config( config: luxe.AppConfig ) {
+    override function config( config : luxe.AppConfig ) {
 
-        config.preload.textures.push( { id:'assets/blue-grid-720.png' } );
+        config.preload.textures.push( { id : 'assets/blue-grid-720.png' } );
 
         return config;
 

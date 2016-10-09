@@ -36,6 +36,8 @@ class SelectionCompassSprite extends Sprite {
 
         selected = true;
 
+        trace( "SelectionCompassSprite :: selected compass sprite $this.name" );
+
         /* <TODO> do selection visuals */
 
     } // select()
@@ -46,6 +48,8 @@ class SelectionCompassSprite extends Sprite {
     public function deselect(): Void {
 
         selected = false;
+
+        trace( "SelectionCompassSprite :: deselected compass sprite $this.name" );
 
         /* <TODO> undo selection visuals */
 

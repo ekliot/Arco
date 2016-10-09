@@ -17,6 +17,7 @@ class Selection extends State {
         // the selections that the user makes before starting a game
     private var selections : AdversaryOptions;
 
+
     /**
      * <TODO>
      */
@@ -30,20 +31,27 @@ class Selection extends State {
 
         view = new SelectionView( this );
 
+        select_defaults();
+
     } // onenter()
 
     public function select_name( name : String ): Void {
 
         selections.name = name;
 
+        trace( "Selection :: selected name :> $name" );
+
     } // select_name()
 
     /**
      * <TODO>
      */
+    /* <TODO> eventually this will take an Archetype instead of a String */
     public function select_class( class : String ): Void {
 
         selections.class = class;
+
+        trace( "Selection :: selected class :> $class" );
 
     } // select_class()
 
@@ -53,24 +61,45 @@ class Selection extends State {
     public function select_ability( ability : String, slot : Int ): Void {
 
         switch slot {
+
             case 1:
                 selections.ability1 = ability;
             case 2:
                 selections.ability2 = ability;
             case 3:
                 selections.ability3 = ability;
+
         } // switch slot
+
+        trace( "Selection :: selected ability :> $ability in slot :> $slot" );
 
     } // select_ability()
 
+    /**
+    * <TODO>
+    */
+    private function select_defaults(): Void {
+
+        trace( "Selection :: selecting defaults" );
+
+        /* <TODO> */
+        select_name( view.input_name.textedit.text );
+        // select_class( RANDOM DIRECTION OF COMPASS );
+        // select_ability( first T1 ability of selections.class );
+        // select_ability( first T2 ability of selections.class );
+        // select_ability( first T3 ability of selections.class );
+
+    } // select_defaults
 
     /**
-     * when leaving this state, cleanup all the menu elements
+     * when leaving this state, cleanup
      */
     override function onleave<T>( t : T ) {
 
         view.destroy()
         view = null;
+
+        selections = null;
 
     } // onleave()
 
@@ -83,19 +112,18 @@ class Selection extends State {
      */
     private static function init_adversary( opt : AdversaryOptions ): Adversary {
 
-        trace( "Selection :: Initializing Adversary using options:" );
-        trace( opt.toString() );
+        trace( "Selection :: initializing adversary using options :> $opt" );
 
         var newAdv:Adversary = new Adversary( opt );
 
         if( newAdv != null ) {
 
-            trace( "Selection :: Adversary " + opt.name + " initialized:" );
+            trace( "Selection :: adversary '$opt.name' initialization succeeded" );
             trace( newAdv.toString() );
 
         } else {
 
-            trace( "Selection :: Adversary initialization failed" );
+            trace( "Selection :: adversary '$opt.name' initialization failed" );
 
         } // if newAdv
 
@@ -108,13 +136,15 @@ class Selection extends State {
      */
     override function onkeyup( e : KeyEvent ) {
 
-        trace( "Selection :: User pressed " + e.keycode );
+        trace( "Selection :: user pressed $e.keycode" );
 
         if ( e.keycode == Key.escape ) {
 
             machine.set( "state.main_menu" );
 
         } // if key == esc
+
+        /* <TODO> implement keyboard controls here */
 
     } // onkeyup()
 
