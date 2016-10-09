@@ -54,8 +54,8 @@ typedef AdversaryStatus = {
 class Adversary {
 
 
-        // the Game this Adversary is playing in
-    public var GAME (get, set) : Game;
+        // the Board this Adversary is playing on
+    public var Board (get, set) : Board;
 
         // the listener IDs for easy cleanup, <Event, ID>
     private var LISTENING: Map<String, String>;
@@ -214,7 +214,7 @@ class Adversary {
 
         if ( on_board ) {
 
-            status.on_board = this.GAME.BOARD.field.get( this.name );
+            status.on_board = this.BOARD.field.get( this.name );
 
         } // if on_board
 
