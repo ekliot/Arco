@@ -44,8 +44,8 @@ func _end_turn():
 func _resolve_all_moves():
   # iterate up the rivers
   # for each momentum M in 1..4
-  #  resolve momentum M cards for hero from A to D
-  #  resolve momentum M cards for enemy from A to D
+  #  resolve momentum M card for hero
+  #  resolve momentum M card for enemy
   var move = null
 
   for m in range( MAX_MOMENTUM ):
@@ -53,7 +53,9 @@ func _resolve_all_moves():
     if move:
       move.card.activate( self, move.river )
 
-    if
+    move = get_enemy_move_at_momentum( m )
+    if move:
+      move.card.activate( self, move.river )
 
 # ============ #
 # PLAYER MOVES #
