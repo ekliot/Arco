@@ -1,7 +1,7 @@
 extends Node
 
-signal turn_start
-signal turn_end
+signal turn_start # Battle
+signal turn_end # Battle
 
 var BOARD = {
   'hero': {
@@ -29,17 +29,31 @@ func _init():
 func _ready():
   pass
 
+func setup( params ):
+  setup_battle( params )
+  setup_ui()
+
+func setup_battle( params ):
+  BOARD.hero.root = params.player_data.hero
+  BOARD.enemies.root = params.enemy_data.root
+  BOARD.enemies.minions = params.enemy_data.minions
+
+func setup_ui():
+  # setup menu
+  # setup duel
+  # setup hand
+
 # ============ #
 # PRIVATE CORE #
 # ============ #
 
 func _start_turn():
-  emit_signal( 'turn_start' )
+  emit_signal( 'turn_start', self )
   get_enemy().decide_next_move()
 
 func _end_turn():
   _resolve_all_moves()
-  pass
+  emit_signal( 'turn_end', self )
 
 func _resolve_all_moves():
   # iterate up the rivers
@@ -49,6 +63,9 @@ func _resolve_all_moves():
   var move = null
 
   for m in range( MAX_MOMENTUM ):
+    # momentum methods are 1-indexed, and m will be reset at each iteration
+    m += 1
+
     move = get_hero_move_at_momentum( m )
     if move:
       move.card.activate( self, move.river )
@@ -132,6 +149,9 @@ func enemy_target_in_river( river ):
 # ======= #
 # GETTERS #
 # ======= #
+
+func get_board():
+  return BOARD
 
 func get_hero():
   return BOARD.hero.root
