@@ -14,6 +14,10 @@ config/name="Arco"
 run/main_scene="res://battles/Battle.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+card_effects="*res://cards/effects.gd"
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

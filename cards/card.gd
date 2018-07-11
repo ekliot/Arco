@@ -4,13 +4,34 @@ signal played
 signal activated
 signal discarded
 
+var ID = "CARD_"
+var TITLE = ""
+var SUIT = ""
 var POWER = -1
+var DESCRIPTION = ""
+var ICON = null
 
-var EFFECTS = {
-  'onplay': {},
-  'onactivate': {},
-  'ondiscard': {}
-}
+func play( board ):
+  _onplay( board )
+  emit_signal( 'played', self )
 
-func play():
-  emit_signal( played, self )
+func activate( board ):
+  _onactivate( board )
+  emit_signal( 'activated', self )
+  
+func discard( board ):
+  _ondiscard( board )
+  emit_signal( 'discarded', self )
+  
+# ============= #
+# OVERRIDEABLES #
+# ============= #
+  
+func _onplay( board ):
+  pass
+    
+func _onactivate( board ):
+  pass  
+
+func _ondiscard( board ):
+  pass

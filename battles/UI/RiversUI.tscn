@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://characters/River.tscn" type="PackedScene" id=1]
+[ext_resource path="res://battles/UI/RiverUI.tscn" type="PackedScene" id=1]
 
-[node name="Rivers" type="VBoxContainer"]
+[node name="RiversUI" type="VBoxContainer"]
 
 anchor_left = 0.0
 anchor_top = 0.0
