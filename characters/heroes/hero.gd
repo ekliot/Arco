@@ -1,12 +1,16 @@
 extends '../character.gd'
 
-func _in
+func _init():
+  ID += "HERO_"
   init_from_player_data()
+  ._init()
 
 func init_from_player_data():
   var p_data = player_data.get_player_battle_data()
   var stats = p_data.stats
   var cards = p_data.cards
+
+  ID += p_data.id
 
   HEALTH = stats.health
   HEALTH_MAX = stats.health_max
@@ -15,5 +19,4 @@ func init_from_player_data():
   DECK = cards.deck
   SIGNATURE = cards.signature
 
-  MINIONS = p_data.minions
   SPRITE = p_data.sprite

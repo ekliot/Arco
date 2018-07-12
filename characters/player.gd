@@ -1,6 +1,8 @@
 extends Node
 
 var PLAYER = {
+  'id': '',
+  'sprite': null,
   'stats': {
     'health': -1,
     'health_max': -1,
@@ -12,11 +14,11 @@ var PLAYER = {
     # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
     'signature': []
   },
-  'sprite': null,
   'minions': {}
 }
 
 func setup_test_player_data():
+  PLAYER.id = 'TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
   PLAYER.cards.deck = preload( "res://cards/deck.gd" ).new()

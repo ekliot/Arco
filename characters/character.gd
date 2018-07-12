@@ -24,8 +24,6 @@ var DISCARD   = []
 # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
 var SIGNATURE = []
 
-var RIVERS = {}
-var MINIONS = {}
 var ACTIVE = []
 
 var SPRITE = null
