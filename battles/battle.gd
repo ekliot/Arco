@@ -3,15 +3,17 @@ extends Node
 signal turn_start # Battle
 signal turn_end # Battle
 
+enum FIGHTERS { HERO, CPU }
+
 var BOARD = {
-  'hero': {
+  HERO: {
     'root': null,
     'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null },
     'rivers':  { 'a' : [],   'b' : [],   'c' : [],   'd' : [] },
     'active_cards': [] # this expects dicts of { 'card': Card, 'river': String }
   },
 
-  'enemies': {
+  CPU: {
     'root': null,
     'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null },
     'rivers':  { 'a' : [],   'b' : [],   'c' : [],   'd' : [] },
@@ -44,9 +46,9 @@ func setup( params ):
 
 func setup_battle( params ):
   player_data.setup_test_player_data() # TEMP
-  BOARD.hero.root = preload( "res://characters/heroes/hero.gd" ).new()
-  BOARD.hero.minions = player_data.get_player_battle_data().minions
-  BOARD.enemies.root = params.enemy_data.root
+  BOARD[HERO].root = preload( "res://characters/heroes/hero.gd" ).new()
+  BOARD[HERO].minions = player_data.get_player_battle_data().minions
+  BOARD[CPU].root = params.enemy_data.root
 
 # ============ #
 # PRIVATE CORE #
@@ -54,7 +56,7 @@ func setup_battle( params ):
 
 func _start_turn():
   emit_signal( 'turn_start', self )
-  get_enemy().decide_next_move()
+  get_fighter( CPU ).decide_next_move()
 
 func _end_turn():
   _resolve_all_moves()
@@ -71,11 +73,16 @@ func _resolve_all_moves():
     # momentum methods are 1-indexed, and m will be reset at each iteration
     m += 1
 
-    move = get_hero_move_at_momentum( m )
+    move = get_move_at_momentum( HERO, m )
     if move:
       move.card.activate( self, move.river )
+      # TODO check for mini-combo satisfaction
+      # activate signature if final hit
+      if m == 4:
+        # TODO do signature shit
+        pass
 
-    move = get_enemy_move_at_momentum( m )
+    move = get_move_at_momentum( CPU, m )
     if move:
       move.card.activate( self, move.river )
 
@@ -84,9 +91,32 @@ func _resolve_all_moves():
 # ============ #
 
 func play_card( who, card, river ):
-  # validate move
+  var _name = 'player' if who == HERO else 'enemy'
+  print( 'battle.gd // ', _name, ' is playing card ', card, ' into river ', river )
+
+  var rivers = BOARD[who].rivers
+  var active_cards = BOARD[who].active_cards
+  var momentum = active_cards.size()
+
+  # TODO validate move
+  # TODO remove card from hand
+
+  # clear the river if needed
+  print( 'battle.gd // ', 'removing top ', momentum - card.level, ' cards from ', _name, '\'s river ', river )
+  for i in range( momentum - card.level ):
+    var data = active_cards.pop()
+    print( 'battle.gd // ', 'removing card ', data.card, ' from river ', data.river )
+    rivers[data.river].remove_card( data.card.level )
+
   # add card to correct place in river
+  rivers[river][card.level] = card
+  active_cards.push_back( { 'card': card, 'river': river } )
+  print( 'battle.gd // added card ', card, ' into river ', river )
+
   card.play()
+  # TODO emit signal
+
+  get_fighter( who ).set_momentum( card.level )
 
 func pass_turn():
   pass # lol
@@ -95,7 +125,7 @@ func swap_rivers():
   pass
 
 func mulligan():
-  var hero = get_hero()
+  var hero = get_fighter( HERO )
   hero.clear_hand()
   hero.draw_hand()
 
@@ -103,10 +133,11 @@ func mulligan():
 # HELPERS #
 # ======= #
 
-# who the hero will hit
-func hero_target_in_river( river ):
-  if !get_enemy_minions().values.empty():
-    var minion = get_enemy_minion_in_river( river )
+# who will be targeted by an attack in a river vs the enemy or hero
+func target_in_river( vs, river ):
+
+  if !get_minions( vs ).values.empty():
+    var minion = get_minion_in_river( vs, river )
 
     if minion:
       return minion
@@ -115,43 +146,18 @@ func hero_target_in_river( river ):
       'a':
         river = 'b'
       'b':
-        river = 'a' if get_enemy_minion_in_river( 'a' ) else 'c'
+        river = 'a' if get_minion_in_river( vs, 'a' ) else 'c'
       'c':
-        river = 'd' if get_enemy_minion_in_river( 'd' ) else 'b'
+        river = 'd' if get_minion_in_river( vs, 'd' ) else 'b'
       'd':
         river = 'c'
 
-    minion = get_enemy_minion_in_river( river )
+    minion = get_minion_in_river( vs, river )
 
     if minion:
       return minion
 
-  return get_enemy()
-
-# who the enemy will hit
-func enemy_target_in_river( river ):
-  if !get_hero_minions().values.empty():
-    var minion = get_hero_minion_in_river( river )
-
-    if minion:
-      return minion
-
-    match( river ):
-      'a':
-        river = 'b'
-      'b':
-        river = 'a' if get_hero_minion_in_river( 'a' ) else 'c'
-      'c':
-        river = 'd' if get_hero_minion_in_river( 'd' ) else 'b'
-      'd':
-        river = 'c'
-
-    minion = get_hero_minion_in_river( river )
-
-    if minion:
-      return minion
-
-  return get_hero()
+  return get_fighter( vs )
 
 # ======= #
 # GETTERS #
@@ -160,87 +166,46 @@ func enemy_target_in_river( river ):
 func get_board():
   return BOARD
 
-func get_hero():
-  return BOARD.hero.root
+func get_fighter( who ):
+  return BOARD[who].root
 
-func get_hero_active_cards():
-  return BOARD.hero.active_cards
+func get_active_cards( who ):
+  return BOARD[who].active_cards
 
-func get_hero_max_momentum():
-  return get_hero_active_cards().size()
+func get_max_momentum( who ):
+  return get_active_cards( who ).size()
 
-func get_hero_rivers():
-  return BOARD.hero.rivers
+func get_rivers( who ):
+  return BOARD[who].rivers
 
-func get_hero_minions():
-  return BOARD.hero.minions
-
-func get_enemy():
-  return BOARD.enemies.root
-
-func get_enemy_active_cards():
-  return BOARD.enemies.active_cards
-
-func get_enemy_max_momentum():
-  return get_enemy_active_cards().size()
-
-func get_enemy_rivers():
-  return BOARD.enemies.rivers
-
-func get_enemy_minions():
-  return BOARD.enemies.minions
+func get_minions( who ):
+  return BOARD[who].minions
 
 # # GET by river
 
-func get_hero_minion_in_river( river ):
-  return get_hero_minions()[river]
-
-func get_enemy_minion_in_river( river ):
-  return get_enemy_minions()[river]
+func get_minion_in_river( who, river ):
+  return get_minions( who )[river]
 
 # # GET by momentum
 
 # the 'level' is 1-indexed
-func get_hero_move_at_momentum( level ):
-  if level <= get_hero_max_momentum():
-    return get_hero_active_cards()[level-1]
+func get_move_at_momentum( who, level ):
+  if level <= get_max_momentum( who ):
+    return get_active_cards( who )[level-1]
 
   return null
 
 # the 'level' is 1-indexed
-func get_hero_active_river_at_momentum( level ):
-  var move = get_hero_move_at_momentum( level )
+func get_active_river_at_momentum( who, level ):
+  var move = get_move_at_momentum( who, level )
   if move:
     return move.river
 
   return null
 
 # the 'level' is 1-indexed
-func get_hero_card_at_momentum( level ):
-  var move = get_hero_move_at_momentum( level )
-  if move:
-    return move.card
-
-  return null
-
-# the 'level' is 1-indexed
-func get_enemy_move_at_momentum( level ):
-  if level <= get_enemy_max_momentum():
-    return get_enemy_active_cards()[level-1]
-
-  return null
-
-# the 'level' is 1-indexed
-func get_enemy_active_river_at_momentum( level ):
-  var move = get_enemy_move_at_momentum( level )
-  if move:
-    return move.river
-
-  return null
-
-# the 'level' is 1-indexed
-func get_enemy_card_at_momentum( level ):
-  var move = get_enemy_move_at_momentum( level )
+func get_card_at_momentum( who, level ):
+  var move = get_move_at_momentum( who, level )
   if move:
     return move.card
 

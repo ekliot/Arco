@@ -24,8 +24,6 @@ var DISCARD   = []
 # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
 var SIGNATURE = []
 
-var ACTIVE = []
-
 var SPRITE = null
 
 # ======= #
@@ -55,16 +53,7 @@ func clear_hand():
 func play_card( card, river ):
   print( ID, ' // ', 'playing card ', card, ' into river ', river )
 
-  print( ID, ' // ', 'removing top ', MOMENTUM - card.level, ' cards' )
-  for i in range( MOMENTUM - card.level ):
-    var data = ACTIVE.pop()
-
-    print( ID, ' // ', 'removing card ', data.card, ' from river ', data.river )
-    RIVERS[data.river].remove_card( data.card.level )
-
-  ACTIVE.push_back( { 'card': card, 'river': river } )
-  RIVERS[river].add_card( card )
-  print( ID, ' // ', 'added card ', card, ' into river ', river )
+  # TODO remove card from hand
 
   set_momentum( card.level )
 
