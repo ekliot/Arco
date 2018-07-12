@@ -27,21 +27,26 @@ func _init():
   pass
 
 func _ready():
-  pass
+  setup( {
+    'player_data': {
+      'hero': null
+    },
+    'enemy_data': {
+      'root': null,
+      'minions': {}
+    }
+  } )
 
 func setup( params ):
   setup_battle( params )
-  setup_ui()
+  $BattleUI.setup_ui( params )
+  print( BOARD )
 
 func setup_battle( params ):
-  BOARD.hero.root = params.player_data.hero
+  player_data.setup_test_player_data() # TEMP
+  BOARD.hero.root = preload( "res://characters/heroes/hero.gd" ).new()
+  BOARD.hero.minions = player_data.get_player_battle_data().minions
   BOARD.enemies.root = params.enemy_data.root
-  BOARD.enemies.minions = params.enemy_data.minions
-
-func setup_ui():
-  # setup menu
-  # setup duel
-  # setup hand
 
 # ============ #
 # PRIVATE CORE #
@@ -90,7 +95,9 @@ func swap_rivers():
   pass
 
 func mulligan():
-  pass
+  var hero = get_hero()
+  hero.clear_hand()
+  hero.draw_hand()
 
 # ======= #
 # HELPERS #
