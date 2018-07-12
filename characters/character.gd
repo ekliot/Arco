@@ -80,6 +80,3 @@ func set_momentum( lvl ):
 
   MOMENTUM = lvl
   print( ID, ' // ', 'set momentum to ', lvl, ' from ', MOMENTUM )
-
-func get_rivers():
-  return RIVERS

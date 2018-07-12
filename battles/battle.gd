@@ -2,6 +2,9 @@ extends Node
 
 signal turn_start # Battle
 signal turn_end # Battle
+signal game_over # winner
+
+signal card_played # who, card, river
 
 enum FIGHTERS { HERO, CPU }
 
@@ -42,7 +45,6 @@ func _ready():
 func setup( params ):
   setup_battle( params )
   $BattleUI.setup_ui( params )
-  print( BOARD )
 
 func setup_battle( params ):
   player_data.setup_test_player_data() # TEMP
@@ -55,12 +57,18 @@ func setup_battle( params ):
 # ============ #
 
 func _start_turn():
-  emit_signal( 'turn_start', self )
+  # this needs to be before the turn start signal emits
+  # in order to guarantee the player has complete
+  # information at the start of the turn timer
   get_fighter( CPU ).decide_next_move()
+  emit_signal( 'turn_start', self )
 
 func _end_turn():
-  _resolve_all_moves()
-  emit_signal( 'turn_end', self )
+  var result = _resolve_all_moves()
+  if result == null:
+    emit_signal( 'turn_end', self )
+  else:
+    emit_signal( 'game_over', result )
 
 func _resolve_all_moves():
   # iterate up the rivers
@@ -113,8 +121,9 @@ func play_card( who, card, river ):
   active_cards.push_back( { 'card': card, 'river': river } )
   print( 'battle.gd // added card ', card, ' into river ', river )
 
-  card.play()
-  # TODO emit signal
+  card.play( self, river )
+
+  emit_signal( 'card_played', who, card, river )
 
   get_fighter( who ).set_momentum( card.level )
 

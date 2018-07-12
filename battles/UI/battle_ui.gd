@@ -10,13 +10,12 @@ func setup_ui( params ):
   var sprite_enemy = params.enemy_data.root.get_sprite() if params.enemy_data.root else null
 
   # setup duel
-  for child in DUEL_AREA.get_node( 'HeroRivers' ).get_children():
-    if child.get_child( 0 ):
-      for river in child.get_children():
-        if river.get_child( 0 ):
-          print( river )
-          print( river.get_rect() )
-          print( river.get_child( 0 ).get_rect() )
+  for river in DUEL_AREA.get_node( 'HeroRivers' ).get_children():
+    if river.get_child_count() > 0:
+      for slot in river.get_children():
+        print( river )
+        print( river.get_rect() )
+        print( slot.get_rect() )
 
   # setup hand
 

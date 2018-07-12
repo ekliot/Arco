@@ -13,16 +13,16 @@ var POWER = -1
 var DESCRIPTION = ""
 var ICON = null
 
-func play( board ):
-  _onplay( board )
+func play( board, river ):
+  _onplay( board, river )
   emit_signal( 'played', self )
 
 func activate( board, river ):
   _onactivate( board, river )
   emit_signal( 'activated', self )
 
-func discard( board ):
-  _ondiscard( board )
+func discard( board, river ):
+  _ondiscard( board, river )
   emit_signal( 'discarded', self )
 
 # ============= #
