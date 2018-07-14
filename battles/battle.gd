@@ -146,8 +146,7 @@ func mulligan():
 
 # who will be targeted by an attack in a river vs the enemy or hero
 func target_in_river( vs, river ):
-
-  if !get_minions( vs ).values.empty():
+  if !has_minions( vs ):
     var minion = get_minion_in_river( vs, river )
 
     if minion:
@@ -191,6 +190,15 @@ func get_rivers( who ):
 
 func get_minions( who ):
   return BOARD[who].minions
+
+func has_minions( who ):
+  var minions = get_minions( who )
+
+  for m in minions.values:
+    if m != null:
+      return true
+
+  return false
 
 # # GET by river
 
