@@ -10,6 +10,7 @@ var ID = "CARD_" # unique ID for the card, going CARD_<SUIT>_<NAME>
 var TITLE = ""   # human-readable display name
 var SUIT = -1    # corresponds to SUITS enum in cards/suits.gd
 var POWER = -1   # power level of the card
+var ICON = null  # Texture for the card's icon (typically, the suit icon)
 var DESCRIPTION = ""
 
 func play( board, river ):
@@ -52,6 +53,9 @@ func get_suit_as_str():
 
 func get_power():
   return POWER
+
+func get_icon():
+  return ICON
 
 func get_description():
   return DESCRIPTION

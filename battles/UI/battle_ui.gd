@@ -65,29 +65,10 @@ func place_hero_sprite( sprite ):
     placement.connect( 'resized', self, 'position_hero_sprite' )
 
 func position_hero_sprite():
-  var placement = DUEL_AREA.get_node( "HeroPlacement" )
-  if placement.get_child_count() == 0:
-    return
-
-  var sprite = placement.get_node( "HeroSprite" )
-  sprite.set_position( placement.get_size() / 2 )
+  position_fighter( "Hero" )
 
 func place_hero_card( card, river ):
-  var rivers = DUEL_AREA.get_node( "HeroRivers" )
-  var _river = rivers.get_node( river.to_upper() )
-
-  var power = card.power
-  var river_node = _river.get_node( String(power) )
-
-  var suit = card.suit
-  var text_rect = TextureRect.new()
-  text_rect.set_texture( card_suits.TEXTURES[suit] )
-
-  if river_node.get_child_count() > 0:
-    river_node.get_child( 0 ).queue_free()
-
-  river_node.add_child( text_rect )
-
+  place_card_in_river( "Hero", card, river )
 
 # enemy river
 func place_enemy_sprite( sprite ):
@@ -98,12 +79,33 @@ func place_enemy_sprite( sprite ):
     placement.connect( 'resized', self, 'position_enemy_sprite' )
 
 func position_enemy_sprite():
-  var placement = DUEL_AREA.get_node( "EnemyPlacement" )
+  position_fighter( "Enemy" )
+
+func place_enemy_card( card, river ):
+  place_card_in_river( "Enemy", card, river )
+
+func position_fighter( who ):
+  var placement = DUEL_AREA.get_node( who + "Placement" )
   if placement.get_child_count() == 0:
     return
 
-  var sprite = placement.get_node( "EnemySprite" )
+  var sprite = placement.get_node( who + "Sprite" )
   sprite.set_position( placement.get_size() / 2 )
+
+func place_card( who, card, river ):
+  var rivers = DUEL_AREA.get_node( who + "Rivers" )
+  var _river = rivers.get_node( river.to_upper() )
+
+  var power = card.get_power()
+  var river_node = _river.get_node( String(power) )
+
+  var text_rect = TextureRect.new()
+  text_rect.set_texture( card.get_icon() )
+
+  if river_node.get_child_count() > 0:
+    river_node.get_child( 0 ).queue_free()
+
+  river_node.add_child( text_rect )
 
 # timer
 # river swapping
