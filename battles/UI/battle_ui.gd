@@ -72,6 +72,23 @@ func position_hero_sprite():
   var sprite = placement.get_node( "HeroSprite" )
   sprite.set_position( placement.get_size() / 2 )
 
+func place_hero_card( card, river ):
+  var rivers = DUEL_AREA.get_node( "HeroRivers" )
+  var _river = rivers.get_node( river.to_upper() )
+
+  var power = card.power
+  var river_node = _river.get_node( String(power) )
+
+  var suit = card.suit
+  var text_rect = TextureRect.new()
+  text_rect.set_texture( card_suits.TEXTURES[suit] )
+
+  if river_node.get_child_count() > 0:
+    river_node.get_child( 0 ).queue_free()
+
+  river_node.add_child( text_rect )
+
+
 # enemy river
 func place_enemy_sprite( sprite ):
   var placement = DUEL_AREA.get_node( "EnemyPlacement" )
