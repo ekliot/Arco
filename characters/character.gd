@@ -68,10 +68,6 @@ func heal_damage( amt ):
   HEALTH = min( HEALTH + amt, HEALTH_MAX )
   emit_signal( 'heal_damage', HEALTH, old_hp, HEALTH_MAX )
 
-# ======= #
-# HELPERS #
-# ======= #
-
 func set_momentum( lvl ):
   if lvl < MOMENTUM:
     emit_signal( 'momentum_dec', MOMENTUM, lvl )
@@ -80,3 +76,10 @@ func set_momentum( lvl ):
 
   MOMENTUM = lvl
   print( ID, ' // ', 'set momentum to ', lvl, ' from ', MOMENTUM )
+
+# ======= #
+# HELPERS #
+# ======= #
+
+func get_sprite():
+  return SPRITE
