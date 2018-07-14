@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://battles/UI/RiversUI.tscn" type="PackedScene" id=1]
-[ext_resource path="res://battles/UI/HandUI.tscn" type="PackedScene" id=2]
+[ext_resource path="res://battles/ui/rivers/RiversUI.tscn" type="PackedScene" id=1]
+[ext_resource path="res://battles/ui/HandUI.tscn" type="PackedScene" id=2]
 
 [node name="BattleUI" type="VBoxContainer"]
 
@@ -305,6 +305,9 @@ color = Color( 1, 1, 1, 1 )
 _sections_unfolded = [ "Rect", "Size Flags" ]
 
 [node name="Hand" parent="CardArea" index="1" instance=ExtResource( 2 )]
+
+margin_top = 149.0
+margin_bottom = 149.0
 
 [node name="Discard" type="ColorRect" parent="CardArea" index="2"]
 

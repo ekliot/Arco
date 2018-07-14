@@ -51,6 +51,13 @@ func setup_card_area( board ):
 # ========== #
 
 # =
+# # input checking
+# =
+
+func _input( ev ):
+  pass
+
+# =
 # # duel area
 # =
 
@@ -114,6 +121,8 @@ func place_enemy_card( card, river ):
 func add_card_to_hand( card ):
   var card_sprite = card.get_as_sprite()
   get_hand().add_child( card_sprite )
+
+
 
 # end turn
 # dragging cards
