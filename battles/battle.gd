@@ -5,8 +5,11 @@ signal turn_end # Battle
 signal game_over # winner
 
 signal card_played # who, card, river
+signal card_activated # who, card, river
 
 enum FIGHTERS { HERO, CPU }
+
+enum MOVES { PLAY, SWAP, PASS }
 
 var BOARD = {
   HERO: {
@@ -33,24 +36,23 @@ func _init():
 
 func _ready():
   setup( {
-    'player_data': {
-      'hero': null
-    },
-    'enemy_data': {
-      'root': null,
+    'enemies': {
+      'root': preload( "res://characters/enemies/enemy.gd" ).new(),
       'minions': {}
     }
   } )
 
 func setup( params ):
   setup_battle( params )
-  $BattleUI.setup_ui( params )
+  $BattleUI.setup_ui()
+
+  _start_turn()
 
 func setup_battle( params ):
   player_data.setup_test_player_data() # TEMP
   BOARD[HERO].root = preload( "res://characters/heroes/hero.gd" ).new()
   BOARD[HERO].minions = player_data.get_player_battle_data().minions
-  BOARD[CPU].root = params.enemy_data.root
+  BOARD[CPU].root = params.enemies.root
 
 # ============ #
 # PRIVATE CORE #
@@ -60,7 +62,7 @@ func _start_turn():
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer
-  get_fighter( CPU ).decide_next_move()
+  get_fighter( CPU ).decide_next_move( self )
   emit_signal( 'turn_start', self )
 
 func _end_turn():
