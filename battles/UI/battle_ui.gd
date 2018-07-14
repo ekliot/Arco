@@ -25,12 +25,7 @@ func setup_duel_area( board ):
   setup_timer( board )
 
 func setup_rivers( board ):
-  for river in DUEL_AREA.get_node( 'HeroRivers' ).get_children():
-    if river.get_child_count() > 0:
-      for slot in river.get_children():
-        print( river )
-        # print( river.get_rect() )
-        # print( slot.get_rect() )
+  pass
 
 func setup_sprites( board ):
   var sprite_hero  = board.get_fighter( board.HERO ).get_sprite()
@@ -48,15 +43,37 @@ func setup_timer( board ):
 
 func setup_card_area( board ):
   # setup hand
-  pass
+  var card = preload( "res://cards/card.gd" ).new()
+  add_card_to_hand( card )
 
 # ========== #
 # UI CONTROL #
 # ========== #
 
+# =
 # # duel area
+# =
 
-# hero river
+# = =
+# # # general
+# = =
+
+func position_fighter( who ):
+  var placement = DUEL_AREA.get_node( who + "Placement" )
+  if placement.get_child_count() == 0:
+    return
+
+  var sprite = placement.get_node( who + "Sprite" )
+  sprite.set_position( placement.get_size() / 2 )
+
+func place_card( who, card, river ):
+  var rivers = DUEL_AREA.get_node( who + "Rivers" )
+  rivers.play_card( card, river )
+
+# = =
+# # # hero
+# = =
+
 func place_hero_sprite( sprite ):
   var placement = DUEL_AREA.get_node( "HeroPlacement" )
   if placement.get_child_count() == 0:
@@ -70,7 +87,10 @@ func position_hero_sprite():
 func place_hero_card( card, river ):
   place_card_in_river( "Hero", card, river )
 
-# enemy river
+# = =
+# # # enemy
+# = =
+
 func place_enemy_sprite( sprite ):
   var placement = DUEL_AREA.get_node( "EnemyPlacement" )
   if placement.get_child_count() == 0:
@@ -84,36 +104,26 @@ func position_enemy_sprite():
 func place_enemy_card( card, river ):
   place_card_in_river( "Enemy", card, river )
 
-func position_fighter( who ):
-  var placement = DUEL_AREA.get_node( who + "Placement" )
-  if placement.get_child_count() == 0:
-    return
-
-  var sprite = placement.get_node( who + "Sprite" )
-  sprite.set_position( placement.get_size() / 2 )
-
-func place_card( who, card, river ):
-  var rivers = DUEL_AREA.get_node( who + "Rivers" )
-  var _river = rivers.get_node( river.to_upper() )
-
-  var power = card.get_power()
-  var river_node = _river.get_node( String(power) )
-
-  var text_rect = TextureRect.new()
-  text_rect.set_texture( card.get_icon() )
-
-  if river_node.get_child_count() > 0:
-    river_node.get_child( 0 ).queue_free()
-
-  river_node.add_child( text_rect )
-
 # timer
 # river swapping
 
+# =
 # # card area
+# =
+
+func add_card_to_hand( card ):
+  var card_sprite = card.get_as_sprite()
+  get_hand().add_child( card_sprite )
 
 # end turn
 # dragging cards
 # mulligan
 # deck
 # hand
+
+# ======= #
+# GETTERS #
+# ======= #
+
+func get_hand():
+  return CARD_AREA.get_node( 'Hand' )

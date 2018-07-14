@@ -4,6 +4,8 @@ signal played
 signal activated
 signal discarded
 
+const TEMPLATE = preload( "res://cards/CardTemplate.tscn" )
+
 var OWNER = ""
 
 var ID = "CARD_" # unique ID for the card, going CARD_<SUIT>_<NAME>
@@ -38,9 +40,16 @@ func _onactivate( board ):
 func _ondiscard( board ):
   pass
 
+func _load_template( template ):
+  # set up template instance
+  return template
+
 # ======= #
 # GETTERS #
 # ======= #
+
+func get_as_sprite():
+  return _load_template( TEMPLATE.instance() )
 
 func get_title():
   return TITLE

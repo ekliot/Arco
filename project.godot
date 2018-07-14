@@ -20,6 +20,11 @@ card_suits="*res://cards/suits.gd"
 card_effects="*res://cards/effects.gd"
 player_data="*res://characters/player.gd"
 
+[display]
+
+window/size/resizable=false
+window/vsync/use_vsync=false
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
