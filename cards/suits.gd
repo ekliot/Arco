@@ -9,7 +9,7 @@ const NAMES = {
   STONES: 'stones'
 }
 
-const SPRITES = { # TODO
+const TEXTURES = { # TODO
   BLADES: preload( "res://icon.png" ),
   BONES:  preload( "res://icon.png" ),
   STARS:  preload( "res://icon.png" ),
