@@ -71,6 +71,7 @@ func heal_damage( amt ):
 func set_momentum( lvl ):
   if lvl < MOMENTUM:
     emit_signal( 'momentum_dec', MOMENTUM, lvl )
+    # signature_check()
   elif lvl > MOMENTUM:
     emit_signal( 'momentum_inc', MOMENTUM, lvl )
 

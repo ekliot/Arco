@@ -6,10 +6,11 @@ signal game_over # winner
 
 signal card_played # who, card, river
 signal card_activated # who, card, river
+signal card_removed # who, card, river
 
 enum FIGHTERS { HERO, CPU }
-
 enum MOVES { PLAY, SWAP, PASS }
+const MAX_MOMENTUM = 4
 
 var BOARD = {
   HERO: {
@@ -27,7 +28,7 @@ var BOARD = {
   }
 }
 
-var MAX_MOMENTUM = 0
+var CUR_MOMENTUM = 0
 
 # we need to be able to dynamically load different battle scenarios
 
@@ -35,24 +36,33 @@ func _init():
   pass
 
 func _ready():
+  # TEMP
   setup( {
     'enemies': {
       'root': preload( "res://characters/enemies/enemy.gd" ).new(),
-      'minions': {}
+      'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
     }
   } )
 
 func setup( params ):
-  setup_battle( params )
+  _setup_battle( params )
   $BattleUI.setup_ui()
+  _connect_signals()
 
   _start_turn()
 
-func setup_battle( params ):
+func _setup_battle( params ):
   player_data.setup_test_player_data() # TEMP
-  BOARD[HERO].root = preload( "res://characters/heroes/hero.gd" ).new()
+
+  BOARD[HERO].root    = preload( "res://characters/heroes/hero.gd" ).new()
   BOARD[HERO].minions = player_data.get_player_battle_data().minions
-  BOARD[CPU].root = params.enemies.root
+  BOARD[CPU].root    = params.enemies.root
+  BOARD[CPU].minions = params.enemies.minions
+
+func _connect_signals():
+  # connect to hero signals
+  # connect to enemy signals
+  pass
 
 # ============ #
 # PRIVATE CORE #
@@ -79,14 +89,20 @@ func _resolve_all_moves():
   #  resolve momentum M card for enemy
   var move = null
 
-  for m in range( MAX_MOMENTUM ):
+  for m in range( CUR_MOMENTUM ):
     # momentum methods are 1-indexed, and m will be reset at each iteration
     m += 1
 
     move = get_move_at_momentum( HERO, m )
     if move:
+      # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
+
       # TODO check for mini-combo satisfaction
+      # for combo in player.combos:
+      #   if combo.satisfied()
+      #     combo.activate()
+
       # activate signature if final hit
       if m == 4:
         # TODO do signature shit
@@ -94,6 +110,7 @@ func _resolve_all_moves():
 
     move = get_move_at_momentum( CPU, m )
     if move:
+      # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
 
 # ============ #
@@ -104,9 +121,9 @@ func play_card( who, card, river ):
   var _name = 'player' if who == HERO else 'enemy'
   print( 'battle.gd // ', _name, ' is playing card ', card, ' into river ', river )
 
-  var rivers = BOARD[who].rivers
-  var active_cards = BOARD[who].active_cards
-  var momentum = active_cards.size()
+  var rivers = get_rivers( who )
+  var active_cards = get_active_cards( who )
+  var momentum = get_current_momentum( who )
 
   # TODO validate move
   # TODO remove card from hand
@@ -116,22 +133,23 @@ func play_card( who, card, river ):
   for i in range( momentum - card.level ):
     var data = active_cards.pop()
     print( 'battle.gd // ', 'removing card ', data.card, ' from river ', data.river )
-    rivers[data.river].remove_card( data.card.level )
+    rivers[data.river].remove( data.card.level )
+    emit_signal( 'card_removed', who, card, river )
 
   # add card to correct place in river
   rivers[river][card.level] = card
-  active_cards.push_back( { 'card': card, 'river': river } )
+  active_cards[card.level] = { 'card': card, 'river': river }
   print( 'battle.gd // added card ', card, ' into river ', river )
 
   card.play( self, river )
-
+  get_fighter( who ).set_momentum( card.level )
   emit_signal( 'card_played', who, card, river )
 
-  get_fighter( who ).set_momentum( card.level )
-
+# TODO
 func pass_turn():
   pass # lol
 
+# TODO
 func swap_rivers():
   pass
 
@@ -169,6 +187,28 @@ func target_in_river( vs, river ):
 
   return get_fighter( vs )
 
+# TODO
+func available_moves( who ):
+  # return the river steps that can have cards played in them
+  return null
+
+func can_place_card( who, card, river ):
+  # check if momentum is within limits for that fighter
+  var cur_mom = get_current_momentum( who )
+  if card.get_power() > cur_mom + 1:
+    return false
+
+  # check if the fighter can't play the card
+  # if !get_fighter( who ).can_play_card( card, river ):
+  #   return false
+
+  return true
+
+# TODO
+func test_move_outcome( who, card, river ):
+  # copy board state, make test move, and calculate the resulting board state
+  return null
+
 # ======= #
 # GETTERS #
 # ======= #
@@ -182,7 +222,7 @@ func get_fighter( who ):
 func get_active_cards( who ):
   return BOARD[who].active_cards
 
-func get_max_momentum( who ):
+func get_current_momentum( who ):
   return get_active_cards( who ).size()
 
 func get_rivers( who ):
@@ -209,8 +249,8 @@ func get_minion_in_river( who, river ):
 
 # the 'level' is 1-indexed
 func get_move_at_momentum( who, level ):
-  if level <= get_max_momentum( who ):
-    return get_active_cards( who )[level-1]
+  if level <= get_current_momentum( who ):
+    return get_active_cards( who )[level]
 
   return null
 
