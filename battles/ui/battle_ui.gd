@@ -56,9 +56,7 @@ func _setup_timer( battle ):
 
 func _setup_card_area( battle ):
   # setup hand
-  # TEMP
-  var card = preload( "res://cards/card.gd" ).new()
-  add_card_to_hand( card )
+  pass
 
 # =============== #
 # SIGNAL HANDLING #
@@ -73,7 +71,7 @@ func _connect_signals( battle ):
   battle.connect( 'card_removed',   self, '_on_card_removed' )
 
   # hero state changes
-  var hero = battle.get_figher( battle.HERO )
+  var hero = battle.get_fighter( battle.HERO )
   hero.connect( 'draw_card',      self, '_on_hero_draw_card' )
   hero.connect( 'discard_card',   self, '_on_hero_discard_card' )
   hero.connect( 'take_damage',    self, '_on_hero_take_damage' )
@@ -84,7 +82,7 @@ func _connect_signals( battle ):
   hero.connect( 'combo_activate', self, '_on_hero_combo_activate' )
 
   # enemy state changes
-  var enemy = battle.get_figher( battle.CPU )
+  var enemy = battle.get_fighter( battle.CPU )
   enemy.connect( 'draw_card',      self, '_on_enemy_draw_card' )
   enemy.connect( 'discard_card',   self, '_on_enemy_discard_card' )
   enemy.connect( 'take_damage',    self, '_on_enemy_take_damage' )

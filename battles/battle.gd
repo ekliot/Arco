@@ -61,6 +61,9 @@ func _setup_battle( params ):
 
 func _connect_signals():
   # connect to hero signals
+  var hero = get_fighter( HERO )
+  connect( 'turn_start', hero, '_on_turn_start' )
+  connect( 'turn_end',   hero, '_on_turn_end' )
   # connect to enemy signals
   pass
 

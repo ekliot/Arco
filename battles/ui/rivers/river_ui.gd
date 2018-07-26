@@ -2,7 +2,7 @@ extends HBoxContainer
 
 var BATTLE = null
 
-onready const RIVER_ID = get_name().to_lower()
+onready var RIVER_ID = get_name().to_lower()
 
 func _ready():
   for step in get_all_steps():

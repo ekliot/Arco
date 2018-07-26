@@ -26,6 +26,16 @@ var SIGNATURE = []
 
 var SPRITE = null
 
+# =============== #
+# SIGNAL HANDLERS #
+# =============== #
+
+func _on_turn_start( battle ):
+  draw_hand()
+
+func _on_turn_end( battle ):
+  clear_hand()
+
 # ======= #
 # ACTIONS #
 # ======= #

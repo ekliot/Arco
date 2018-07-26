@@ -22,7 +22,12 @@ func setup_test_player_data():
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
   PLAYER.cards.deck = preload( "res://cards/deck.gd" ).new()
-  PLAYER.cards.deck.set_deck( [ 'x','x','x','x','x','x','x','x','x','x' ] ) # 10 x's
+
+  var tmp_deck = []
+  for i in range(10):
+    tmp_deck.push_back( preload( "res://cards/card.gd" ).new() )
+
+  PLAYER.cards.deck.set_deck( tmp_deck )
 
   PLAYER.sprite = Sprite.new()
   PLAYER.sprite.set_name( 'HeroSprite' )

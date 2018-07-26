@@ -4,7 +4,7 @@ signal played
 signal activated
 signal discarded
 
-const TEMPLATE = preload( "res://cards/CardTemplate.tscn" )
+var TEMPLATE = preload( "res://cards/CardTemplate.tscn" )
 
 var OWNER = ""
 
@@ -42,6 +42,7 @@ func _ondiscard( board ):
 
 func _load_template( template ):
   # set up template instance
+  # this means overlaying the template with card data, image, modifiers, etc.
   return template
 
 # ======= #

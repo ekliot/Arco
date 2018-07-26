@@ -55,8 +55,8 @@ func get_river( river ):
 func get_river_step( river, momentum ):
   return get_river( river ).get_step( momentum )
 
-func get_current_momentum():
-  return get_active_cards().size()
-
-func get_active_cards():
-  return ACTIVE_CARDS
+# func get_current_momentum():
+#   return get_active_cards().size()
+#
+# func get_active_cards():
+#   return ACTIVE_CARDS
