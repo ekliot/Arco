@@ -3,7 +3,7 @@
 [ext_resource path="res://battles/ui/rivers/rivers_ui.gd" type="Script" id=1]
 [ext_resource path="res://battles/ui/rivers/RiverUI.tscn" type="PackedScene" id=2]
 
-[node name="RiversUI" type="VBoxContainer"]
+[node name="RiversUI" type="VBoxContainer" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0

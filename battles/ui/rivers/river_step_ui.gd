@@ -2,18 +2,15 @@ extends CenterContainer
 
 export (int) var MOMENTUM_LEVEL = -1
 
-var RIVER_ID = ''
-var BATTLE = null
+var MODEL = null
 
 var active_card = null
 var active_card_icon = null
 
-# ==== #
-# CORE #
-# ==== #
+# == CORE == #
 
-func set_battle( battle ):
-  BATTLE = battle
+func connect_to_model( step_model ):
+  MODEL = step_model
 
 func place_card( card ):
   if is_active():
@@ -32,9 +29,7 @@ func clear_card():
     active_card = null
     active_card_icon.queue_free()
 
-# ========= #
-# DRAG DROP #
-# ========= #
+# == DRAG DROP == #
 
 func can_drop_data( pos, data ):
   # TODO check with BATTLE if card is playable
@@ -48,9 +43,7 @@ func preview_icon( card ):
   # set a semi-transparent icon for the card to preview its placement
   pass
 
-# ======= #
-# GETTERS #
-# ======= #
+# == GETTERS == #
 
 func is_active():
   return active_card != null

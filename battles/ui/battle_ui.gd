@@ -10,25 +10,19 @@ onready var CARD_AREA = $CardArea
 func setup_ui():
   var battle = get_parent()
 
-  # TODO setup menu
-  # _setup_menu()
   _setup_menu_area( battle )
   _setup_duel_area( battle )
   _setup_card_area( battle )
 
   _connect_signals( battle )
 
-# =
-# # menu area
-# =
+# ==== menu area
 
 # TODO
 func _setup_menu_area( battle ):
   pass
 
-# =
-# # duel area
-# =
+# ==== duel area
 
 func _setup_duel_area( battle ):
   _setup_rivers( battle )
@@ -36,8 +30,11 @@ func _setup_duel_area( battle ):
   _setup_timer( battle )
 
 func _setup_rivers( battle ):
-  get_rivers( "Hero" ).set_battle( battle )
-  get_rivers( "Enemy" ).set_battle( battle )
+  var hero_rivers = battle.get_rivers( battle.HERO )
+  get_rivers( "Hero" ).connect_to_model( hero_rivers )
+
+  var enemy_rivers = battle.get_rivers( battle.CPU )
+  get_rivers( "Enemy" ).connect_to_model( enemy_rivers )
 
 func _setup_sprites( battle ):
   var sprite_hero  = battle.get_fighter( battle.HERO ).get_sprite()
@@ -50,17 +47,13 @@ func _setup_sprites( battle ):
 func _setup_timer( battle ):
   pass
 
-# =
-# # card area
-# =
+# ==== card area
 
 func _setup_card_area( battle ):
   # setup hand
   pass
 
-# =============== #
-# SIGNAL HANDLING #
-# =============== #
+# == SIGNAL HANDLING == #
 
 func _connect_signals( battle ):
   # battle state changes
@@ -92,9 +85,7 @@ func _connect_signals( battle ):
   enemy.connect( 'momentum_dec',   self, '_on_enemy_momentum_dec' )
   enemy.connect( 'combo_activate', self, '_on_enemy_combo_activate' )
 
-# =
-# # board
-# =
+# ==== board
 
 func _on_turn_start( battle ):
   # enable hero rivers
@@ -114,9 +105,7 @@ func _on_card_activated( who, card, river ):
 func _on_card_removed( who, card, river ):
   pass
 
-# =
-# # hero
-# =
+# ==== hero
 
 func _on_hero_draw_card( card, hand, deck ):
   # TODO verify UI hand and hero hand are in sync
@@ -172,25 +161,17 @@ func _on_enemy_momentum_dec( old_momentum, new_momentum ):
 func _on_enemy_combo_activate():
   pass
 
-# ========== #
-# UI CONTROL #
-# ========== #
+# == UI CONTROL == #
 
-# =
-# # input checking
-# =
+# ==== input handling
 
 func _input( ev ):
   # check for mouse shit
   pass
 
-# =
-# # duel area
-# =
+# ==== duel area
 
-# = =
-# # # general
-# = =
+# ====== general
 
 func position_fighter( who ):
   var placement = DUEL_AREA.get_node( who + "Placement" )
@@ -204,9 +185,7 @@ func place_card_in_river( who, card, river ):
   var rivers = get_rivers( who )
   rivers.play_card( card, river )
 
-# = =
-# # # hero
-# = =
+# ====== hero
 
 func place_hero_sprite( sprite ):
   var placement = DUEL_AREA.get_node( "HeroPlacement" )
@@ -221,9 +200,7 @@ func position_hero_sprite():
 func place_hero_card( card, river ):
   place_card_in_river( "Hero", card, river )
 
-# = =
-# # # enemy
-# = =
+# ======= enemy
 
 func place_enemy_sprite( sprite ):
   var placement = DUEL_AREA.get_node( "EnemyPlacement" )
@@ -238,21 +215,15 @@ func position_enemy_sprite():
 func place_enemy_card( card, river ):
   place_card_in_river( "Enemy", card, river )
 
-# = =
-# # # timer
-# = =
+# ====== timer
 
 # TODO
 
-# = =
-# # river swapping
-# = =
+# ====== river swapping
 
 # TODO
 
-# =
-# # card area
-# =
+# ==== card area
 
 func add_card_to_hand( card ):
   var card_sprite = card.get_as_sprite()
@@ -264,9 +235,7 @@ func add_card_to_hand( card ):
 # deck
 # hand
 
-# ======= #
-# GETTERS #
-# ======= #
+# == GETTERS == #
 
 func get_hand():
   return CARD_AREA.get_node( 'Hand' )
