@@ -2,7 +2,7 @@
 
 [ext_resource path="res://cards/card_back.png" type="Texture" id=1]
 
-[node name="DeckUI" type="TextureRect" index="0"]
+[node name="DeckUI" type="TextureRect"]
 
 anchor_left = 0.0
 anchor_top = 0.0
