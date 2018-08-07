@@ -62,12 +62,14 @@ func _setup_battle( params ):
   BOARD[CPU].minions = params.enemies.minions
 
 func _connect_signals():
-  # connect to hero signals
+  # connect signals to/from hero
   var hero = get_fighter( HERO )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
-  # connect to enemy signals
-  pass
+  # connect signals to/from enemy
+  # var enemy = get_fighter( CPU )
+  # connect( 'turn_start', enemy, '_on_turn_start' )
+  # connect( 'turn_end',   enemy, '_on_turn_end' )
 
 # == PRIVATE CORE == #
 
