@@ -41,24 +41,34 @@ func _on_turn_end( battle ):
 # ======= #
 
 func draw_hand():
+  print( ID, " // drawing new hand of size ", DRAW_SIZE )
   for i in range( DRAW_SIZE ):
+    print( ID, " // drawing card ", i )
     draw_card()
 
 func draw_card():
-  if DECK.empty():
+  if DECK.empty() and not DISCARD.empty():
+    print( ID, " // reshuffling discard into deck" )
     DECK = DISCARD
     DISCARD.clear()
     DECK.shuffle()
 
   var card = DECK.draw()
   HAND.push_back( card )
+  print( ID, " // drew card ", card )
   emit_signal( 'draw_card', card, HAND, DECK )
 
 func clear_hand():
+  print( ID, " // clearing hand" )
   for c in HAND:
-    DISCARD.push_back( c )
-    HAND.erase( c )
-    emit_signal( 'discard_card', c, HAND, DISCARD )
+    discard_card( c )
+
+func discard_card( card ):
+  if not HAND.empty() and HAND.has( card ):
+    DISCARD.push_back( card )
+    HAND.erase( card )
+    print( ID, " // discarded card ", card )
+    emit_signal( 'discard_card', card, HAND, DISCARD )
 
 func play_card( card, river ):
   print( ID, ' // ', 'playing card ', card, ' into river ', river )

@@ -18,6 +18,7 @@ var PLAYER = {
 }
 
 func setup_test_player_data():
+  print( "setting up test player data..." )
   PLAYER.id = 'TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
@@ -32,6 +33,9 @@ func setup_test_player_data():
   PLAYER.sprite = Sprite.new()
   PLAYER.sprite.set_name( 'HeroSprite' )
   PLAYER.sprite.set_texture( preload( "res://icon.png" ) )
+
+  print( "player data:" )
+  print( PLAYER )
 
 func get_player_battle_data():
   return PLAYER

@@ -2,6 +2,8 @@ extends '../character.gd'
 
 signal telegraph_move
 
+# TODO eliminate _init(), make Character._init() build common data via passed in options struct a la luxe
+
 func _init():
   ID += 'ENEMY_'
   SPRITE = Sprite.new()
