@@ -27,6 +27,11 @@ func clear_card( card ):
 func activate_card( card ):
   emit_signal( 'card_activated', FIGHTER, MOMENTUM_LEVEL, card )
 
+# == VALIDATORS == #
+
+func can_place_card( card ):
+  return true
+
 # == GETTERS == #
 
 func get_active_card():

@@ -23,8 +23,8 @@ _sections_unfolded = [ "Rect", "Size Flags" ]
 
 [node name="A" parent="." index="0" instance=ExtResource( 2 )]
 
-margin_right = 56.0
-margin_bottom = 5.0
+margin_right = 76.0
+margin_bottom = 10.0
 
 [node name="HSeparator2" type="HSeparator" parent="." index="1"]
 
@@ -32,9 +32,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 9.0
-margin_right = 56.0
-margin_bottom = 13.0
+margin_top = 14.0
+margin_right = 76.0
+margin_bottom = 18.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -44,9 +44,9 @@ size_flags_vertical = 1
 
 [node name="B" parent="." index="2" instance=ExtResource( 2 )]
 
-margin_top = 17.0
-margin_right = 56.0
-margin_bottom = 22.0
+margin_top = 22.0
+margin_right = 76.0
+margin_bottom = 32.0
 
 [node name="HSeparator" type="HSeparator" parent="." index="3"]
 
@@ -54,9 +54,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 26.0
-margin_right = 56.0
-margin_bottom = 30.0
+margin_top = 36.0
+margin_right = 76.0
+margin_bottom = 40.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -66,9 +66,9 @@ size_flags_vertical = 1
 
 [node name="C" parent="." index="4" instance=ExtResource( 2 )]
 
-margin_top = 34.0
-margin_right = 56.0
-margin_bottom = 39.0
+margin_top = 44.0
+margin_right = 76.0
+margin_bottom = 54.0
 
 [node name="HSeparator3" type="HSeparator" parent="." index="5"]
 
@@ -76,9 +76,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_top = 43.0
-margin_right = 56.0
-margin_bottom = 47.0
+margin_top = 58.0
+margin_right = 76.0
+margin_bottom = 62.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -88,8 +88,8 @@ size_flags_vertical = 1
 
 [node name="D" parent="." index="6" instance=ExtResource( 2 )]
 
-margin_top = 51.0
-margin_right = 56.0
-margin_bottom = 56.0
+margin_top = 66.0
+margin_right = 76.0
+margin_bottom = 76.0
 
 

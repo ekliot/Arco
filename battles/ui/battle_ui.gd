@@ -238,7 +238,7 @@ func add_card_to_hand( card ):
 # == GETTERS == #
 
 func get_hand():
-  return CARD_AREA.get_node( 'Hand' )
+  return CARD_AREA.get_node( 'HandContainer/Hand' )
 
 func get_rivers( who ):
   return DUEL_AREA.get_node( who + "Rivers" )

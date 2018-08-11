@@ -20,6 +20,10 @@ card_suits="*res://cards/suits.gd"
 card_effects="*res://cards/effects.gd"
 player_data="*res://characters/player.gd"
 
+[debug]
+
+settings/fps/force_fps=60
+
 [display]
 
 window/size/resizable=false
