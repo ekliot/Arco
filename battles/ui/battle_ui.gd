@@ -226,7 +226,7 @@ func place_enemy_card( card, river ):
 # ==== card area
 
 func add_card_to_hand( card ):
-  var card_sprite = card.get_as_sprite()
+  var card_sprite = card.get_as_ui_element()
   get_hand().add_child( card_sprite )
 
 # end turn

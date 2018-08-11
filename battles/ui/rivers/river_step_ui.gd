@@ -29,28 +29,6 @@ func clear_card():
     active_card = null
     active_card_icon.queue_free()
 
-# == DnD API == #
-
-func can_drop_data( pos, data ):
-  print( 'can place?', pos )
-  # TODO check with BATTLE if card is playable
-  if MODEL.can_place_card( data.card ):
-    print( 'can place' )
-    data.pointer.lock_to( rect_global_position + get_center() )
-    return true
-  print( 'cannot place' )
-  return false
-
-func drop_data( pos, data ):
-  # TODO actually place the card in and fire off the card play signals
-  print( "card placed:", data.card )
-  pass
-
-func preview_icon( card ):
-  # TODO
-  # set a semi-transparent icon for the card to preview its placement
-  pass
-
 # == GETTERS == #
 
 func is_active():

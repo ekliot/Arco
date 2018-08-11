@@ -63,7 +63,7 @@ func get_packed_data():
   }
   return data
 
-func get_as_sprite():
+func get_as_ui_element():
   return _load_template()
 
 func get_title():

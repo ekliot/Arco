@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://battles/battle.gd" type="Script" id=1]
 [ext_resource path="res://battles/ui/BattleUI.tscn" type="PackedScene" id=2]
-[ext_resource path="res://battles/ui/battle_ui.gd" type="Script" id=3]
 
 [node name="Battle" type="Node"]
 
@@ -16,7 +15,5 @@ one_shot = false
 autostart = false
 
 [node name="BattleUI" parent="." index="1" instance=ExtResource( 2 )]
-
-script = ExtResource( 3 )
 
 

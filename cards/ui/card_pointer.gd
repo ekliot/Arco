@@ -9,15 +9,15 @@ func  _init( src, orig ):
   source = src
   add_point( orig )
 
-func _input(event):
-  # Mouse in viewport coordinates
-  if event is InputEventMouseButton:
+func _input( ev ):
+  if ev is InputEventMouseButton:
     # delete the node when the mouse is released
-    if !event.is_pressed():
+    if !ev.is_pressed():
       queue_free()
-  if event is InputEventMouseMotion:
+
+  if ev is InputEventMouseMotion:
     if !is_locked():
-      point_to( event.position )
+      point_to( ev.position )
 
 func point_to( dest ):
   clear_points()
