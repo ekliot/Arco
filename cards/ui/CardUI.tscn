@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://cards/card_template.png" type="Texture" id=1]
-[ext_resource path="res://cards/card_template.gd" type="Script" id=2]
+[ext_resource path="res://cards/assets/card_template.png" type="Texture" id=1]
+[ext_resource path="res://cards/ui/card_ui.gd" type="Script" id=2]
 
-[node name="CardUI" type="TextureRect" index="0"]
+[node name="CardUI" type="TextureRect"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -34,11 +34,12 @@ margin_right = 36.0
 margin_bottom = 31.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
-mouse_filter = 1
+mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 stretch_mode = 0
+_sections_unfolded = [ "Mouse" ]
 
 [node name="Description" type="Container" parent="." index="1"]
 
@@ -52,9 +53,10 @@ margin_right = 36.0
 margin_bottom = 55.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
-mouse_filter = 0
+mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
+_sections_unfolded = [ "Mouse" ]
 
 

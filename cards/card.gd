@@ -4,16 +4,17 @@ signal played
 signal activated
 signal discarded
 
-var TEMPLATE = preload( "res://cards/CardTemplate.tscn" )
+var _TEMPLATE_ = preload( "res://cards/ui/CardUI.tscn" )
 
 var OWNER = ""
 
-var ID = "CARD_" # unique ID for the card, going CARD_<SUIT>_<NAME>
-var TITLE = ""   # human-readable display name
-var SUIT = -1    # corresponds to SUITS enum in cards/suits.gd
-var POWER = -1   # power level of the card
-var ICON = null  # Texture for the card's icon (typically, the suit icon)
-var DESCRIPTION = ""
+var ID = "CARD_"        # unique ID for the card, going CARD_<SUIT>_<NAME>
+var TITLE = ""          # human-readable display name
+var SUIT = -1           # corresponds to SUITS enum in cards/suits.gd
+var POWER = -1          # power level of the card
+var ICON = null         # Texture for the card's icon (typically, the suit icon)
+var ILLUSTRATION = null # Texture for the card's illustration
+var DESCRIPTION = ""    # long string of this card's description (QUESTION should this be marked up?)
 
 func play( board, river ):
   _onplay( board, river )
@@ -40,8 +41,10 @@ func _onactivate( board ):
 func _ondiscard( board ):
   pass
 
-func _load_template( template ):
+func _load_template():
+  var template = _TEMPLATE_.instance()
   # set up template instance
+  # template.lead_data( get_packed_data() )
   # this means overlaying the template with card data, image, modifiers, etc.
   return template
 
@@ -49,8 +52,19 @@ func _load_template( template ):
 # GETTERS #
 # ======= #
 
+func get_packed_data():
+  var data = {
+    'id': ID,
+    'title': get_tile(),
+    'suit': get_suit(),
+    'power': get_power(),
+    'icon': get_icon(),
+    'description': get_description()
+  }
+  return data
+
 func get_as_sprite():
-  return _load_template( TEMPLATE.instance() )
+  return _load_template()
 
 func get_title():
   return TITLE
