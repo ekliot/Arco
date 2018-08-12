@@ -9,9 +9,15 @@ var enabled = true
 
 func connect_to_model( rivers_model ):
   MODEL = rivers_model
-  for id in rivers_model.RIVER_IDS:
+  # propogate to child UI elements
+  for id in get_river_ids():
     var riv_model = rivers_model.get_river( id )
-    get_node( id.to_upper() ).connect_to_model( riv_model )
+    get_river( id ).connect_to_model( riv_model )
+
+func connect_to_card_pointer( card, pointer ):
+  print( 'connecting pointer ', pointer, ' from card ', card, ' to steps ', get_valid_steps( card ) )
+  for step in get_valid_steps( card ):
+    step.connect( 'pointer_hover', pointer, 'river_listener' )
 
 # == CORE == #
 
@@ -19,12 +25,16 @@ func reverse():
   # reverse each river
   pass
 
+func valid_for( card ):
+  return enabled && MODEL.valid_for( card )
+
 func can_place_card( card, river ):
-  return enabled && get_river( river ).can_place_card( card )
+  return valid_for( card ) && MODEL.can_place_card( card, river )
 
 func place_card( card, river ):
-  var river_step = get_river_step( river, card.get_power() )
-  river_step.place_card( card )
+  # var river_step = get_river_step( river, card.get_power() )
+  # river_step.place_card( card )
+  pass
 
 func enable():
   enabled = true
@@ -34,10 +44,14 @@ func disable():
 
 # == GETTERS == #
 
+func get_river_ids():
+  return MODEL.RIVER_IDS
+
 func is_enabled():
   return enabled
 
 func get_all_rivers():
+  # TODO
   var rivs = []
   for child in get_children():
     if child.has_method( 'connect_to_model' ): # HACK is there a better way to do this?
@@ -49,3 +63,11 @@ func get_river( id ):
 
 func get_river_step( id, momentum ):
   return get_river( id ).get_step( momentum )
+
+func get_valid_steps( card ):
+  var steps = []
+
+  for step in MODEL.get_valid_steps( card ):
+    steps.push_back( get_river_step( step.get_momentum(), step.get_river_id() ) )
+
+  return steps

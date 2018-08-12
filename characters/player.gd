@@ -17,10 +17,11 @@ var PLAYER = {
   'minions': {}
 }
 
-var held_card = null
-
 func setup_test_player_data():
   print( "setting up test player data..." )
+
+  var hero_battle_id = battlemaster.get_hero_id()
+
   PLAYER.id = 'TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
@@ -28,7 +29,7 @@ func setup_test_player_data():
 
   var tmp_deck = []
   for i in range(10):
-    tmp_deck.push_back( preload( "res://cards/card.gd" ).new() )
+    tmp_deck.push_back( preload( "res://cards/card.gd" ).new( hero_battle_id ) )
 
   PLAYER.cards.deck.set_deck( tmp_deck )
 
@@ -42,6 +43,10 @@ func setup_test_player_data():
 func get_player_battle_data():
   return PLAYER
 
+# == BATTLE LOGIC == #
+
+var held_card = null
+
 func pick_up_card( card ):
   held_card = card
   print( "PLAYER // picked up card ", card )
@@ -52,3 +57,6 @@ func drop_card():
 
 func get_held_card():
   return held_card
+
+func can_hold( card ):
+  return held_card == card or held_card == null

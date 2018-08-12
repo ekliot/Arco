@@ -29,10 +29,24 @@ func activate_card( card ):
 
 # == VALIDATORS == #
 
-func can_place_card( card ):
-  return true
+func valid_for( card ):
+  var valid = MOMENTUM_LEVEL == card.get_power()
+  # TODO
+  return valid
 
 # == GETTERS == #
 
 func get_active_card():
   return active_card
+
+func get_river():
+  return RIVER
+
+func get_river_id():
+  return get_river().get_river_id()
+
+func get_fighter():
+  return FIGHTER
+
+func get_momentum():
+  return MOMENTUM_LEVEL

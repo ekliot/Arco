@@ -6,7 +6,7 @@ signal discarded
 
 var _TEMPLATE_ = preload( "res://cards/ui/CardUI.tscn" )
 
-var OWNER = ""
+var OWNER_ID = null
 
 var ID = "CARD_"        # unique ID for the card, going CARD_<SUIT>_<NAME>
 var TITLE = ""          # human-readable display name
@@ -15,6 +15,9 @@ var POWER = -1          # power level of the card
 var ICON = null         # Texture for the card's icon (typically, the suit icon)
 var ILLUSTRATION = null # Texture for the card's illustration
 var DESCRIPTION = ""    # long string of this card's description (QUESTION should this be marked up?)
+
+func _init( owner_id ):
+  OWNER_ID = owner_id
 
 func play( board, river ):
   _onplay( board, river )
@@ -48,23 +51,28 @@ func _load_template():
   template.build( self )
   return template
 
-# ======= #
-# GETTERS #
-# ======= #
+# == GETTERS == #
 
 func get_packed_data():
   var data = {
-    'id': ID,
-    'title': get_tile(),
-    'suit': get_suit(),
-    'power': get_power(),
-    'icon': get_icon(),
+    'owner_id':    get_owner_id(),
+    'id':          get_card_id(),
+    'title':       get_title(),
+    'suit':        get_suit(),
+    'power':       get_power(),
+    'icon':        get_icon(),
     'description': get_description()
   }
   return data
 
 func get_as_ui_element():
   return _load_template()
+
+func get_owner_id():
+  return OWNER_ID
+
+func get_card_id():
+  return ID
 
 func get_title():
   return TITLE

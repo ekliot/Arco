@@ -10,11 +10,6 @@ func  _init( src, orig ):
   add_point( orig )
 
 func _input( ev ):
-  if ev is InputEventMouseButton:
-    # delete the node when the mouse is released
-    if !source.is_hovered() and !ev.is_pressed():
-      queue_free()
-
   if ev is InputEventMouseMotion:
     if !is_locked():
       point_to( ev.position )
@@ -27,6 +22,10 @@ func point_to( dest ):
 func clear_points():
   while get_point_count() > 1:
     remove_point( 1 )
+
+func river_listener( lock_pos, river_step ):
+  lock_to( lock_pos )
+
 
 func lock_to( pos ):
   locked = true

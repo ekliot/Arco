@@ -14,3 +14,6 @@ func get_river_ui( who, river_id ):
 
 func get_river_step_ui( who, river_id, level ):
   get_river_ui( who, river_id ).get_step( level )
+
+func get_hero_id():
+  return get_battle().HERO
