@@ -17,6 +17,8 @@ var PLAYER = {
   'minions': {}
 }
 
+var held_card = null
+
 func setup_test_player_data():
   print( "setting up test player data..." )
   PLAYER.id = 'TEST'
@@ -39,3 +41,14 @@ func setup_test_player_data():
 
 func get_player_battle_data():
   return PLAYER
+
+func pick_up_card( card ):
+  held_card = card
+  print( "PLAYER // picked up card ", card )
+
+func drop_card():
+  print( "PLAYER // dropping card ", held_card )
+  held_card = null
+
+func get_held_card():
+  return held_card

@@ -44,8 +44,8 @@ func _ondiscard( board ):
 func _load_template():
   var template = _TEMPLATE_.instance()
   # set up template instance
-  # template.lead_data( get_packed_data() )
   # this means overlaying the template with card data, image, modifiers, etc.
+  template.build( self )
   return template
 
 # ======= #

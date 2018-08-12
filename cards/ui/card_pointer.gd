@@ -12,7 +12,7 @@ func  _init( src, orig ):
 func _input( ev ):
   if ev is InputEventMouseButton:
     # delete the node when the mouse is released
-    if !ev.is_pressed():
+    if !source.is_hovered() and !ev.is_pressed():
       queue_free()
 
   if ev is InputEventMouseMotion:
