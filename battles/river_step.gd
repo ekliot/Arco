@@ -32,7 +32,8 @@ func activate_card( card ):
 func valid_for( card ):
   var valid = MOMENTUM_LEVEL == card.get_power()
   # TODO
-  return valid
+  # return valid
+  return true
 
 # == GETTERS == #
 

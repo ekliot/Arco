@@ -17,7 +17,8 @@ func connect_to_model( rivers_model ):
 func connect_to_card_pointer( card, pointer ):
   print( 'connecting pointer ', pointer, ' from card ', card, ' to steps ', get_valid_steps( card ) )
   for step in get_valid_steps( card ):
-    step.connect( 'pointer_hover', pointer, 'river_listener' )
+    step.connect( 'pointer_lockon', pointer, 'lock_to' )
+    step.connect( 'pointer_unlock', pointer, 'unlock' )
 
 # == CORE == #
 
@@ -68,6 +69,6 @@ func get_valid_steps( card ):
   var steps = []
 
   for step in MODEL.get_valid_steps( card ):
-    steps.push_back( get_river_step( step.get_momentum(), step.get_river_id() ) )
+    steps.push_back( get_river_step( step.get_river_id(), step.get_momentum() ) )
 
   return steps

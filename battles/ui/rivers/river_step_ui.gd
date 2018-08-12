@@ -1,6 +1,7 @@
 extends CenterContainer
 
-signal pointer_hover # lock_position, river_step
+signal pointer_lockon # lock_position, river_step
+signal pointer_unlock
 
 export (int) var MOMENTUM_LEVEL = -1
 
@@ -12,13 +13,17 @@ var active_card_icon = null
 # == CORE == #
 
 func _ready():
-  connect( 'mouse_entered', self, '_notify_pointer' )
+  connect( 'mouse_entered', self, '_pointer_lockon' )
+  connect( 'mouse_exited', self, '_pointer_unlock' )
 
 func connect_to_model( step_model ):
   MODEL = step_model
 
-func _notify_pointer():
-  emit_signal( 'pointer_hover', get_pointer_lock(), self )
+func _pointer_lockon():
+  emit_signal( 'pointer_lockon', get_pointer_lock(), self )
+
+func _pointer_unlock():
+  emit_signal( 'pointer_unlock' )
 
 func valid_for( card ):
   return MODEL.valid_for( card )
@@ -55,4 +60,4 @@ func get_center():
   return rect_size / 2
 
 func get_pointer_lock():
-  return Vector2( rect_size.x / 2, rect_size.y )
+  return rect_global_position + Vector2( rect_size.x / 2, rect_size.y )
