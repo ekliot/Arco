@@ -1,5 +1,7 @@
 extends HBoxContainer
 
+const RiverStepUI = preload( "river_step_ui.gd" )
+
 var MODEL = null
 var STEPS = [ null ] # 1-indexed
 
@@ -9,7 +11,8 @@ func _ready():
   # for step in get_all_steps():
   #   step.RIVER_ID = get_name().to_lower()
   for child in get_children():
-    if child.has_method( 'connect_to_model' ): # HACK
+    # if child.has_method( 'connect_to_model' ): # HACK
+    if child is RiverStepUI:
       STEPS.push_back( child )
 
 # == SETUP == #

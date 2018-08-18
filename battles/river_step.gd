@@ -1,8 +1,8 @@
 extends Node
 
-signal card_placed # who, level, card
-signal card_cleared # who, level, card
-signal card_activated # who, level, card
+signal card_placed(who, level, card)
+signal card_cleared(who, level, card)
+signal card_activated(who, level, card)
 
 var RIVER = null
 var FIGHTER = null
@@ -22,17 +22,19 @@ func place_card( card ):
   emit_signal( 'card_placed', FIGHTER, MOMENTUM_LEVEL, card )
 
 func clear_card( card ):
+  active_card = null
   emit_signal( 'card_cleared', FIGHTER, MOMENTUM_LEVEL, card )
 
 func activate_card( card ):
+  card.activate()
   emit_signal( 'card_activated', FIGHTER, MOMENTUM_LEVEL, card )
 
 # == VALIDATORS == #
 
 func valid_for( card ):
   var valid = MOMENTUM_LEVEL == card.get_power()
-  # TODO
   # return valid
+  # TEMP HACK
   return true
 
 # == GETTERS == #

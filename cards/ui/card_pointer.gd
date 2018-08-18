@@ -2,7 +2,7 @@ extends Line2D
 
 var source = null
 var origin = null
-var locked = false
+var lockon = null
 
 func  _init( src, orig ):
   origin = orig
@@ -25,15 +25,16 @@ func clear_points():
 
 func lock_to( pos, node ):
   if !is_locked():
-    print( 'locking to ', pos )
-    locked = true
+    lockon = node
     point_to( pos )
 
 func unlock():
   if is_locked():
-    locked = false
-    print( self, 'unlocked' )
+    lockon = null
     point_to( get_viewport().get_mouse_position() )
 
 func is_locked():
-  return locked
+  return lockon != null
+
+func get_lockon():
+  return lockon

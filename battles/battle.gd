@@ -125,27 +125,13 @@ func play_card( who, card, river ):
   print( 'battle.gd // ', _name, ' is playing card ', card, ' into river ', river )
 
   var rivers = get_rivers( who )
-  var active_cards = get_active_cards( who )
-  var momentum = get_current_momentum( who )
 
-  # TODO validate move
-  # TODO remove card from hand
+  if rivers.validate_play( card, river ):
+    rivers.place_card( card, river )
+  else:
+    print( "battle.gd // that was not a valid move" )
 
-  # clear the river if needed
-  print( 'battle.gd // ', 'removing top ', momentum - card.level, ' cards from ', _name, '\'s river ', river )
-  for i in range( momentum - card.level ):
-    var data = active_cards.pop()
-    print( 'battle.gd // ', 'removing card ', data.card, ' from river ', data.river )
-    rivers[data.river].remove( data.card.level )
-    emit_signal( 'card_removed', who, card, river )
 
-  # add card to correct place in river
-  rivers[river][card.level] = card
-  active_cards[card.level] = { 'card': card, 'river': river }
-  print( 'battle.gd // added card ', card, ' into river ', river )
-
-  card.play( self, river )
-  get_fighter( who ).set_momentum( card.level )
   emit_signal( 'card_played', who, card, river )
 
 # TODO

@@ -1,5 +1,7 @@
 extends VBoxContainer
 
+const RiverUI = preload( "river_ui.gd" )
+
 var MODEL = null
 
 # whether the UI element is available for Player control
@@ -55,7 +57,8 @@ func get_all_rivers():
   # TODO
   var rivs = []
   for child in get_children():
-    if child.has_method( 'connect_to_model' ): # HACK is there a better way to do this?
+    # if child.has_method( 'connect_to_model' ): # HACK is there a better way to do this?
+    if child is RiverUI:
       rivs.push_back( child )
   return rivs
 

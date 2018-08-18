@@ -1,5 +1,7 @@
 extends TextureRect
 
+signal card_dropped(card, card_ui)
+
 var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" )
 
 var CARD = null
@@ -58,21 +60,28 @@ func point():
 
 func grow():
   if !bigger:
+    # TODO tween this
     rect_size = rect_size * 2
-    # print( rect_size )
-    # print( margin_left, ' ', margin_top, ' ', margin_right, ' ', margin_bottom )
     bigger = true
 
 func shrink():
   if bigger:
+    # TODO tween this
     rect_size = rect_size / 2
-    # print( rect_size )
-    # print( margin_left, ' ', margin_top, ' ', margin_right, ' ', margin_bottom )
     bigger = false
 
+func place_me():
+  var target = pointer.get_lockon()
+  reset()
+  emit_signal( 'card_placed', CARD, self, target )
+  # we expect to be queued to free after this
+
 func drop_me():
+  reset()
   player_data.drop_card()
-  # TODO logic for passing this card's data
+  emit_signal( 'card_dropped', CARD, self )
+
+func reset():
   pointer.queue_free()
   pointing = false
   shrink()

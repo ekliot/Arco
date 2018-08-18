@@ -3,9 +3,7 @@ extends VBoxContainer
 onready var DUEL_AREA = $DuelArea
 onready var CARD_AREA = $CardArea
 
-# ===== #
-# SETUP #
-# ===== #
+# == SETUP == #
 
 func setup_ui():
   var battle = get_parent()
@@ -96,6 +94,9 @@ func _on_turn_end( battle ):
   # disable hero rivers
   pass
 
+func _player_places_card( card, river_step ):
+  pass
+
 func _on_card_played( who, card, river ):
   pass
 
@@ -109,8 +110,9 @@ func _on_card_removed( who, card, river ):
 
 func _on_hero_draw_card( card, hand, deck ):
   # TODO verify UI hand and hero hand are in sync
-  add_card_to_hand( card )
-  # update deck
+  var card_sprite = get_hand().add_card( card )
+  # card_sprite.connect( 'card_placed', self, '_player_places_card' )
+  # TODO update deck
 
 func _on_hero_discard_card( card, hand, discard ):
   pass
@@ -133,9 +135,7 @@ func _on_hero_momentum_dec( old_momentum, new_momentum ):
 func _on_hero_combo_activate():
   pass
 
-# =
-# # enemy
-# =
+# ==== enemy
 
 func _on_enemy_draw_card( card, hand, deck ):
   pass
@@ -222,12 +222,6 @@ func place_enemy_card( card, river ):
 # ====== river swapping
 
 # TODO
-
-# ==== card area
-
-func add_card_to_hand( card ):
-  var card_sprite = card.get_as_ui_element()
-  get_hand().add_child( card_sprite )
 
 # end turn
 # dragging cards
