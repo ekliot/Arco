@@ -17,7 +17,7 @@ func _init():
 
 func _input( ev ):
   if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
-    hovered = _is_mouse_inside()
+    hovered = ui_helper.is_mouse_inside( get_global_rect() )
     if hovered:
       grow()
     elif !pointing:
@@ -33,11 +33,6 @@ func _input( ev ):
     else:
       if pointing and !ev.is_pressed():
         drop_me()
-
-func _is_mouse_inside():
-  var mpos = get_viewport().get_mouse_position()
-  var mrect = Rect2( mpos, Vector2( 1, 1 ) )
-  return get_global_rect().encloses( mrect )
 
 # == ACTIONS == #
 

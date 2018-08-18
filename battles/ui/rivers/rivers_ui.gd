@@ -3,7 +3,7 @@ extends VBoxContainer
 var MODEL = null
 
 # whether the UI element is available for Player control
-var enabled = true
+var enabled = true # TODO should be false by default
 
 # == SETUP == #
 

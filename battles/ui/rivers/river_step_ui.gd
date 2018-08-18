@@ -10,11 +10,23 @@ var MODEL = null
 var active_card = null
 var active_card_icon = null
 
+var hovered = false
+
 # == CORE == #
 
 func _ready():
   connect( 'mouse_entered', self, '_pointer_lockon' )
   connect( 'mouse_exited', self, '_pointer_unlock' )
+
+func _input( ev ):
+  if ev is InputEventMouseMotion:
+    var inside = ui_helper.is_mouse_inside( get_global_rect() )
+    if inside and !is_hovered():
+      hovered = true
+      _pointer_lockon()
+    elif !inside and is_hovered():
+      hovered = false
+      _pointer_unlock()
 
 func connect_to_model( step_model ):
   MODEL = step_model
@@ -49,6 +61,9 @@ func clear_card():
 
 func is_active():
   return active_card != null
+
+func is_hovered():
+  return hovered
 
 func get_active_card():
   return active_card

@@ -23,15 +23,17 @@ func clear_points():
   while get_point_count() > 1:
     remove_point( 1 )
 
-func lock_to( pos, river_step ):
-  print( 'locking to ', pos )
-  locked = true
-  point_to( pos )
+func lock_to( pos, node ):
+  if !is_locked():
+    print( 'locking to ', pos )
+    locked = true
+    point_to( pos )
 
 func unlock():
-  locked = false
-  print( 'unlocked' )
-  point_to( get_viewport().get_mouse_position() )
+  if is_locked():
+    locked = false
+    print( self, 'unlocked' )
+    point_to( get_viewport().get_mouse_position() )
 
 func is_locked():
   return locked
