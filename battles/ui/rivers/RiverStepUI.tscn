@@ -3,13 +3,12 @@
 [ext_resource path="res://battles/ui/rivers/river_step_ui.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
-[node name="RiverNodeUI" type="CenterContainer"]
+[node name="RiverNodeUI" type="CenterContainer" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 10, 10 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -27,11 +26,11 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 480.0
-margin_top = 268.0
-margin_right = 544.0
-margin_bottom = 332.0
-rect_min_size = Vector2( 10, 10 )
+margin_left = 504.0
+margin_top = 292.0
+margin_right = 520.0
+margin_bottom = 308.0
+rect_min_size = Vector2( 16, 16 )
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 1
@@ -39,7 +38,8 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource( 2 )
+expand = true
 stretch_mode = 6
-_sections_unfolded = [ "Rect", "Size Flags" ]
+_sections_unfolded = [ "Mouse", "Rect", "Size Flags" ]
 
 
