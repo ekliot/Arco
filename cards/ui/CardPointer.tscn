@@ -1,16 +1,19 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
 
-[node name="CardPointer" type="Line2D"]
+[ext_resource path="res://cards/ui/card_pointer.gd" type="Script" id=1]
+
+[node name="CardPointer" type="Line2D" index="0"]
 
 points = PoolVector2Array(  )
 width = 10.0
-default_color = Color( 0.4, 0.5, 1, 1 )
+default_color = Color( 1, 0, 0, 1 )
 texture_mode = 655463
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 sharp_limit = 2.0
 round_precision = 8
+script = ExtResource( 1 )
 _sections_unfolded = [ "Border", "Capping" ]
 
 

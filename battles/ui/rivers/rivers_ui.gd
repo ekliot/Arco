@@ -4,9 +4,6 @@ const RiverUI = preload( "river_ui.gd" )
 
 var MODEL = null
 
-# whether the UI element is available for Player control
-var enabled = true # TODO should be false by default
-
 # == SETUP == #
 
 func connect_to_model( rivers_model ):
@@ -29,7 +26,7 @@ func reverse():
   pass
 
 func valid_for( card ):
-  return enabled && MODEL.valid_for( card )
+  return MODEL.valid_for( card )
 
 func can_place_card( card, river ):
   return valid_for( card ) && MODEL.can_place_card( card, river )
@@ -39,19 +36,10 @@ func place_card( card, river ):
   # river_step.place_card( card )
   pass
 
-func enable():
-  enabled = true
-
-func disable():
-  enabled = false
-
 # == GETTERS == #
 
 func get_river_ids():
   return MODEL.RIVER_IDS
-
-func is_enabled():
-  return enabled
 
 func get_all_rivers():
   # TODO

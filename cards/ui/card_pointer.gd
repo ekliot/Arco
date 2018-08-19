@@ -4,10 +4,10 @@ var source = null
 var origin = null
 var lockon = null
 
-func  _init( src, orig ):
-  origin = orig
-  source = src
-  add_point( orig )
+func _ready():
+  source = get_parent()
+  origin = source.get_pointer_origin()
+  add_point( origin )
 
 func _input( ev ):
   if ev is InputEventMouseMotion:

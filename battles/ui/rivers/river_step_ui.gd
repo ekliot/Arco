@@ -3,14 +3,14 @@ extends CenterContainer
 signal pointer_lockon # lock_position, river_step
 signal pointer_unlock
 
-export (int) var MOMENTUM_LEVEL = -1
+export (int) var MOMENTUM_LEVEL = -1 setget ,get_momentum
 
 var MODEL = null
 
-var active_card = null
+var active_card = null setget ,get_active_card
 var active_card_icon = null
 
-var hovered = false
+var hovered = false setget ,is_hovered
 
 # == CORE == #
 

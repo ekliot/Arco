@@ -1,5 +1,6 @@
 extends VBoxContainer
 
+onready var MENU_BAR = $MenuBar
 onready var DUEL_AREA = $DuelArea
 onready var CARD_AREA = $CardArea
 
@@ -13,6 +14,36 @@ func setup_ui():
   _setup_card_area( battle )
 
   _connect_signals( battle )
+
+  _scaling()
+  # QUESTION this doesn't work the way I want it to?
+  # self.connect( 'resized', self, '_scaling' )
+
+func _debug_size( ui, max_depth=0, cur_depth=0 ):
+  if max_depth > 0 and cur_depth > max_depth:
+    return
+
+  if ui.has_method( 'get_rect' ):
+    print( ui.get_name(), ui.get_rect() )
+    for child in ui.get_children():
+      _debug_size( child, max_depth, cur_depth+1 )
+
+func _scaling():
+  var vp_size = get_viewport().get_size()
+
+  var d_h = DUEL_AREA.get_size().y * .4
+
+  var riv_cont = get_rivers()
+  var riv_size = riv_cont.get_minimum_size()
+  riv_cont.set_custom_minimum_size( Vector2( riv_size.x, d_h ) )
+
+  var h_place = get_placement( "Hero" )
+  var h_place_size = h_place.get_minimum_size()
+  h_place.set_custom_minimum_size( Vector2( h_place_size.x, d_h ) )
+
+  var e_place = get_placement( "Enemy" )
+  var e_place_size = e_place.get_minimum_size()
+  e_place.set_custom_minimum_size( Vector2( e_place_size.x, d_h ) )
 
 # ==== menu area
 
@@ -28,18 +59,22 @@ func _setup_duel_area( battle ):
   _setup_timer( battle )
 
 func _setup_rivers( battle ):
+  # first, connect the river UIs to their respective models
   var hero_rivers = battle.get_rivers( battle.HERO )
   get_rivers( "Hero" ).connect_to_model( hero_rivers )
 
   var enemy_rivers = battle.get_rivers( battle.CPU )
   get_rivers( "Enemy" ).connect_to_model( enemy_rivers )
+  # get_rivers( "Enemy" ).reverse()
 
 func _setup_sprites( battle ):
   var sprite_hero  = battle.get_fighter( battle.HERO ).get_sprite()
-  var sprite_enemy = battle.get_fighter( battle.CPU ).get_sprite() if battle.get_fighter( battle.CPU ) else null
+  var sprite_enemy = battle.get_fighter( battle.CPU ).get_sprite()
 
   place_hero_sprite( sprite_hero )
   place_enemy_sprite( sprite_enemy )
+
+  # TODO minions
 
 # TODO
 func _setup_timer( battle ):
@@ -173,13 +208,12 @@ func _input( ev ):
 
 # ====== general
 
+# set a fighter's sprite in the middle of its container
 func position_fighter( who ):
-  var placement = DUEL_AREA.get_node( who + "Placement" )
-  if placement.get_child_count() == 0:
-    return
-
-  var sprite = placement.get_node( who + "Sprite" )
-  sprite.set_position( placement.get_size() / 2 )
+  var placement = get_placement( who )
+  if placement.get_child_count() > 0:
+    var sprite = placement.get_node( who + "Sprite" )
+    sprite.set_position( placement.get_size() / 2 )
 
 func place_card_in_river( who, card, river ):
   var rivers = get_rivers( who )
@@ -232,7 +266,10 @@ func place_enemy_card( card, river ):
 # == GETTERS == #
 
 func get_hand():
-  return CARD_AREA.get_node( 'HandContainer/Hand' )
+  return CARD_AREA.get_node( 'Hand' )
 
-func get_rivers( who ):
-  return DUEL_AREA.get_node( who + "Rivers" )
+func get_placement( who ):
+  return DUEL_AREA.get_node( "%sPlacement" % who )
+
+func get_rivers( who=null ):
+  return DUEL_AREA.get_node( "RiverContainer" + ("/%sRivers" % who if who else "") )

@@ -60,3 +60,6 @@ func get_held_card():
 
 func can_hold( card ):
   return held_card == card or held_card == null
+
+func is_holding_card():
+  return held_card != null

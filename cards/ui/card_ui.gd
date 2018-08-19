@@ -2,7 +2,8 @@ extends TextureRect
 
 signal card_dropped(card, card_ui)
 
-var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" )
+var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
+# var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" )
 
 var CARD = null
 
@@ -48,7 +49,8 @@ func pick_up():
   pointer = point()
 
 func point():
-  var ptr = _POINTER_.new( self, get_pointer_origin() )
+  # var ptr = _POINTER_.new( self, get_pointer_origin() )
+  var ptr = _POINTER_.instance()
   add_child( ptr )
   ptr.point_to( get_viewport().get_mouse_position() )
   pointing = true
