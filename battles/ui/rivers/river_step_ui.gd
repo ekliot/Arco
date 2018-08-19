@@ -3,9 +3,8 @@ extends CenterContainer
 signal pointer_lockon # lock_position, river_step
 signal pointer_unlock
 
-export (int) var MOMENTUM_LEVEL = -1 setget ,get_momentum
-
 var MODEL = null
+var MOMENTUM_LEVEL = -1 setget ,get_momentum
 
 var active_card = null setget ,get_active_card
 var active_card_icon = null
@@ -30,6 +29,11 @@ func _input( ev ):
 
 func connect_to_model( step_model ):
   MODEL = step_model
+  MOMENTUM_LEVEL = MODEL.get_momentum()
+
+# NOTE for some reason, these signals are being emitted twice if the child
+# TextureRect mouse filter is set to Ignore. This must be done, or else the
+# child will block mouse events (even if set to pass)
 
 func _pointer_lockon():
   emit_signal( 'pointer_lockon', get_pointer_lock(), self )
