@@ -1,5 +1,6 @@
 extends Node
 
+# TODO make this a class
 func enemy_template( name="" ):
   var template = {
     'id': "ENEMY_%s" % name.to_upper(),

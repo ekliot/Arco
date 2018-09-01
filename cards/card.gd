@@ -21,6 +21,7 @@ func _init( owner_id, card_params ):
   slurp_params( card_params )
 
 func slurp_params( params ):
+  # TODO make params a class in dealer
   if params.has( 'id' ):
     self.ID += params['id']
 
