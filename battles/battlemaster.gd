@@ -17,3 +17,14 @@ func get_river_step_ui( who, river_id, level ):
 
 func get_hero_id():
   return get_battle().HERO
+
+func get_cpu_id():
+  return get_battle().CPU
+
+func hero_id_to_str( id ):
+  # NOTE match doesn't work here for some reason
+  if id == get_hero_id():
+    return "Hero"
+  elif id == get_cpu_id():
+    return "CPU"
+  return ""

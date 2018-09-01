@@ -14,10 +14,33 @@ var SUIT = -1           # corresponds to SUITS enum in cards/suits.gd
 var POWER = -1          # power level of the card
 var ICON = null         # Texture for the card's icon (typically, the suit icon)
 var ILLUSTRATION = null # Texture for the card's illustration
-var DESCRIPTION = ""    # long string of this card's description (QUESTION should this be marked up?)
+var DESCRIPTION = ""    # long string of this card's description (QUESTION should/can this be marked up?)
 
-func _init( owner_id ):
-  OWNER_ID = owner_id
+func _init( owner_id, card_params ):
+  self.OWNER_ID = owner_id
+  slurp_params( card_params )
+
+func slurp_params( params ):
+  if params.has( 'id' ):
+    self.ID += params['id']
+
+  if params.has( 'title' ):
+    self.TITLE += params['title']
+
+  if params.has( 'suit' ):
+    self.SUIT = params['suit']
+
+  if params.has( 'power' ):
+    self.POWER = params['power']
+
+  if params.has( 'icon' ):
+    self.ICON= params['icon']
+
+  if params.has( 'illustration' ):
+    self.ILLUSTRATION= params['illustration']
+
+  if params.has( 'description' ):
+    self.DESCRIPTION= params['description']
 
 func play( board, river ):
   _onplay( board, river )

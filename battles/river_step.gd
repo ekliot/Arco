@@ -4,8 +4,8 @@ signal card_placed(who, level, card)
 signal card_cleared(who, level, card)
 signal card_activated(who, level, card)
 
-var RIVER = null
 var FIGHTER = null
+var RIVER = null
 var MOMENTUM_LEVEL = -1
 
 var active_card = null
