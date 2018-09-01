@@ -2,6 +2,7 @@ extends HBoxContainer
 
 func add_card( card ):
   var card_sprite = card.get_as_ui_element()
+  card.whoami()
   # card_sprite.connect( 'card_placed', self, 'remove_card' )
   add_child( card_sprite )
   return card_sprite

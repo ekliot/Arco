@@ -28,8 +28,15 @@ func setup_test_player_data():
   PLAYER.cards.deck = preload( "res://cards/deck.gd" ).new()
 
   var tmp_deck = []
+  var card = null
   for i in range(10):
-    tmp_deck.push_back( preload( "res://cards/card.gd" ).new( hero_battle_id ) )
+    card = dealer.deal(
+      hero_battle_id,
+      card_suits.get_blades_str(),
+      1,
+      "slash"
+    )
+    tmp_deck.push_back( card )
 
   PLAYER.cards.deck.set_deck( tmp_deck )
 

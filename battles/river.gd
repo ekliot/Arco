@@ -8,6 +8,7 @@ var _STEP_ = preload( "res://battles/river_step.gd" )
 var FIGHTER = null
 var RIVERS = null
 var RIVER_ID = null
+
 var STEPS = [ null ] # 1-indexed
 var STEP_STATES = [ null ]
 
