@@ -2,7 +2,7 @@ extends Line2D
 
 var source = null
 var origin = null
-var lockon = null
+var lockon = null setget ,get_lockon
 
 func _ready():
   source = get_parent()

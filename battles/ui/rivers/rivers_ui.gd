@@ -9,7 +9,7 @@ var MODEL = null
 func connect_to_model( rivers_model ):
   MODEL = rivers_model
   # propogate to child UI elements
-  for id in get_river_ids():
+  for id in battlemaster.RIVER_IDS:
     var riv_model = rivers_model.get_river( id )
     get_river( id ).connect_to_model( riv_model )
 
@@ -37,9 +37,6 @@ func place_card( card, river ):
   pass
 
 # == GETTERS == #
-
-func get_river_ids():
-  return MODEL.RIVER_IDS
 
 func get_all_rivers():
   # TODO

@@ -142,6 +142,7 @@ func mulligan():
   var hero = get_fighter( battlemaster.HERO )
   hero.clear_hand()
   hero.draw_hand()
+  # TODO flag the mulligan for this turn
 
 # == HELPERS == #
 

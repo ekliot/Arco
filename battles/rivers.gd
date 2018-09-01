@@ -4,8 +4,6 @@ signal momentum_update(old, new)
 
 var _RIVER_ = preload( "res://battles/river.gd" )
 
-const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
-
 var FIGHTER = null setget ,get_fighter
 var RIVERS = {} setget ,get_rivers
 
@@ -14,7 +12,7 @@ var active_moves = [ null ] # this expects dicts of { 'card': Card, 'river': Str
 
 func _init( fighter ):
   FIGHTER = fighter
-  for id in RIVER_IDS:
+  for id in battlemaster.RIVER_IDS:
     var riv = _RIVER_.new( fighter, self, id )
     riv.connect( 'momentum_update', self, '_on_momentum_change' )
     RIVERS[id] = riv

@@ -1,5 +1,6 @@
 extends Node
 
+# TODO make this template into a class a la spawner.gd
 var PLAYER = {
   'id': '',
   'sprite': null,
@@ -21,11 +22,7 @@ func _init():
   setup_test_player_data()
 
 func setup_test_player_data():
-  print( "setting up test player data..." )
-
-  var hero_battle_id = battlemaster.HERO
-
-  PLAYER.id = 'TEST'
+  PLAYER.id = 'HERO_TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
   PLAYER.cards.deck = dealer.new_deck()
@@ -34,7 +31,7 @@ func setup_test_player_data():
   var card = null
   for i in range(10):
     card = dealer.deal(
-      hero_battle_id,
+      battlemaster.HERO,
       card_suits.get_blades_str(),
       1,
       "slash"
@@ -44,11 +41,8 @@ func setup_test_player_data():
   PLAYER.cards.deck.set_deck( tmp_deck )
 
   PLAYER.sprite = Sprite.new()
-  PLAYER.sprite.name = 'HeroSprite'
+  PLAYER.sprite.name = "%sSprite" % battlemaster.hero_id_to_str( battlemaster.HERO )
   PLAYER.sprite.texture = preload( "res://icon.png" )
-
-  print( "player data:" )
-  print( PLAYER )
 
 func get_player_battle_data():
   return PLAYER

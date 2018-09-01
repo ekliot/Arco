@@ -7,7 +7,7 @@ var MODEL = null
 var MOMENTUM_LEVEL = -1 setget ,get_momentum
 
 var active_card = null setget ,get_active_card
-var active_card_icon = null
+onready var active_card_icon = $Icon
 
 var hovered = false setget ,is_hovered
 
@@ -45,21 +45,28 @@ func valid_for( card ):
   return MODEL.valid_for( card )
 
 func place_card( card ):
-  if is_active():
-    active_card_icon.queue_free()
-
-  # TODO make CardIcon scene instead of using TextureRect
-  var text_rect = TextureRect.new()
-  text_rect.set_texture( card.get_icon() )
-
-  add_child( text_rect )
+  # MODEL.place_card( card )
   active_card = card
-  active_card_icon = text_rect
+  replace_icon( card.get_icon() )
 
 func clear_card():
   if is_active():
     active_card = null
     active_card_icon.queue_free()
+
+# == TEXTURE CONTROL == #
+
+func replace_icon( texture ):
+  # TODO
+  # if is_active():
+  #   active_card_icon.queue_free()
+
+  active_card_icon.queue_free()
+  # TODO make CardIcon scene instead of using TextureRect
+  var trect = TextureRect.new()
+  trect.texture = texture
+  add_child( trect )
+  trect.name = "Icon"
 
 # == GETTERS == #
 

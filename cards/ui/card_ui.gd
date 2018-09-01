@@ -31,7 +31,6 @@ func _input( ev ):
     # TODO filtering based on which button
     if hovered:
       if !pointing and ev.is_pressed():
-        # make a new line pointer
         pick_up()
     else:
       if pointing and !ev.is_pressed():
@@ -79,6 +78,9 @@ func place_me():
   # we expect to be queued to free after this
 
 func drop_me():
+  if pointer.is_locked():
+    pointer.lockon.place_card( CARD )
+
   reset()
   player_data.drop_card()
   emit_signal( 'card_dropped', CARD, self )

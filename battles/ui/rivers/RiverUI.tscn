@@ -25,31 +25,31 @@ _sections_unfolded = [ "Grow Direction", "Rect", "Size Flags", "custom_constants
 
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_right = 32.0
-margin_bottom = 32.0
+margin_right = 16.0
+margin_bottom = 16.0
 
 [node name="2" parent="." index="1" instance=ExtResource( 2 )]
 
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 36.0
-margin_right = 68.0
-margin_bottom = 32.0
+margin_left = 20.0
+margin_right = 36.0
+margin_bottom = 16.0
 
 [node name="3" parent="." index="2" instance=ExtResource( 2 )]
 
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 72.0
-margin_right = 104.0
-margin_bottom = 32.0
+margin_left = 40.0
+margin_right = 56.0
+margin_bottom = 16.0
 
 [node name="4" parent="." index="3" instance=ExtResource( 2 )]
 
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 108.0
-margin_right = 140.0
-margin_bottom = 32.0
+margin_left = 60.0
+margin_right = 76.0
+margin_bottom = 16.0
 
 

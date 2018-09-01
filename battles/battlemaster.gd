@@ -2,7 +2,10 @@ extends Node
 
 enum FIGHTERS { HERO, CPU }
 enum MOVES { PLAY, SWAP, PASS }
+
 const MAX_MOMENTUM = 4
+
+const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 
 # == MODELS == #
 
