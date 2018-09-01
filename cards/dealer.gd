@@ -5,6 +5,8 @@
 
 extends Node
 
+const _DECK_ = preload( "res://cards/deck.gd" )
+
 func _init():
   # TODO preload all cards? is this a performance hit?
   pass
@@ -12,3 +14,6 @@ func _init():
 func deal( owner_id, suit, power, name ):
   var card = load( "res://cards/library/%s/%s_%s.gd" % [suit, power, name] )
   return card.new( owner_id )
+
+func new_deck():
+  return _DECK_.new()

@@ -1,6 +1,6 @@
 extends VBoxContainer
 
-const RiverUI = preload( "river_ui.gd" )
+const _RIVERUI_ = preload( "river_ui.gd" )
 
 var MODEL = null
 
@@ -46,7 +46,7 @@ func get_all_rivers():
   var rivs = []
   for child in get_children():
     # if child.has_method( 'connect_to_model' ): # HACK is there a better way to do this?
-    if child is RiverUI:
+    if child is _RIVERUI_:
       rivs.push_back( child )
   return rivs
 

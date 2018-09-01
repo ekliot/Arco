@@ -8,24 +8,6 @@ signal card_played # who, card, river
 signal card_activated # who, card, river
 signal card_removed # who, card, river
 
-enum FIGHTERS { HERO, CPU }
-enum MOVES { PLAY, SWAP, PASS }
-const MAX_MOMENTUM = 4
-
-var BOARD = {
-  HERO: {
-    'root': null,
-    'rivers':  null,
-    'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
-  },
-
-  CPU: {
-    'root': null,
-    'rivers':  null,
-    'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
-  }
-}
-
 var CUR_MOMENTUM = 0
 
 # we need to be able to dynamically load different battle scenarios
@@ -35,35 +17,49 @@ func _init():
 
 func _ready():
   # TEMP
-  setup( {
+  _setup( {
     'enemies': {
-      'root': preload( "res://characters/enemies/enemy.gd" ).new(),
+      'root': preload( "res://characters/enemies/skeleton.gd" ),
       'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
     }
   } )
 
-func setup( params ):
+func _setup( params ):
   _setup_battle( params )
   $BattleUI.setup_ui()
   _connect_signals()
 
   _start_turn()
 
-func _setup_battle( params ):
-  player_data.setup_test_player_data() # TEMP
+func add_child( child, name=null ):
+  .add_child( child )
+  if name:
+    child.name = name
 
+func _setup_battle( params ):
   var _rivers_ = preload( "res://battles/rivers.gd" )
 
-  BOARD[HERO].root    = preload( "res://characters/heroes/hero.gd" ).new()
-  BOARD[HERO].rivers  = _rivers_.new( HERO )
-  BOARD[HERO].minions = player_data.get_player_battle_data().minions
-  BOARD[CPU].root    = params.enemies.root
-  BOARD[CPU].rivers  = _rivers_.new( CPU )
-  BOARD[CPU].minions = params.enemies.minions
+  # BOARD[HERO].root    = preload( "res://characters/heroes/hero.gd" ).new()
+  # BOARD[HERO].rivers  = _rivers_.new( HERO )
+  # BOARD[HERO].minions = player_data.get_player_battle_data().minions
+  var hero = preload( "res://characters/heroes/hero.gd" ).new(
+    _rivers_.new( battlemaster.HERO ),
+    null # TODO minions
+  )
+  add_child( hero, battlemaster.hero_id_to_str( battlemaster.HERO ) )
+
+  # BOARD[CPU].root    = params.enemies.root
+  # BOARD[CPU].rivers  = _rivers_.new( CPU )
+  # BOARD[CPU].minions = params.enemies.minions
+  var opponent = params.enemies.root.new(
+    _rivers_.new( battlemaster.CPU ),
+    null # TODO minions
+  )
+  add_child( opponent, battlemaster.hero_id_to_str( battlemaster.CPU ) )
 
 func _connect_signals():
   # connect signals to/from hero
-  var hero = get_fighter( HERO )
+  var hero = get_fighter( battlemaster.HERO )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
   # connect signals to/from enemy
@@ -77,7 +73,7 @@ func _start_turn():
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer
-  get_fighter( CPU ).decide_next_move( self )
+  get_fighter( battlemaster.CPU ).decide_next_move( self )
   emit_signal( 'turn_start', self )
 
 func _end_turn():
@@ -98,7 +94,7 @@ func _resolve_all_moves():
     # momentum methods are 1-indexed, and m will be reset at each iteration
     m += 1
 
-    move = get_move_at_momentum( HERO, m )
+    move = get_move_at_momentum( battlemaster.HERO, m )
     if move:
       # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
@@ -113,7 +109,7 @@ func _resolve_all_moves():
         # TODO do signature shit
         pass
 
-    move = get_move_at_momentum( CPU, m )
+    move = get_move_at_momentum( battlemaster.CPU, m )
     if move:
       # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
@@ -121,7 +117,7 @@ func _resolve_all_moves():
 # == FIGHTER MOVES == #
 
 func play_card( who, card, river ):
-  var _name = 'player' if who == HERO else 'enemy'
+  var _name = 'player' if who == battlemaster.HERO else 'enemy'
   print( 'battle.gd // ', _name, ' is playing card ', card, ' into river ', river )
 
   var rivers = get_rivers( who )
@@ -143,7 +139,7 @@ func swap_rivers():
   pass
 
 func mulligan():
-  var hero = get_fighter( HERO )
+  var hero = get_fighter( battlemaster.HERO )
   hero.clear_hand()
   hero.draw_hand()
 
@@ -198,11 +194,8 @@ func test_move_outcome( who, card, river ):
 
 # == GETTERS == #
 
-func get_board():
-  return BOARD
-
 func get_fighter( who ):
-  return BOARD[who].root
+  return get_node( battlemaster.hero_id_to_str( who ) )
 
 func get_active_moves( who ):
   return get_rivers( who ).get_active_moves()
@@ -211,10 +204,10 @@ func get_current_momentum( who ):
   return get_rivers( who ).get_active_momentum()
 
 func get_rivers( who ):
-  return BOARD[who].rivers
+  return get_fighter( who ).get_node( "Rivers" )
 
-func get_minions( who ):
-  return BOARD[who].minions
+# func get_minions( who ):
+#   return BOARD[who].minions
 
 func has_minions( who ):
   var minions = get_minions( who )

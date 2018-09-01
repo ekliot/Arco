@@ -26,6 +26,27 @@ var SIGNATURE = []
 
 var SPRITE = null
 
+func _init( data, rivers, minions ):
+  slurp_data( data )
+  add_child( rivers )
+  rivers.name = "Rivers"
+  # TODO add_child( minions )
+
+func slurp_data( data ):
+  var stats = data.stats
+  var cards = data.cards
+
+  ID += data.id
+
+  HEALTH = stats.health
+  HEALTH_MAX = stats.health_max
+  DRAW_SIZE = stats.draw_size
+
+  DECK = cards.deck
+  SIGNATURE = cards.signature
+
+  SPRITE = data.sprite
+
 # =============== #
 # SIGNAL HANDLERS #
 # =============== #

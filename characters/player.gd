@@ -17,15 +17,18 @@ var PLAYER = {
   'minions': {}
 }
 
+func _init():
+  setup_test_player_data()
+
 func setup_test_player_data():
   print( "setting up test player data..." )
 
-  var hero_battle_id = battlemaster.get_hero_id()
+  var hero_battle_id = battlemaster.HERO
 
   PLAYER.id = 'TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
-  PLAYER.cards.deck = preload( "res://cards/deck.gd" ).new()
+  PLAYER.cards.deck = dealer.new_deck()
 
   var tmp_deck = []
   var card = null
@@ -41,8 +44,8 @@ func setup_test_player_data():
   PLAYER.cards.deck.set_deck( tmp_deck )
 
   PLAYER.sprite = Sprite.new()
-  PLAYER.sprite.set_name( 'HeroSprite' )
-  PLAYER.sprite.set_texture( preload( "res://icon.png" ) )
+  PLAYER.sprite.name = 'HeroSprite'
+  PLAYER.sprite.texture = preload( "res://icon.png" )
 
   print( "player data:" )
   print( PLAYER )

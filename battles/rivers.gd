@@ -16,7 +16,7 @@ func _init( fighter ):
   FIGHTER = fighter
   for id in RIVER_IDS:
     var riv = _RIVER_.new( fighter, self, id )
-    connect( 'momentum_update', self, '_on_momentum_change' )
+    riv.connect( 'momentum_update', self, '_on_momentum_change' )
     RIVERS[id] = riv
 
 # == SIGNAL HANDLING == #
@@ -29,7 +29,7 @@ func _on_momentum_change( old, new ):
       _new = riv.max_momentum
 
   if _new != active_momentum:
-    _old = active_momentum
+    var _old = active_momentum
     active_momentum = _new
     emit_signal( 'momentum_update', _old, _new )
 
@@ -53,6 +53,9 @@ func validate_play( card, river_id ):
   return valid_for( card ) and get_river( river_id ).valid_for( card )
 
 # == GETTERS == #
+
+func get_fighter():
+  return FIGHTER
 
 func get_rivers():
   return RIVERS

@@ -3,7 +3,7 @@ extends TextureRect
 signal card_dropped(card, card_ui)
 
 var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
-# var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" )
+# var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" ) # this doesn't work for some reason
 
 var CARD = null
 

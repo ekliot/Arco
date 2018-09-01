@@ -1,22 +1,21 @@
 extends Node
 
+enum FIGHTERS { HERO, CPU }
+enum MOVES { PLAY, SWAP, PASS }
+const MAX_MOMENTUM = 4
+
 # == MODELS == #
 
 func get_battle():
   return get_node( "/root/Battle" )
 
-func get_hero_id():
-  return get_battle().HERO
-
-func get_cpu_id():
-  return get_battle().CPU
-
 func hero_id_to_str( id ):
   # NOTE match doesn't work here for some reason
-  if id == get_hero_id():
-    return "Hero"
-  elif id == get_cpu_id():
-    return "CPU"
+  match(id):
+    HERO:
+      return "Hero"
+    CPU:
+      return "Enemy"
   return ""
 
 # == VIEWS == #
