@@ -1,23 +1,37 @@
 extends Node
 
+signal momentum_update(old, new)
+
 var _RIVER_ = preload( "res://battles/river.gd" )
 
 const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 
-var FIGHTER = null
-var RIVERS = {}
+var FIGHTER = null setget ,get_fighter
+var RIVERS = {} setget ,get_rivers
 
-var active_momentum = 0
+var active_momentum = 0 setget ,get_active_momentum
 var active_moves = [ null ] # this expects dicts of { 'card': Card, 'river': String }
 
 func _init( fighter ):
   FIGHTER = fighter
   for id in RIVER_IDS:
-    var riv = _RIVER_.new( self, fighter, id )
-    # TODO connect to signals
+    var riv = _RIVER_.new( fighter, self, id )
+    connect( 'momentum_update', self, '_on_momentum_change' )
     RIVERS[id] = riv
 
 # == SIGNAL HANDLING == #
+
+func _on_momentum_change( old, new ):
+  var _new = 0
+
+  for riv in RIVERS.values:
+    if riv.max_momentum > _new:
+      _new = riv.max_momentum
+
+  if _new != active_momentum:
+    _old = active_momentum
+    active_momentum = _new
+    emit_signal( 'momentum_update', _old, _new )
 
 # == CORE == #
 

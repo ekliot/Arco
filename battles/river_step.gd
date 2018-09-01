@@ -4,20 +4,21 @@ signal card_placed(who, level, card)
 signal card_cleared(who, level, card)
 signal card_activated(who, level, card)
 
-var FIGHTER = null
-var RIVER = null
-var MOMENTUM_LEVEL = -1
+var FIGHTER = null setget ,get_fighter
+var RIVER = null setget ,get_river
+var MOMENTUM_LEVEL = -1 setget ,get_momentum
 
-var active_card = null
+var active_card = null setget place_card,get_active_card
 
-func _init( river, fighter, level ):
-  RIVER = river
+func _init( fighter, river, level ):
   FIGHTER = fighter
+  RIVER = river
   MOMENTUM_LEVEL = level
 
 # == CORE == #
 
 func place_card( card ):
+  # TODO check for current active card
   active_card = card
   emit_signal( 'card_placed', FIGHTER, MOMENTUM_LEVEL, card )
 
@@ -33,9 +34,7 @@ func activate_card( card ):
 
 func valid_for( card ):
   var valid = MOMENTUM_LEVEL == card.get_power()
-  # return valid
-  # TEMP HACK
-  return true
+  return valid
 
 # == GETTERS == #
 
