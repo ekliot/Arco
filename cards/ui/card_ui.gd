@@ -7,6 +7,9 @@ var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
 
 var CARD = null
 
+var shrink_size = null
+var grow_size = null
+
 var pointer = null
 
 var hovered = false
@@ -16,30 +19,35 @@ var pointing = false
 # == OVERRIDES == #
 
 func _init():
-  set_custom_minimum_size( texture.get_size() )
+  # TODO set size proportional to UI
+  # TODO connect to UI resizing and set size based on that
+  set_size_params()
+  set_custom_minimum_size( shrink_size )
 
 func _input( ev ):
   if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
     hovered = ui_helper.is_mouse_inside( get_global_rect() )
-    if hovered:
+    if hovered: # and not get_parent().is_examining():
       grow()
-    elif !pointing:
+      # get_parent().examine_card( self )
+    elif not pointing:
       shrink()
 
   # Mouse in viewport coordinates
   if ev is InputEventMouseButton:
     # TODO filtering based on which button
     if hovered:
-      if !pointing and ev.is_pressed():
+      if not pointing and ev.is_pressed():
         pick_up()
     else:
-      if pointing and !ev.is_pressed():
+      if pointing and not ev.is_pressed():
         drop_me()
 
 # == ACTIONS == #
 
 func build( card ):
   CARD = card
+  self.name = card.get_title() + "_UI"
   # TODO actually overlay all the elements with data from the card
   return
 
@@ -60,15 +68,15 @@ func point():
   return ptr
 
 func grow():
-  if !bigger:
+  if not bigger:
     # TODO tween this
-    rect_size = rect_size * 2
+    set_custom_minimum_size( grow_size )
     bigger = true
 
 func shrink():
   if bigger:
     # TODO tween this
-    rect_size = rect_size / 2
+    set_custom_minimum_size( shrink_size )
     bigger = false
 
 func place_me():
@@ -89,6 +97,19 @@ func reset():
   pointer.queue_free()
   pointing = false
   shrink()
+
+# == SETTERS == #
+
+func set_size_params( _min=null, _max=null ):
+  if _min:
+    shrink_size = _min
+  else:
+    shrink_size = texture.get_size()
+
+  if _max:
+    grow_size = _max
+  else:
+    grow_size = shrink_size * 2
 
 # == GETTERS == #
 
