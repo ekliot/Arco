@@ -1,3 +1,9 @@
+"""
+provides constants used across all classes
+provides functionality for all other classes to access and interact the Battle scene
+(in effect, an MVC controller)
+"""
+
 extends Node
 
 enum FIGHTERS { HERO, CPU }
@@ -6,6 +12,13 @@ enum MOVES { PLAY, SWAP, PASS }
 const MAX_MOMENTUM = 4
 
 const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
+
+# == RULES == #
+
+# == MOVES == #
+
+func play_card( card, river_id ):
+  return get_battle().play_card( card, river_id )
 
 # == MODELS == #
 

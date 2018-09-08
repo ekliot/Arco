@@ -20,9 +20,10 @@ func _init( fighter ):
 # == SIGNAL HANDLING == #
 
 func _on_momentum_change( old, new ):
+  # TODO this is kind of a shitshow, optimize this later
   var _new = 0
 
-  for riv in RIVERS.values:
+  for riv in RIVERS.values():
     if riv.max_momentum > _new:
       _new = riv.max_momentum
 
@@ -33,21 +34,25 @@ func _on_momentum_change( old, new ):
 
 # == CORE == #
 
-func place_card( card, river ):
-  pass
+func place_card( card, river_id ):
+  get_river( river_id ).place_card( card )
 
 # == VALIDATORS == #
 
-# this checks that these rivers can accept the card
-#   - card must belong to the same fighter as the rivers
-#   - this river's active momentum must be valid for the card's power level
 func valid_for( card ):
+  """
+  this checks that these rivers can accept the card
+    - card must belong to the same fighter as the rivers
+    - this river's active momentum must be valid for the card's power level
+  """
   var valid = card.get_owner_id() == FIGHTER \
               and card.get_power() <= active_momentum + 1
   return valid
 
-# this validates that a card can be placed into a specific river
 func validate_play( card, river_id ):
+  """
+  this validates that a card can be placed into a specific river
+  """
   return valid_for( card ) and get_river( river_id ).valid_for( card )
 
 # == GETTERS == #

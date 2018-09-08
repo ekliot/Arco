@@ -63,6 +63,8 @@ func _on_turn_end( battle ):
 
 func draw_hand():
   print( ID, " // drawing new hand of size ", DRAW_SIZE )
+  # TODO make sure there are cards to draw from the deck
+  # to_draw = min( DRAW_SIZE, DECK.size() )
   for i in range( DRAW_SIZE ):
     print( ID, " // drawing card ", i )
     draw_card()

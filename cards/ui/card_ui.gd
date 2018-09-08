@@ -1,6 +1,6 @@
 extends TextureRect
 
-signal card_dropped(card, card_ui)
+signal card_placed(card_ui)
 
 var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
 # var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" ) # this doesn't work for some reason
@@ -55,6 +55,22 @@ func pick_up():
   player_data.pick_up_card( CARD )
   pointer = point()
 
+func drop_me():
+  player_data.drop_card()
+
+  if pointer.is_locked():
+    var success = battlemaster.play_card( CARD, pointer.lockon.get_river_id() )
+    if success:
+      emit_signal( 'card_placed', self )
+
+  else:
+    reset()
+
+func reset():
+  pointer.queue_free()
+  pointing = false
+  shrink()
+
 func point():
   # var ptr = _POINTER_.new( self, get_pointer_origin() )
   var ptr = _POINTER_.instance()
@@ -78,25 +94,6 @@ func shrink():
     # TODO tween this
     set_custom_minimum_size( shrink_size )
     bigger = false
-
-func place_me():
-  var target = pointer.get_lockon()
-  reset()
-  emit_signal( 'card_placed', CARD, self, target )
-  # we expect to be queued to free after this
-
-func drop_me():
-  if pointer.is_locked():
-    pointer.lockon.place_card( CARD )
-
-  reset()
-  player_data.drop_card()
-  emit_signal( 'card_dropped', CARD, self )
-
-func reset():
-  pointer.queue_free()
-  pointing = false
-  shrink()
 
 # == SETTERS == #
 

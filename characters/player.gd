@@ -29,7 +29,7 @@ func setup_test_player_data():
 
   var tmp_deck = []
   var card = null
-  for i in range(10):
+  for i in range(20):
     card = dealer.deal(
       battlemaster.HERO,
       card_suits.get_blades_str(),
@@ -53,10 +53,10 @@ var held_card = null
 
 func pick_up_card( card ):
   held_card = card
-  print( "PLAYER // picked up card ", card )
+  # print( "PLAYER // picked up card ", card )
 
 func drop_card():
-  print( "PLAYER // dropping card ", held_card )
+  # print( "PLAYER // dropping card ", held_card )
   held_card = null
 
 func get_held_card():

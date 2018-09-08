@@ -8,16 +8,21 @@ var MODEL = null
 
 func connect_to_model( rivers_model ):
   MODEL = rivers_model
+  MODEL.connect( 'momentum_update', self, '_on_momentum_update' )
   # propogate to child UI elements
   for id in battlemaster.RIVER_IDS:
     var riv_model = rivers_model.get_river( id )
     get_river( id ).connect_to_model( riv_model )
 
 func connect_to_card_pointer( card, pointer ):
-  print( 'connecting pointer ', pointer, ' from card ', card, ' to steps ', get_valid_steps( card ) )
   for step in get_valid_steps( card ):
     step.connect( 'pointer_lockon', pointer, 'lock_to' )
     step.connect( 'pointer_unlock', pointer, 'unlock' )
+
+# == SIGNALS == #
+
+func _on_momentum_update( old, new ):
+  pass
 
 # == CORE == #
 
@@ -53,10 +58,13 @@ func get_river( id ):
 func get_river_step( id, momentum ):
   return get_river( id ).get_step( momentum )
 
+func get_river_step_by_model( step_model ):
+  return get_river_step( step_model.get_river_id(), step_model.get_momentum() )
+
 func get_valid_steps( card ):
   var steps = []
 
   for step in MODEL.get_valid_steps( card ):
-    steps.push_back( get_river_step( step.get_river_id(), step.get_momentum() ) )
+    steps.push_back( get_river_step_by_model( step ) )
 
   return steps

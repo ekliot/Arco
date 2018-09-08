@@ -1,8 +1,8 @@
 extends Node
 
-signal card_placed(who, level, card)
-signal card_cleared(who, level, card)
-signal card_activated(who, level, card)
+signal card_placed(card)
+signal card_cleared(card)
+signal card_activated(card)
 
 var FIGHTER = null setget ,get_fighter
 var RIVER = null setget ,get_river
@@ -20,15 +20,16 @@ func _init( fighter, river, level ):
 func place_card( card ):
   # TODO check for current active card
   active_card = card
-  emit_signal( 'card_placed', FIGHTER, MOMENTUM_LEVEL, card )
+  prints( "STEP\t// card", card, 'placed in', self )
+  emit_signal( 'card_placed', card )
 
 func clear_card( card ):
   active_card = null
-  emit_signal( 'card_cleared', FIGHTER, MOMENTUM_LEVEL, card )
+  emit_signal( 'card_cleared', card )
 
 func activate_card( card ):
   card.activate()
-  emit_signal( 'card_activated', FIGHTER, MOMENTUM_LEVEL, card )
+  emit_signal( 'card_activated', card )
 
 # == VALIDATORS == #
 

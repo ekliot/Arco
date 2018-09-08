@@ -1,5 +1,6 @@
 extends Node
 
+signal card_placed(card, lvl)
 signal momentum_update(old, new)
 signal step_activated(who, level, card)
 
@@ -20,27 +21,43 @@ func _init( fighter, rivers, id ):
   RIVER_ID = id
   for i in range( 1, 5 ):
     var step = _STEP_.new( fighter, self, i )
-    step.connect( 'card_placed', self, '_on_card_placed' )
+    # step.connect( 'card_placed', self, '_on_card_placed' )
     step.connect( 'card_cleared', self, '_on_card_cleared' )
     STEPS.push_back( step )
     STEP_STATES.push_back( null )
 
-func _on_card_placed( who, lvl, card ):
-  STEP_STATES[lvl] = card
-  emit_signal( 'card_placed', who, lvl, card )
+# == SIGNALS == #
+
+func _on_card_cleared( card ):
+  var lvl = card.get_power()
+  STEP_STATES[lvl] = null
+
+  prints( 'RIVER\t//', card, ' cleared for lvl ', lvl )
+
+  emit_signal( 'card_cleared', card, lvl )
   _update_momentum()
 
-func _on_card_cleared( who, lvl, card ):
-  STEP_STATES[lvl] = null
-  emit_signal( 'card_cleared', who, lvl, card )
+# == CORE == #
+
+func place_card( card ):
+  var lvl = card.get_power()
+  STEP_STATES[lvl] = card
+
+  prints( 'RIVER\t//', card, 'set for lvl', lvl )
+
+  get_step( lvl ).place_card( card )
+  emit_signal( 'card_placed', card, lvl )
   _update_momentum()
 
 func _update_momentum():
   var last_m = max_momentum
-  for lvl in range( 1, STEP_STATES.size()+1 ):
+
+  for lvl in range( 1, STEP_STATES.size() ):
     if STEP_STATES[lvl]:
       max_momentum = lvl
+
   if last_m != max_momentum:
+    prints( "RIVER\t// momentum updated to", max_momentum, "from", last_m )
     emit_signal( 'momentum_update', last_m, max_momentum )
 
 # == VALIDATORS == #
@@ -67,7 +84,9 @@ func get_steps():
 func get_step( lvl ):
   return STEPS[ lvl ]
 
-func get_max_momentum():
+func get_max_momentum( refresh=False ):
+  if refresh:
+    _update_momentum()
   return max_momentum
 
 func get_valid_step( card ):

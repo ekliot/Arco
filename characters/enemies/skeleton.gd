@@ -8,6 +8,18 @@ func _build_data():
   data.sprite.texture = preload( "res://icon.png" )
 
   # TODO set stats
-  # TODO set cards
+
+  var tmp_deck = []
+  var card = null
+  for i in range(20):
+    card = dealer.deal(
+      battlemaster.CPU,
+      card_suits.get_blades_str(),
+      1,
+      "slash"
+    )
+    tmp_deck.push_back( card )
+
+  data.cards.deck.set_deck( tmp_deck )
 
   return data

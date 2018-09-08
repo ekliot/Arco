@@ -11,7 +11,7 @@ onready var active_card_icon = $Icon
 
 var hovered = false setget ,is_hovered
 
-# == CORE == #
+# == OVERRIDES == #
 
 func _ready():
   connect( 'mouse_entered', self, '_pointer_lockon' )
@@ -27,9 +27,26 @@ func _input( ev ):
       hovered = false
       _pointer_unlock()
 
+# == SIGNALS == #
+
 func connect_to_model( step_model ):
   MODEL = step_model
   MOMENTUM_LEVEL = MODEL.get_momentum()
+  MODEL.connect( 'card_placed', self, '_on_model_card_placed' )
+  MODEL.connect( 'card_cleared', self, '_on_model_card_cleared' )
+  MODEL.connect( 'card_activated', self, '_on_model_card_activated' )
+
+func _on_model_card_placed( card ):
+  clear_card()
+  active_card = card
+  replace_icon( card.get_icon() )
+
+func _on_model_card_cleared( card ):
+  clear_card()
+
+func _on_model_card_activated( card ):
+  # TODO fancy graphical effects
+  pass
 
 # NOTE for some reason, these signals are being emitted twice if the child
 # TextureRect mouse filter is set to Ignore. This must be done, or else the
@@ -41,32 +58,26 @@ func _pointer_lockon():
 func _pointer_unlock():
   emit_signal( 'pointer_unlock' )
 
+# == CORE == #
+
 func valid_for( card ):
   return MODEL.valid_for( card )
-
-func place_card( card ):
-  # MODEL.place_card( card )
-  active_card = card
-  replace_icon( card.get_icon() )
 
 func clear_card():
   if is_active():
     active_card = null
     active_card_icon.queue_free()
 
-# == TEXTURE CONTROL == #
-
 func replace_icon( texture ):
-  # TODO
-  # if is_active():
-  #   active_card_icon.queue_free()
+  if active_card_icon:
+    active_card_icon.queue_free()
 
-  active_card_icon.queue_free()
   # TODO make CardIcon scene instead of using TextureRect
   var trect = TextureRect.new()
   trect.texture = texture
   add_child( trect )
   trect.name = "Icon"
+  active_card_icon = trect
 
 # == GETTERS == #
 
@@ -75,6 +86,9 @@ func is_active():
 
 func is_hovered():
   return hovered
+
+func get_river_id():
+  return MODEL.RIVER.RIVER_ID
 
 func get_active_card():
   return active_card

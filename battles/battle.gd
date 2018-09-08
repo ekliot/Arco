@@ -1,19 +1,20 @@
 extends Node
 
-signal turn_start # Battle
-signal turn_end # Battle
-signal game_over # winner
+signal turn_start(battle)
+signal turn_end(battle)
+signal game_over(winner)
 
-signal card_played # who, card, river
-signal card_activated # who, card, river
-signal card_removed # who, card, river
+signal card_played(who, card, river)
+signal card_activated(who, card, river)
+signal card_removed(who, card, river)
 
+var SCENARIO = null
 var CUR_MOMENTUM = 0
 
 # we need to be able to dynamically load different battle scenarios
 
-func _init():
-  pass
+func _init( scenario=null ):
+  SCENARIO = scenario
 
 func _ready():
   # TEMP
@@ -23,34 +24,22 @@ func _ready():
       'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
     }
   } )
+  _start_turn()
 
 func _setup( params ):
   _setup_battle( params )
   $BattleUI.setup_ui()
   _connect_signals()
 
-  _start_turn()
-
-func add_child( child, name=null ):
-  .add_child( child )
-  if name:
-    child.name = name
-
 func _setup_battle( params ):
   var _rivers_ = preload( "res://battles/rivers.gd" )
 
-  # BOARD[HERO].root    = preload( "res://characters/heroes/hero.gd" ).new()
-  # BOARD[HERO].rivers  = _rivers_.new( HERO )
-  # BOARD[HERO].minions = player_data.get_player_battle_data().minions
   var hero = preload( "res://characters/heroes/hero.gd" ).new(
     _rivers_.new( battlemaster.HERO ),
     null # TODO minions
   )
   add_child( hero, battlemaster.hero_id_to_str( battlemaster.HERO ) )
 
-  # BOARD[CPU].root    = params.enemies.root
-  # BOARD[CPU].rivers  = _rivers_.new( CPU )
-  # BOARD[CPU].minions = params.enemies.minions
   var opponent = params.enemies.root.new(
     _rivers_.new( battlemaster.CPU ),
     null # TODO minions
@@ -63,9 +52,9 @@ func _connect_signals():
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
   # connect signals to/from enemy
-  # var enemy = get_fighter( CPU )
-  # connect( 'turn_start', enemy, '_on_turn_start' )
-  # connect( 'turn_end',   enemy, '_on_turn_end' )
+  var enemy = get_fighter( battlemaster.CPU )
+  connect( 'turn_start', enemy, '_on_turn_start' )
+  connect( 'turn_end',   enemy, '_on_turn_end' )
 
 # == PRIVATE CORE == #
 
@@ -116,19 +105,22 @@ func _resolve_all_moves():
 
 # == FIGHTER MOVES == #
 
-func play_card( who, card, river ):
+func play_card( card, river ):
+  var who = card.get_owner_id()
   var _name = 'player' if who == battlemaster.HERO else 'enemy'
-  print( 'battle.gd // ', _name, ' is playing card ', card, ' into river ', river )
+  prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river )
 
   var rivers = get_rivers( who )
+  var valid = rivers.validate_play( card, river )
 
-  if rivers.validate_play( card, river ):
+  if valid:
     rivers.place_card( card, river )
+    emit_signal( 'card_played', who, card, river )
   else:
     print( "battle.gd // that was not a valid move" )
 
+  return valid
 
-  emit_signal( 'card_played', who, card, river )
 
 # TODO
 func pass_turn():
@@ -195,6 +187,13 @@ func test_move_outcome( who, card, river ):
 
 # == GETTERS == #
 
+func get_board():
+  var board = {
+    battlemaster.HERO: get_node( battlemaster.hero_id_to_str( battlemaster.HERO ) ),
+    battlemaster.CPU: get_node( battlemaster.hero_id_to_str( battlemaster.CPU ) )
+  }
+  return board
+
 func get_fighter( who ):
   return get_node( battlemaster.hero_id_to_str( who ) )
 
@@ -237,3 +236,13 @@ func get_active_river_at_momentum( who, level ):
 # the 'level' is 1-indexed
 func get_card_at_momentum( who, level ):
   get_rivers( who ).get_card_at_momentum( level )
+
+# == OVERRIDES == #
+
+func add_child( child, name=null ):
+  """
+  Overridden Node.add_child() to also name the node being added
+  """
+  .add_child( child )
+  if name:
+    child.name = name
