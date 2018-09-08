@@ -10,7 +10,7 @@ func connect_to_model( rivers_model ):
   MODEL = rivers_model
   MODEL.connect( 'momentum_update', self, '_on_momentum_update' )
   # propogate to child UI elements
-  for id in battlemaster.RIVER_IDS:
+  for id in BM.RIVER_IDS:
     var riv_model = rivers_model.get_river( id )
     get_river( id ).connect_to_model( riv_model )
 
@@ -37,7 +37,7 @@ func can_place_card( card, river ):
   return valid_for( card ) && MODEL.can_place_card( card, river )
 
 func place_card( card, river ):
-  # var river_step = get_river_step( river, card.get_power() )
+  # var river_step = get_river_step( river, card.POWER )
   # river_step.place_card( card )
   pass
 

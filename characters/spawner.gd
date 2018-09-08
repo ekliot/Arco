@@ -12,13 +12,13 @@ func enemy_template( name="" ):
       'draw_size': 4
     },
     'cards': {
-      'deck': dealer.new_deck(),
+      'deck': DEALER.new_deck(),
       # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
       'signature': []
     }
   }
 
-  template.sprite.name = "%sSprite" % battlemaster.hero_id_to_str( battlemaster.CPU )
+  template.sprite.name = "%sSprite" % BM.hero_id_to_str( BM.CPU )
 
   return template
 

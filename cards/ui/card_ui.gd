@@ -59,7 +59,7 @@ func drop_me():
   player_data.drop_card()
 
   if pointer.is_locked():
-    var success = battlemaster.play_card( CARD, pointer.lockon.get_river_id() )
+    var success = BM.play_card( CARD, pointer.lockon.get_river_id() )
     if success:
       emit_signal( 'card_placed', self )
 
@@ -79,7 +79,7 @@ func point():
   pointing = true
 
   # connect pointer to valid river nodes
-  battlemaster.get_rivers_ui( 'Hero' ).connect_to_card_pointer( CARD, ptr )
+  BM.get_rivers_ui( 'Hero' ).connect_to_card_pointer( CARD, ptr )
 
   return ptr
 

@@ -18,9 +18,9 @@ config/icon="res://icon.png"
 
 card_suits="*res://cards/suits.gd"
 card_effects="*res://cards/effects.gd"
-battlemaster="*res://battles/battlemaster.gd"
-dealer="*res://cards/dealer.gd"
-spawner="*res://characters/spawner.gd"
+BM="*res://battles/battlemaster.gd"
+DEALER="*res://cards/dealer.gd"
+SPAWNER="*res://characters/spawner.gd"
 player_data="*res://characters/player.gd"
 ui_helper="*res://ui_helper.gd"
 

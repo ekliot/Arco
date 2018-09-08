@@ -12,10 +12,11 @@ var active_moves = [ null ] # this expects dicts of { 'card': Card, 'river': Str
 
 func _init( fighter ):
   FIGHTER = fighter
-  for id in battlemaster.RIVER_IDS:
+  for id in BM.RIVER_IDS:
     var riv = _RIVER_.new( fighter, self, id )
     riv.connect( 'momentum_update', self, '_on_momentum_change' )
     RIVERS[id] = riv
+    active_moves.push_back( null )
 
 # == SIGNAL HANDLING == #
 
@@ -36,6 +37,14 @@ func _on_momentum_change( old, new ):
 
 func place_card( card, river_id ):
   get_river( river_id ).place_card( card )
+  update_rivers( card )
+  active_moves[card.POWER] = { 'card': card, 'river': river_id }
+
+func update_rivers( card ):
+  """
+  given card was just played -- clear all cards at a momentum equal to or higher than the card's
+  """
+  var lvl = card.POWER
 
 # == VALIDATORS == #
 
@@ -46,7 +55,7 @@ func valid_for( card ):
     - this river's active momentum must be valid for the card's power level
   """
   var valid = card.get_owner_id() == FIGHTER \
-              and card.get_power() <= active_momentum + 1
+              and card.POWER <= active_momentum + 1
   return valid
 
 func validate_play( card, river_id ):

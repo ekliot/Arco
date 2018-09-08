@@ -25,13 +25,13 @@ func setup_test_player_data():
   PLAYER.id = 'HERO_TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
-  PLAYER.cards.deck = dealer.new_deck()
+  PLAYER.cards.deck = DEALER.new_deck()
 
   var tmp_deck = []
   var card = null
   for i in range(20):
-    card = dealer.deal(
-      battlemaster.HERO,
+    card = DEALER.deal(
+      BM.HERO,
       card_suits.get_blades_str(),
       1,
       "slash"
@@ -41,7 +41,7 @@ func setup_test_player_data():
   PLAYER.cards.deck.set_deck( tmp_deck )
 
   PLAYER.sprite = Sprite.new()
-  PLAYER.sprite.name = "%sSprite" % battlemaster.hero_id_to_str( battlemaster.HERO )
+  PLAYER.sprite.name = "%sSprite" % BM.hero_id_to_str( BM.HERO )
   PLAYER.sprite.texture = preload( "res://icon.png" )
 
 func get_player_battle_data():

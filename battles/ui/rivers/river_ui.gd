@@ -30,7 +30,7 @@ func reverse():
   pass
 
 func place_card( card ):
-  var power = card.get_power()
+  var power = card.POWER
   get_step( power ).place_card( card )
 
 # == GETTERS == #

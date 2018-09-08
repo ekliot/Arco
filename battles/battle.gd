@@ -35,24 +35,24 @@ func _setup_battle( params ):
   var _rivers_ = preload( "res://battles/rivers.gd" )
 
   var hero = preload( "res://characters/heroes/hero.gd" ).new(
-    _rivers_.new( battlemaster.HERO ),
+    _rivers_.new( BM.HERO ),
     null # TODO minions
   )
-  add_child( hero, battlemaster.hero_id_to_str( battlemaster.HERO ) )
+  add_child( hero, BM.hero_id_to_str( BM.HERO ) )
 
   var opponent = params.enemies.root.new(
-    _rivers_.new( battlemaster.CPU ),
+    _rivers_.new( BM.CPU ),
     null # TODO minions
   )
-  add_child( opponent, battlemaster.hero_id_to_str( battlemaster.CPU ) )
+  add_child( opponent, BM.hero_id_to_str( BM.CPU ) )
 
 func _connect_signals():
   # connect signals to/from hero
-  var hero = get_fighter( battlemaster.HERO )
+  var hero = get_fighter( BM.HERO )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
   # connect signals to/from enemy
-  var enemy = get_fighter( battlemaster.CPU )
+  var enemy = get_fighter( BM.CPU )
   connect( 'turn_start', enemy, '_on_turn_start' )
   connect( 'turn_end',   enemy, '_on_turn_end' )
 
@@ -62,7 +62,7 @@ func _start_turn():
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer
-  get_fighter( battlemaster.CPU ).decide_next_move( self )
+  get_fighter( BM.CPU ).decide_next_move( self )
   emit_signal( 'turn_start', self )
 
 func _end_turn():
@@ -83,7 +83,7 @@ func _resolve_all_moves():
     # momentum methods are 1-indexed, and m will be reset at each iteration
     m += 1
 
-    move = get_move_at_momentum( battlemaster.HERO, m )
+    move = get_move_at_momentum( BM.HERO, m )
     if move:
       # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
@@ -98,7 +98,7 @@ func _resolve_all_moves():
         # TODO do signature shit
         pass
 
-    move = get_move_at_momentum( battlemaster.CPU, m )
+    move = get_move_at_momentum( BM.CPU, m )
     if move:
       # TEMP actually think though how this logics out
       move.card.activate( self, move.river )
@@ -107,7 +107,7 @@ func _resolve_all_moves():
 
 func play_card( card, river ):
   var who = card.get_owner_id()
-  var _name = 'player' if who == battlemaster.HERO else 'enemy'
+  var _name = 'player' if who == BM.HERO else 'enemy'
   prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river )
 
   var rivers = get_rivers( who )
@@ -131,7 +131,7 @@ func swap_rivers():
   pass
 
 func mulligan():
-  var hero = get_fighter( battlemaster.HERO )
+  var hero = get_fighter( BM.HERO )
   hero.clear_hand()
   hero.draw_hand()
   # TODO flag the mulligan for this turn
@@ -171,7 +171,7 @@ func available_moves( who ):
 func can_place_card( who, card, river ):
   # check if momentum is within limits for that fighter
   var cur_mom = get_current_momentum( who )
-  if card.get_power() > cur_mom + 1:
+  if card.POWER > cur_mom + 1:
     return false
 
   # check if the fighter can't play the card
@@ -189,13 +189,13 @@ func test_move_outcome( who, card, river ):
 
 func get_board():
   var board = {
-    battlemaster.HERO: get_node( battlemaster.hero_id_to_str( battlemaster.HERO ) ),
-    battlemaster.CPU: get_node( battlemaster.hero_id_to_str( battlemaster.CPU ) )
+    BM.HERO: get_node( BM.hero_id_to_str( BM.HERO ) ),
+    BM.CPU: get_node( BM.hero_id_to_str( BM.CPU ) )
   }
   return board
 
 func get_fighter( who ):
-  return get_node( battlemaster.hero_id_to_str( who ) )
+  return get_node( BM.hero_id_to_str( who ) )
 
 func get_active_moves( who ):
   return get_rivers( who ).get_active_moves()

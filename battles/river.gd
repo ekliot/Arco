@@ -29,7 +29,7 @@ func _init( fighter, rivers, id ):
 # == SIGNALS == #
 
 func _on_card_cleared( card ):
-  var lvl = card.get_power()
+  var lvl = card.POWER
   STEP_STATES[lvl] = null
 
   prints( 'RIVER\t//', card, ' cleared for lvl ', lvl )
@@ -40,7 +40,7 @@ func _on_card_cleared( card ):
 # == CORE == #
 
 func place_card( card ):
-  var lvl = card.get_power()
+  var lvl = card.POWER
   STEP_STATES[lvl] = card
 
   prints( 'RIVER\t//', card, 'set for lvl', lvl )
@@ -90,7 +90,7 @@ func get_max_momentum( refresh=False ):
   return max_momentum
 
 func get_valid_step( card ):
-  var step = get_step( card.get_power() )
+  var step = get_step( card.POWER )
   if step.valid_for( card ):
     return step
   else:

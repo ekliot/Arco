@@ -60,16 +60,16 @@ func _setup_duel_area( battle ):
 
 func _setup_rivers( battle ):
   # first, connect the river UIs to their respective models
-  var hero_rivers = battle.get_rivers( battlemaster.HERO )
+  var hero_rivers = battle.get_rivers( BM.HERO )
   get_rivers( "Hero" ).connect_to_model( hero_rivers )
 
-  var enemy_rivers = battle.get_rivers( battlemaster.CPU )
+  var enemy_rivers = battle.get_rivers( BM.CPU )
   get_rivers( "Enemy" ).connect_to_model( enemy_rivers )
   # get_rivers( "Enemy" ).reverse()
 
 func _setup_sprites( battle ):
-  var sprite_hero  = battle.get_fighter( battlemaster.HERO ).get_sprite()
-  var sprite_enemy = battle.get_fighter( battlemaster.CPU ).get_sprite()
+  var sprite_hero  = battle.get_fighter( BM.HERO ).get_sprite()
+  var sprite_enemy = battle.get_fighter( BM.CPU ).get_sprite()
 
   place_hero_sprite( sprite_hero )
   place_enemy_sprite( sprite_enemy )
@@ -97,7 +97,7 @@ func _connect_signals( battle ):
   battle.connect( 'card_removed',   self, '_on_card_removed' )
 
   # hero state changes
-  var hero = battle.get_fighter( battlemaster.HERO )
+  var hero = battle.get_fighter( BM.HERO )
   hero.connect( 'draw_card',      self, '_on_hero_draw_card' )
   hero.connect( 'discard_card',   self, '_on_hero_discard_card' )
   hero.connect( 'take_damage',    self, '_on_hero_take_damage' )
@@ -108,7 +108,7 @@ func _connect_signals( battle ):
   hero.connect( 'combo_activate', self, '_on_hero_combo_activate' )
 
   # enemy state changes
-  var enemy = battle.get_fighter( battlemaster.CPU )
+  var enemy = battle.get_fighter( BM.CPU )
   enemy.connect( 'draw_card',      self, '_on_enemy_draw_card' )
   enemy.connect( 'discard_card',   self, '_on_enemy_discard_card' )
   enemy.connect( 'take_damage',    self, '_on_enemy_take_damage' )

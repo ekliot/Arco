@@ -8,13 +8,13 @@ var _TEMPLATE_ = preload( "res://cards/ui/CardUI.tscn" )
 
 var OWNER_ID = null
 
-var ID = "CARD_"        # unique ID for the card, going CARD_<SUIT>_<NAME>
-var TITLE = ""          # human-readable display name
-var SUIT = -1           # corresponds to SUITS enum in cards/suits.gd
-var POWER = -1          # power level of the card
-var ICON = null         # Texture for the card's icon (typically, the suit icon)
-var ILLUSTRATION = null # Texture for the card's illustration
-var DESCRIPTION = ""    # long string of this card's description (QUESTION should/can this be marked up?)
+var ID = "CARD_" setget ,get_card_id # unique ID for the card, going CARD_<SUIT>_<NAME>
+var TITLE = "" setget ,get_title # human-readable display name
+var SUIT = -1 setget ,get_suit # corresponds to SUITS enum in cards/suits.gd
+var POWER = -1 setget ,get_power # power level of the card
+var ICON = null setget ,get_icon # Texture for the card's icon (typically, the suit icon)
+var ILLUSTRATION = null setget ,get_illustration # Texture for the card's illustration
+var DESCRIPTION = "" setget ,get_description # long string of this card's description (QUESTION should/can this be marked up?)
 
 func _init( owner_id, card_params ):
   self.OWNER_ID = owner_id
@@ -112,6 +112,9 @@ func get_power():
 
 func get_icon():
   return ICON
+
+func get_illustration():
+  return ILLUSTRATION
 
 func get_description():
   return DESCRIPTION
