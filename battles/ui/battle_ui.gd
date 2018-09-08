@@ -145,11 +145,12 @@ func _on_card_removed( who, card, river ):
 
 func _on_hero_draw_card( card, hand, deck ):
   # TODO verify UI hand and hero hand are in sync
+  # TODO update deck/discard based on deck size
   var card_sprite = get_hand().add_card( card )
   # card_sprite.connect( 'card_placed', self, '_player_places_card' )
-  # TODO update deck
 
 func _on_hero_discard_card( card, hand, discard ):
+  # get_hand().remove_card()
   pass
 
 func _on_hero_take_damage( new_hp, old_hp, max_hp ):

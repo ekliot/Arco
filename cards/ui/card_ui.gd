@@ -5,16 +5,16 @@ signal card_placed(card_ui)
 var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
 # var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" ) # this doesn't work for some reason
 
-var CARD = null
+var CARD = null setget ,get_card
 
 var shrink_size = null
 var grow_size = null
 
 var pointer = null
 
-var hovered = false
-var bigger = false
-var pointing = false
+var hovered = false setget ,is_hovered
+var bigger = false setget ,is_bigger
+var pointing = false setget ,is_pointing
 
 # == OVERRIDES == #
 
@@ -49,7 +49,7 @@ func build( card ):
   CARD = card
   self.name = card.get_title() + "_UI"
   # TODO actually overlay all the elements with data from the card
-  return
+  return self
 
 func pick_up():
   player_data.pick_up_card( CARD )
@@ -61,7 +61,7 @@ func drop_me():
   if pointer.is_locked():
     var success = BM.play_card( CARD, pointer.lockon.get_river_id() )
     if success:
-      emit_signal( 'card_placed', self )
+      emit_signal( 'card_placed', CARD )
 
   else:
     reset()

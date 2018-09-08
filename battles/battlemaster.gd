@@ -30,6 +30,7 @@ func enemy_move( card, river_id ):
   tell Battle that the enemy wants to make this move
   the Battle is expected to
   """
+  # TODO do this
   pass
 
 # == HELPERS == #

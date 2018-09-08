@@ -68,6 +68,7 @@ func draw_hand():
 func draw_card():
   if DECK.empty() and not DISCARD.empty():
     print( ID, " // reshuffling discard into deck" )
+    # TODO emit a signal here for the UI
     DECK = DISCARD
     DISCARD.clear()
     DECK.shuffle()

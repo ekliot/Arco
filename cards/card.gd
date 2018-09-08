@@ -72,8 +72,7 @@ func _load_template():
   var template = _TEMPLATE_.instance()
   # set up template instance
   # this means overlaying the template with card data, image, modifiers, etc.
-  template.build( self )
-  return template
+  return template.build( self )
 
 # == GETTERS == #
 
