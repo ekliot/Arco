@@ -65,7 +65,7 @@ func _setup_rivers( battle ):
 
   var enemy_rivers = battle.get_rivers( BM.CPU )
   get_rivers( "Enemy" ).connect_to_model( enemy_rivers )
-  # get_rivers( "Enemy" ).reverse()
+  get_rivers( "Enemy" ).reverse()
 
 func _setup_sprites( battle ):
   var sprite_hero  = battle.get_fighter( BM.HERO ).get_sprite()

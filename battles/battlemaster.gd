@@ -15,10 +15,24 @@ const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 
 # == RULES == #
 
+# QUESTION is it worth including global interpreters and queries for game rules here?
+# e.g. what momentums is a card valid for?
+# NOTE yes, yes it is
+# TODO rule handling
+
 # == MOVES == #
 
 func play_card( card, river_id ):
   return get_battle().play_card( card, river_id )
+
+func enemy_move( card, river_id ):
+  """
+  tell Battle that the enemy wants to make this move
+  the Battle is expected to
+  """
+  pass
+
+# == HELPERS == #
 
 # == MODELS == #
 

@@ -27,8 +27,8 @@ func _on_momentum_update( old, new ):
 # == CORE == #
 
 func reverse():
-  # reverse each river
-  pass
+  for river in get_all_rivers():
+    river.reverse()
 
 func valid_for( card ):
   return MODEL.valid_for( card )

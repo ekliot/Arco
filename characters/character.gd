@@ -47,9 +47,7 @@ func slurp_data( data ):
 
   SPRITE = data.sprite
 
-# =============== #
-# SIGNAL HANDLERS #
-# =============== #
+# == SIGNALS == #
 
 func _on_turn_start( battle ):
   draw_hand()
@@ -57,9 +55,7 @@ func _on_turn_start( battle ):
 func _on_turn_end( battle ):
   clear_hand()
 
-# ======= #
-# ACTIONS #
-# ======= #
+# == ACTIONS == #
 
 func draw_hand():
   print( ID, " // drawing new hand of size ", DRAW_SIZE )
@@ -121,9 +117,16 @@ func set_momentum( lvl ):
   MOMENTUM = lvl
   print( ID, ' // ', 'set momentum to ', lvl, ' from ', MOMENTUM )
 
-# ======= #
-# HELPERS #
-# ======= #
+# == HELPERS == #
 
 func get_sprite():
   return SPRITE
+
+func get_valid_moves():
+  var moves = []
+
+  for card in HAND:
+    if card.POWER <= MOMENTUM + 1:
+      moves.push_back( card )
+
+  return moves

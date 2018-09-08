@@ -23,3 +23,11 @@ func _build_data():
   data.cards.deck.set_deck( tmp_deck )
 
   return data
+
+func decide_next_move( board ):
+  .decide_next_move( board )
+  var moves = get_valid_moves()
+  var next = moves[ randi() % moves.size() ]
+  var riv = BM.RIVER_IDS[ randi() % BM.RIVER_IDS.size() ]
+  prints( ID, "// decided to play", next, 'in river', riv )
+  BM.play_card( next, riv )

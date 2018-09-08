@@ -27,7 +27,13 @@ func connect_to_model( river_model ):
 
 func reverse():
   # reverse the order of RiverStep Nodes
-  pass
+  var reversed = []
+  for c in get_children():
+    reversed.push_front( c )
+    remove_child( c )
+
+  for c in reversed:
+    add_child( c )
 
 func place_card( card ):
   var power = card.POWER

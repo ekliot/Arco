@@ -51,9 +51,10 @@ func _connect_signals():
   var hero = get_fighter( BM.HERO )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
+
   # connect signals to/from enemy
   var enemy = get_fighter( BM.CPU )
-  connect( 'turn_start', enemy, '_on_turn_start' )
+  # connect( 'turn_start', enemy, '_on_turn_start' )
   connect( 'turn_end',   enemy, '_on_turn_end' )
 
 # == PRIVATE CORE == #
@@ -62,22 +63,29 @@ func _start_turn():
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer
-  get_fighter( BM.CPU ).decide_next_move( self )
-  emit_signal( 'turn_start', self )
+  # TODO make this more... elegant. currently, the enemy is disconnected from the turn_start signal, and decide_next_move() handles that instead
+  get_fighter( BM.CPU ).decide_next_move( get_board() )
+  emit_signal( 'turn_start', get_board() )
 
 func _end_turn():
   var result = _resolve_all_moves()
   if result == null:
-    emit_signal( 'turn_end', self )
+    emit_signal( 'turn_end', get_board() )
   else:
     emit_signal( 'game_over', result )
 
 func _resolve_all_moves():
+  """
+  activates moves in each river, upstream, alternating between player and enemy
+  if at any activation a winner is found (the scenario's win condition is reached), that winner is returned
+  if no winner is resolved after all moves are exhausted, null is returned and the next turn starts
+  """
   # iterate up the rivers
   # for each momentum M in 1..4
   #  resolve momentum M card for hero
   #  resolve momentum M card for enemy
   var move = null
+  var winner = null
 
   for m in range( CUR_MOMENTUM ):
     # momentum methods are 1-indexed, and m will be reset at each iteration
