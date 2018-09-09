@@ -13,7 +13,6 @@ func is_empty():
 
 func add_card( card ):
   cards.push_back( card )
-  print( card )
   emit_signal( 'card_added', card, get_cards() )
 
 func remove_card( card ):

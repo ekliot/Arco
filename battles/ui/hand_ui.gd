@@ -5,8 +5,6 @@ signal card_removed(card, sprites)
 
 func connect_to_hero_hand():
   var hero = BM.get_hero()
-  for c in hero.get_children():
-    print( c.name )
   var hand = hero.get_node( 'Hand' )
   hand.connect( 'card_added', self, '_on_hand_card_added' )
   hand.connect( 'card_removed', self, '_on_hand_card_removed' )
