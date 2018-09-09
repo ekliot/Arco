@@ -78,7 +78,7 @@ func play_card( card, river ):
   # let the world know!
   emit_signal( 'play_card', card )
   # make sure the battle has confirmed our move and all is well
-  yield( BM.get_battle(), 'card_played' )
+  yield()
   # tell the world we are done with our turn
   end_turn()
 

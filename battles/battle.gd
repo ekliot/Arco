@@ -121,9 +121,9 @@ func play_card( card, river ):
 
   prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river, '...' )
 
-  fighter.play_card( card, river )
-  yield( fighter, 'play_card' )
+  var play = fighter.play_card( card, river )
   emit_signal( 'card_played', card, river )
+  play.resume()
 
 # TODO
 func pass_turn():
