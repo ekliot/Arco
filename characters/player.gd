@@ -39,6 +39,7 @@ func setup_test_player_data():
     tmp_deck.push_back( card )
 
   PLAYER.cards.deck.set_deck( tmp_deck )
+  PLAYER.cards.deck.shuffle()
 
   PLAYER.sprite = Sprite.new()
   PLAYER.sprite.name = "%sSprite" % BM.hero_id_to_str( BM.HERO )

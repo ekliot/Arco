@@ -5,7 +5,7 @@
 [ext_resource path="res://cards/ui/DeckUI.tscn" type="PackedScene" id=3]
 [ext_resource path="res://battles/ui/HandUI.tscn" type="PackedScene" id=4]
 
-[node name="BattleUI" type="VBoxContainer" index="0"]
+[node name="BattleUI" type="VBoxContainer"]
 
 anchor_left = 0.0
 anchor_top = 0.0

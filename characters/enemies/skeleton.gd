@@ -21,6 +21,7 @@ func _build_data():
     tmp_deck.push_back( card )
 
   data.cards.deck.set_deck( tmp_deck )
+  data.cards.deck.shuffle()
 
   return data
 

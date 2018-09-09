@@ -83,8 +83,12 @@ func _setup_timer( battle ):
 # ==== card area
 
 func _setup_card_area( battle ):
+  # setup deck
+  var deck = get_deck()
+  deck.get_node( "DrawCount" ).text = str(BM.get_hero().DRAW_SIZE)
   # setup hand
-  pass
+  get_hand().connect_to_hero_hand()
+  # setup discard
 
 # == SIGNAL HANDLING == #
 
@@ -100,23 +104,23 @@ func _connect_signals( battle ):
   var hero = battle.get_fighter( BM.HERO )
   hero.connect( 'draw_card',      self, '_on_hero_draw_card' )
   hero.connect( 'discard_card',   self, '_on_hero_discard_card' )
-  hero.connect( 'take_damage',    self, '_on_hero_take_damage' )
-  hero.connect( 'heal_damage',    self, '_on_hero_heal_damage' )
-  hero.connect( 'died',           self, '_on_hero_died' )
-  hero.connect( 'momentum_inc',   self, '_on_hero_momentum_inc' )
-  hero.connect( 'momentum_dec',   self, '_on_hero_momentum_dec' )
-  hero.connect( 'combo_activate', self, '_on_hero_combo_activate' )
+  # hero.connect( 'take_damage',    self, '_on_hero_take_damage' )
+  # hero.connect( 'heal_damage',    self, '_on_hero_heal_damage' )
+  # hero.connect( 'died',           self, '_on_hero_died' )
+  # hero.connect( 'momentum_inc',   self, '_on_hero_momentum_inc' )
+  # hero.connect( 'momentum_dec',   self, '_on_hero_momentum_dec' )
+  # hero.connect( 'combo_activate', self, '_on_hero_combo_activate' )
 
   # enemy state changes
   var enemy = battle.get_fighter( BM.CPU )
   enemy.connect( 'draw_card',      self, '_on_enemy_draw_card' )
   enemy.connect( 'discard_card',   self, '_on_enemy_discard_card' )
-  enemy.connect( 'take_damage',    self, '_on_enemy_take_damage' )
-  enemy.connect( 'heal_damage',    self, '_on_enemy_heal_damage' )
-  enemy.connect( 'died',           self, '_on_enemy_died' )
-  enemy.connect( 'momentum_inc',   self, '_on_enemy_momentum_inc' )
-  enemy.connect( 'momentum_dec',   self, '_on_enemy_momentum_dec' )
-  enemy.connect( 'combo_activate', self, '_on_enemy_combo_activate' )
+  # enemy.connect( 'take_damage',    self, '_on_enemy_take_damage' )
+  # enemy.connect( 'heal_damage',    self, '_on_enemy_heal_damage' )
+  # enemy.connect( 'died',           self, '_on_enemy_died' )
+  # enemy.connect( 'momentum_inc',   self, '_on_enemy_momentum_inc' )
+  # enemy.connect( 'momentum_dec',   self, '_on_enemy_momentum_dec' )
+  # enemy.connect( 'combo_activate', self, '_on_enemy_combo_activate' )
 
 # ==== board
 
@@ -129,27 +133,28 @@ func _on_turn_end( battle ):
   # disable hero rivers
   pass
 
-func _player_places_card( card, river_step ):
+func _on_card_played( card, river ):
   pass
 
-func _on_card_played( who, card, river ):
+func _on_card_activated( card, river ):
   pass
 
-func _on_card_activated( who, card, river ):
-  pass
-
-func _on_card_removed( who, card, river ):
+func _on_card_removed( card, river ):
   pass
 
 # ==== hero
 
-func _on_hero_draw_card( card, hand, deck ):
+# func _on_hero_play_card( card, river ):
+#   pass
+
+func _on_hero_draw_card( card ):
   # TODO verify UI hand and hero hand are in sync
   # TODO update deck/discard based on deck size
-  var card_sprite = get_hand().add_card( card )
+  # var card_sprite = get_hand().add_card( card )
   # card_sprite.connect( 'card_placed', self, '_player_places_card' )
+  pass
 
-func _on_hero_discard_card( card, hand, discard ):
+func _on_hero_discard_card( card ):
   # get_hand().remove_card()
   pass
 
@@ -173,10 +178,13 @@ func _on_hero_combo_activate():
 
 # ==== enemy
 
-func _on_enemy_draw_card( card, hand, deck ):
+# func _on_enemy_play_card( card, river ):
+#   pass
+
+func _on_enemy_draw_card( card ):
   pass
 
-func _on_enemy_discard_card( card, hand, discard ):
+func _on_enemy_discard_card( card ):
   pass
 
 func _on_enemy_take_damage( new_hp, old_hp, max_hp ):
@@ -265,6 +273,9 @@ func place_enemy_card( card, river ):
 # hand
 
 # == GETTERS == #
+
+func get_deck():
+  return CARD_AREA.get_node( "DeckContainer" ).get_child(0)
 
 func get_hand():
   return CARD_AREA.get_node( 'Hand' )

@@ -1,6 +1,7 @@
 extends TextureRect
 
-signal card_placed(card_ui)
+signal card_played(card, sprite)
+signal card_discarded(card, sprite)
 
 var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
 # var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" ) # this doesn't work for some reason
@@ -43,6 +44,12 @@ func _input( ev ):
       if pointing and not ev.is_pressed():
         drop_me()
 
+func _on_card_played( card ):
+  emit_signal( 'card_played', card, self )
+
+func _on_card_discarded( card ):
+  emit_signal( 'card_discarded', card, self )
+
 # == ACTIONS == #
 
 func build( card ):
@@ -59,9 +66,8 @@ func drop_me():
   player_data.drop_card()
 
   if pointer.is_locked():
-    var success = BM.play_card( CARD, pointer.lockon.get_river_id() )
-    if success:
-      emit_signal( 'card_placed', CARD )
+    if BM.validate_play( CARD, pointer.lockon.get_river_id() ):
+      BM.play_card( CARD, pointer.lockon.get_river_id() )
 
   else:
     reset()

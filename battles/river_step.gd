@@ -46,7 +46,7 @@ func get_river():
   return RIVER
 
 func get_river_id():
-  return get_river().get_river_id()
+  return get_river().RIVER_ID
 
 func get_fighter():
   return FIGHTER

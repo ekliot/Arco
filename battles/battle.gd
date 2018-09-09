@@ -4,9 +4,9 @@ signal turn_start(battle)
 signal turn_end(battle)
 signal game_over(winner)
 
-signal card_played(who, card, river)
-signal card_activated(who, card, river)
-signal card_removed(who, card, river)
+signal card_played(card, river)
+signal card_activated(card, river)
+signal card_removed(card, river)
 
 var SCENARIO = null
 var CUR_MOMENTUM = 0
@@ -51,6 +51,7 @@ func _connect_signals():
   var hero = get_fighter( BM.HERO )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
+  hero.connect( 'end_turn', self, '_end_turn' )
 
   # connect signals to/from enemy
   var enemy = get_fighter( BM.CPU )
@@ -116,19 +117,13 @@ func _resolve_all_moves():
 func play_card( card, river ):
   var who = card.get_owner_id()
   var _name = 'player' if who == BM.HERO else 'enemy'
-  prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river )
+  var fighter = get_fighter( who )
 
-  var rivers = get_rivers( who )
-  var valid = rivers.validate_play( card, river )
+  prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river, '...' )
 
-  if valid:
-    rivers.place_card( card, river )
-    emit_signal( 'card_played', who, card, river )
-  else:
-    print( "battle.gd // that was not a valid move" )
-
-  return valid
-
+  fighter.play_card( card, river )
+  yield( fighter, 'play_card' )
+  emit_signal( 'card_played', card, river )
 
 # TODO
 func pass_turn():
@@ -177,16 +172,7 @@ func available_moves( who ):
   return null
 
 func can_place_card( who, card, river ):
-  # check if momentum is within limits for that fighter
-  var cur_mom = get_current_momentum( who )
-  if card.POWER > cur_mom + 1:
-    return false
-
-  # check if the fighter can't play the card
-  # if !get_fighter( who ).can_play_card( card, river ):
-  #   return false
-
-  return true
+  return get_fighter( who ).validate_play( card, river )
 
 # TODO
 func test_move_outcome( who, card, river ):
@@ -212,7 +198,7 @@ func get_current_momentum( who ):
   return get_rivers( who ).get_active_momentum()
 
 func get_rivers( who ):
-  return get_fighter( who ).get_node( "Rivers" )
+  return get_fighter( who ).get_rivers()
 
 # func get_minions( who ):
 #   return BOARD[who].minions

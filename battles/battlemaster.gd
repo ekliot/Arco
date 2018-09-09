@@ -20,6 +20,10 @@ const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 # NOTE yes, yes it is
 # TODO rule handling
 
+func validate_play( card, river_id ):
+  var who = card.OWNER_ID
+  return get_battle().can_place_card( who, card, river_id )
+
 # == MOVES == #
 
 func play_card( card, river_id ):
@@ -39,6 +43,15 @@ func enemy_move( card, river_id ):
 
 func get_battle():
   return get_node( "/root/Battle" )
+
+func get_board():
+  return get_battle().get_board()
+
+func get_hero():
+  return get_battle().get_fighter( HERO )
+
+func get_enemy():
+  return get_battle().get_fighter( CPU )
 
 func hero_id_to_str( id ):
   # NOTE match doesn't work here for some reason

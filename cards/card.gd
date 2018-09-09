@@ -1,8 +1,8 @@
 extends Node
 
-signal played
-signal activated
-signal discarded
+signal played(card)
+signal activated(card)
+signal cleared(card)
 
 var _TEMPLATE_ = preload( "res://cards/ui/CardUI.tscn" )
 
@@ -51,21 +51,19 @@ func activate( board, river ):
   _onactivate( board, river )
   emit_signal( 'activated', self )
 
-func discard( board, river ):
-  _ondiscard( board, river )
-  emit_signal( 'discarded', self )
+func cleared( board, river ):
+  _onclear( board, river )
+  emit_signal( 'cleared', self )
 
-# ============= #
-# OVERRIDEABLES #
-# ============= #
+# == OVERRIDEABLES == #
 
-func _onplay( board ):
+func _onplay( board, river ):
   pass
 
-func _onactivate( board ):
+func _onactivate( board, river ):
   pass
 
-func _ondiscard( board ):
+func _onclear( board, river ):
   pass
 
 func _load_template():

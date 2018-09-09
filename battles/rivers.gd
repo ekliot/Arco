@@ -1,5 +1,6 @@
 extends Node
 
+signal card_placed(card, river_id)
 signal momentum_update(old, new)
 
 var _RIVER_ = preload( "res://battles/river.gd" )
@@ -39,12 +40,22 @@ func place_card( card, river_id ):
   get_river( river_id ).place_card( card )
   update_rivers( card )
   active_moves[card.POWER] = { 'card': card, 'river': river_id }
+  emit_signal( 'card_placed', card, river_id )
 
 func update_rivers( card ):
   """
   given card was just played -- clear all cards at a momentum equal to or higher than the card's
   """
   var lvl = card.POWER
+  var move = null
+  var step = null
+  for l in range( lvl, active_moves.size() ):
+    move = active_moves[l]
+    if move:
+      step = get_river_step( move.river, l )
+      # TODO tell the move it's being cleared
+      # TODO tell the river_step it's being cleared
+      active_moves[l] = null
 
 # == VALIDATORS == #
 
