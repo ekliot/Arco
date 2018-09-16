@@ -36,13 +36,14 @@ func setup_test_player_data():
       1,
       "slash"
     )
+    card.name = 'slash%d' % i
     tmp_deck.push_back( card )
 
   PLAYER.cards.deck.set_deck( tmp_deck )
   PLAYER.cards.deck.shuffle()
 
   PLAYER.sprite = Sprite.new()
-  PLAYER.sprite.name = "%sSprite" % BM.hero_id_to_str( BM.HERO )
+  PLAYER.sprite.name = "%sSprite" % BM.fighter_id_to_str( BM.HERO )
   PLAYER.sprite.texture = preload( "res://icon.png" )
 
 func get_player_battle_data():

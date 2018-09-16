@@ -18,6 +18,7 @@ func _build_data():
       1,
       "slash"
     )
+    card.name = 'slash%d' % i
     tmp_deck.push_back( card )
 
   data.cards.deck.set_deck( tmp_deck )

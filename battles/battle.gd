@@ -1,5 +1,6 @@
 extends Node
 
+signal all_ready
 signal turn_start(battle)
 signal turn_end(battle)
 signal game_over(winner)
@@ -10,6 +11,8 @@ signal card_removed(card, river)
 
 var SCENARIO = null
 var CUR_MOMENTUM = 0
+
+var ready_players = { BM.HERO: false, BM.CPU: false }
 
 # we need to be able to dynamically load different battle scenarios
 
@@ -38,29 +41,43 @@ func _setup_battle( params ):
     _rivers_.new( BM.HERO ),
     null # TODO minions
   )
-  add_child( hero, BM.hero_id_to_str( BM.HERO ) )
+  add_child( hero, BM.fighter_id_to_str( BM.HERO ) )
 
   var opponent = params.enemies.root.new(
     _rivers_.new( BM.CPU ),
     null # TODO minions
   )
-  add_child( opponent, BM.hero_id_to_str( BM.CPU ) )
+  add_child( opponent, BM.fighter_id_to_str( BM.CPU ) )
 
 func _connect_signals():
+  connect( 'all_ready', self, '_start_turn' )
+
   # connect signals to/from hero
   var hero = get_fighter( BM.HERO )
+  hero.connect( 'ready', self, '_ready_up' )
+  hero.connect( 'end_turn', self, '_end_turn' )
   connect( 'turn_start', hero, '_on_turn_start' )
   connect( 'turn_end',   hero, '_on_turn_end' )
-  hero.connect( 'end_turn', self, '_end_turn' )
 
   # connect signals to/from enemy
   var enemy = get_fighter( BM.CPU )
+  enemy.connect( 'ready', self, '_ready_up' )
   # connect( 'turn_start', enemy, '_on_turn_start' )
   connect( 'turn_end',   enemy, '_on_turn_end' )
 
 # == PRIVATE CORE == #
 
+func _ready_up( who ):
+  ready_players[who] = true
+  var ready = true
+  for r in ready_players.values():
+    ready = ready and r
+  if ready:
+    print( 'all ready' )
+    emit_signal( 'all_ready' )
+
 func _start_turn():
+  print( 'starting turn...' )
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer
@@ -69,6 +86,7 @@ func _start_turn():
   emit_signal( 'turn_start', get_board() )
 
 func _end_turn():
+  # TODO 'game_over' should happen based on listening for a scenario-completion signal (i.e. character dies) rather than statically in this method
   var result = _resolve_all_moves()
   if result == null:
     emit_signal( 'turn_end', get_board() )
@@ -121,7 +139,9 @@ func play_card( card, river ):
 
   prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river, '...' )
 
+  # this method will yield, and wait for the battle to confirm the move
   var play = fighter.play_card( card, river )
+  # at the moment, only battle UI is connected to this
   emit_signal( 'card_played', card, river )
   play.resume()
 
@@ -183,13 +203,13 @@ func test_move_outcome( who, card, river ):
 
 func get_board():
   var board = {
-    BM.HERO: get_node( BM.hero_id_to_str( BM.HERO ) ),
-    BM.CPU: get_node( BM.hero_id_to_str( BM.CPU ) )
+    BM.HERO: get_node( BM.fighter_id_to_str( BM.HERO ) ),
+    BM.CPU: get_node( BM.fighter_id_to_str( BM.CPU ) )
   }
   return board
 
 func get_fighter( who ):
-  return get_node( BM.hero_id_to_str( who ) )
+  return get_node( BM.fighter_id_to_str( who ) )
 
 func get_active_moves( who ):
   return get_rivers( who ).get_active_moves()

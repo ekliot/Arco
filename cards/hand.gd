@@ -3,21 +3,29 @@ extends Node
 signal card_added(card, hand)
 signal card_removed(card, hand)
 
-var cards = [] setget ,get_cards
+var hand = [] setget ,get_cards
 
 func has( card ):
-  return card in cards
+  return card in hand
 
 func is_empty():
-  return cards.empty()
+  return hand.empty()
 
 func add_card( card ):
-  cards.push_back( card )
-  emit_signal( 'card_added', card, get_cards() )
+  if card:
+    hand.push_back( card )
+    add_child( card )
+    emit_signal( 'card_added', card, get_cards() )
+  else:
+    prints( "\tDanger says", self.name ,"! Danger,", get_parent().name, '!' )
 
 func remove_card( card ):
-  cards.erase( card )
-  emit_signal( 'card_removed', card, get_cards() )
+  if card:
+    hand.erase( card )
+    remove_child( card )
+    emit_signal( 'card_removed', card, get_cards() )
+  else:
+    prints( "\tDanger says", self.name ,"! Danger,", get_parent().name, '!' )
 
 func get_cards():
-  return [] + cards # copy the array
+  return [] + hand # copy the array

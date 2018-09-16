@@ -53,7 +53,7 @@ func get_hero():
 func get_enemy():
   return get_battle().get_fighter( CPU )
 
-func hero_id_to_str( id ):
+func fighter_id_to_str( id ):
   # NOTE match doesn't work here for some reason
   match(id):
     HERO:

@@ -1,8 +1,9 @@
 extends Node
 
+signal ready(who) # THIS MUST ONLY EMIT ONCE THE CHARACTER IS READY TO BEGIN A NEW TURN
 signal end_turn  # THIS MUST ONLY EMIT AFTER EVERYTHING IS SAID AND DONE
 signal play_card(card)
-signal draw_card(card)
+signal drew_card(card)
 signal discard_card(card)
 
 # signal take_damage(new_hp, old_hp, max_hp)
@@ -30,19 +31,20 @@ var SIGNATURE = [] # TODO signature.gd
 var SPRITE = null
 
 func _init( data, rivers, minions ):
-  slurp_data( data )
-
   HAND = _HAND_.new()
   add_child( HAND )
   HAND.name = 'Hand'
-  connect( 'draw_card', HAND, 'add_card' )
-  connect( 'play_card', HAND, 'remove_card' )
+
+  connect( 'drew_card', HAND, 'add_card' )
+  # connect( 'play_card', HAND, 'remove_card' )
   connect( 'discard_card', HAND, 'remove_card' )
+
+  slurp_data( data )
 
   add_child( rivers )
   rivers.name = 'Rivers'
   rivers.connect( 'momentum_update', self, 'set_momentum' )
-  # TODO add_child( minions )
+  # TODO add_child( minion ) for minion in minions
 
 func slurp_data( data ):
   var stats = data.stats
@@ -55,9 +57,14 @@ func slurp_data( data ):
   DRAW_SIZE = stats.draw_size
 
   DECK = cards.deck
+  add_child( DECK )
+  DECK.name = 'Deck'
+
   SIGNATURE = cards.signature
 
   SPRITE = data.sprite
+  # add_child( SPRITE )
+  # SPRITE.name = 'Sprite'
 
 # == SIGNALS == #
 
@@ -65,12 +72,15 @@ func _on_turn_start( battle ):
   draw_hand()
 
 func _on_turn_end( battle ):
-  clear_hand()
+  var who = BM.HERO if self.name == BM.fighter_id_to_str( BM.HERO ) else BM.CPU
+  emit_signal( 'ready', who )
 
 # == MOVES == #
 
 func play_card( card, river ):
   print( ID, ' // ', 'playing card ', card, ' into river ', river )
+  # remove the card from our hand
+  HAND.remove_card( card )
   # place the card into its river
   $Rivers.place_card( card, river )
   # tell the card it's been played
@@ -82,18 +92,18 @@ func play_card( card, river ):
   # tell the world we are done with our turn
   end_turn()
 
-# we expect this to be overridden by heroes and enemies
+# we expect this to be extended by heroes and enemies
 func end_turn():
-  pass
+  clear_hand()
 
 # == ACTIONS == #
 
 func draw_hand():
-  prints( ID, "// drawing new hand of size", DRAW_SIZE )
+  # prints( ID, "// drawing new hand of size", DRAW_SIZE )
   # TODO make sure there are cards to draw from the deck
   # to_draw = min( DRAW_SIZE, DECK.size() )
   for i in range( DRAW_SIZE ):
-    print( ID, " // drawing card ", i )
+    # print( ID, " // drawing card ", i )
     draw_card()
 
 func draw_card():
@@ -107,19 +117,20 @@ func draw_card():
   # TODO double check the deck...
 
   var card = DECK.draw()
-  print( ID, " // drew card ", card )
-  emit_signal( 'draw_card', card )
+  # print( ID, " // drew card ", card.name )
+  emit_signal( 'drew_card', card )
 
 func clear_hand():
   print( ID, " // clearing hand" )
-  for c in HAND.cards:
+  for c in HAND.get_cards():
     discard_card( c )
 
 func discard_card( card ):
   if not HAND.is_empty() and HAND.has( card ):
-    DISCARD.push_back( card )
     emit_signal( 'discard_card', card )
-    print( ID, " // discarded card ", card )
+    var _discard = yield( HAND, 'card_removed' )[0]
+    DISCARD.push_back( _discard )
+    # print( ID, " // discarded card ", _discard.name )
 
 func take_damage( amt ):
   HEALTH -= amt
@@ -164,7 +175,7 @@ func get_deck():
 func get_valid_moves():
   var moves = []
 
-  for card in HAND.cards:
+  for card in HAND.get_cards():
     if card.POWER <= MOMENTUM + 1:
       moves.push_back( card )
 

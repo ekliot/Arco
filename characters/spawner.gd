@@ -18,7 +18,7 @@ func enemy_template( name="" ):
     }
   }
 
-  template.sprite.name = "%sSprite" % BM.hero_id_to_str( BM.CPU )
+  template.sprite.name = "%sSprite" % BM.fighter_id_to_str( BM.CPU )
 
   return template
 
