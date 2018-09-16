@@ -13,7 +13,9 @@ signal discard_card(card)
 # signal momentum_dec(old, new)
 # signal combo_activate # TODO combo signal args
 
+var _DECK_ = preload( "res://cards/deck.gd" )
 var _HAND_ = preload( "res://cards/hand.gd" )
+var _DISCARD_ = preload( "res://cards/discard.gd" )
 
 var ID = 'CHARACTER_'
 
@@ -24,7 +26,7 @@ var DRAW_SIZE  = 4
 
 var DECK      = null
 var HAND      = null
-var DISCARD   = [] # TODO discard.gd
+var DISCARD   = null
 # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
 var SIGNATURE = [] # TODO signature.gd
 
@@ -34,6 +36,10 @@ func _init( data, rivers, minions ):
   HAND = _HAND_.new()
   add_child( HAND )
   HAND.name = 'Hand'
+
+  DISCARD = _DISCARD_.new()
+  add_child( DISCARD )
+  DISCARD.name = 'Discard'
 
   connect( 'drew_card', HAND, 'add_card' )
   # connect( 'play_card', HAND, 'remove_card' )
@@ -103,21 +109,21 @@ func draw_hand():
   # TODO make sure there are cards to draw from the deck
   # to_draw = min( DRAW_SIZE, DECK.size() )
   for i in range( DRAW_SIZE ):
-    # print( ID, " // drawing card ", i )
+    print( ID, " // drawing card ", i )
     draw_card()
 
 func draw_card():
-  if DECK.is_empty() and not DISCARD.empty():
+  if DECK.is_empty() and not DISCARD.is_empty():
     print( ID, " // reshuffling discard into deck" )
     # TODO emit a signal here for the UI
-    DECK.set_deck( DISCARD )
+    DECK.cards = DISCARD.cards
     DISCARD.clear()
     DECK.shuffle()
 
   # TODO double check the deck...
 
   var card = DECK.draw()
-  # print( ID, " // drew card ", card.name )
+  print( ID, " // drew card ", card.name )
   emit_signal( 'drew_card', card )
 
 func clear_hand():
@@ -128,8 +134,8 @@ func clear_hand():
 func discard_card( card ):
   if not HAND.is_empty() and HAND.has( card ):
     emit_signal( 'discard_card', card )
-    var _discard = yield( HAND, 'card_removed' )[0]
-    DISCARD.push_back( _discard )
+    var _discard = yield( HAND, 'card_removed' )[0] # card_removed returns [card, hand]
+    DISCARD.add_card( _discard )
     # print( ID, " // discarded card ", _discard.name )
 
 func take_damage( amt ):
@@ -175,7 +181,7 @@ func get_deck():
 func get_valid_moves():
   var moves = []
 
-  for card in HAND.get_cards():
+  for card in HAND.cards:
     if card.POWER <= MOMENTUM + 1:
       moves.push_back( card )
 

@@ -9,21 +9,6 @@ func _build_data():
 
   # TODO set stats
 
-  var tmp_deck = []
-  var card = null
-  for i in range(20):
-    card = DEALER.deal(
-      BM.CPU,
-      card_suits.get_blades_str(),
-      1,
-      "slash"
-    )
-    card.name = 'slash%d' % i
-    tmp_deck.push_back( card )
-
-  data.cards.deck.set_deck( tmp_deck )
-  data.cards.deck.shuffle()
-
   return data
 
 func decide_next_move( board ):

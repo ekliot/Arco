@@ -12,7 +12,7 @@ func enemy_template( name="" ):
       'draw_size': 4
     },
     'cards': {
-      'deck': DEALER.new_deck(),
+      'deck': DEALER.tmp_deck( BM.CPU ),
       # idx [1:4] correspond to momentum levels 1-4 ; idx 0 unused
       'signature': []
     }

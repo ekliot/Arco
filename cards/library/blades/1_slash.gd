@@ -1,4 +1,4 @@
-extends "res://cards/card.gd"
+extends 'res://cards/card.gd'
 
 var PARAMS = {
   'id': "BLADES_SLASH",

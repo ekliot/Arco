@@ -25,22 +25,8 @@ func setup_test_player_data():
   PLAYER.id = 'HERO_TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
-  PLAYER.cards.deck = DEALER.new_deck()
 
-  var tmp_deck = []
-  var card = null
-  for i in range(20):
-    card = DEALER.deal(
-      BM.HERO,
-      card_suits.get_blades_str(),
-      1,
-      "slash"
-    )
-    card.name = 'slash%d' % i
-    tmp_deck.push_back( card )
-
-  PLAYER.cards.deck.set_deck( tmp_deck )
-  PLAYER.cards.deck.shuffle()
+  PLAYER.cards.deck = DEALER.tmp_deck( BM.HERO )
 
   PLAYER.sprite = Sprite.new()
   PLAYER.sprite.name = "%sSprite" % BM.fighter_id_to_str( BM.HERO )

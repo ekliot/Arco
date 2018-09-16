@@ -12,6 +12,7 @@ signal card_removed(card, river)
 var SCENARIO = null
 var CUR_MOMENTUM = 0
 
+var turn = 0
 var ready_players = { BM.HERO: false, BM.CPU: false }
 
 # we need to be able to dynamically load different battle scenarios
@@ -77,7 +78,12 @@ func _ready_up( who ):
     emit_signal( 'all_ready' )
 
 func _start_turn():
-  print( 'starting turn...' )
+  turn += 1
+  $BattleUI.MENU_BAR.get_node( 'TurnCounter' ).text = "Turn: %d" % turn
+  print( '===================================================================' )
+  print( 'starting turn %d...' % turn )
+  for who in ready_players:
+    ready_players[who] = false
   # this needs to be before the turn start signal emits
   # in order to guarantee the player has complete
   # information at the start of the turn timer

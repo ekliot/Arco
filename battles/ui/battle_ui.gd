@@ -102,7 +102,7 @@ func _connect_signals( battle ):
 
   # hero state changes
   var hero = battle.get_fighter( BM.HERO )
-  hero.connect( 'draw_card',      self, '_on_hero_draw_card' )
+  hero.connect( 'drew_card',      self, '_on_hero_drew_card' )
   hero.connect( 'discard_card',   self, '_on_hero_discard_card' )
   # hero.connect( 'take_damage',    self, '_on_hero_take_damage' )
   # hero.connect( 'heal_damage',    self, '_on_hero_heal_damage' )
@@ -113,7 +113,7 @@ func _connect_signals( battle ):
 
   # enemy state changes
   var enemy = battle.get_fighter( BM.CPU )
-  enemy.connect( 'draw_card',      self, '_on_enemy_draw_card' )
+  enemy.connect( 'drew_card',      self, '_on_enemy_drew_card' )
   enemy.connect( 'discard_card',   self, '_on_enemy_discard_card' )
   # enemy.connect( 'take_damage',    self, '_on_enemy_take_damage' )
   # enemy.connect( 'heal_damage',    self, '_on_enemy_heal_damage' )
@@ -147,7 +147,7 @@ func _on_card_removed( card, river ):
 # func _on_hero_play_card( card, river ):
 #   pass
 
-func _on_hero_draw_card( card ):
+func _on_hero_drew_card( card ):
   # TODO verify UI hand and hero hand are in sync
   # TODO update deck/discard based on deck size
   # var card_sprite = get_hand().add_card( card )
@@ -181,7 +181,7 @@ func _on_hero_combo_activate():
 # func _on_enemy_play_card( card, river ):
 #   pass
 
-func _on_enemy_draw_card( card ):
+func _on_enemy_drew_card( card ):
   pass
 
 func _on_enemy_discard_card( card ):
