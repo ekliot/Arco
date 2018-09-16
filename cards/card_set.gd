@@ -10,6 +10,11 @@ func _init( _cards=null  ):
   if _cards:
     set_cards( _cards )
 
+func transfer( dest ):
+  for card in cards:
+    remove_card( card )
+    dest.add_card( card )
+
 func add_card( card ):
   if card:
     cards.push_back( card )

@@ -116,15 +116,15 @@ func draw_card():
   if DECK.is_empty() and not DISCARD.is_empty():
     print( ID, " // reshuffling discard into deck" )
     # TODO emit a signal here for the UI
-    DECK.cards = DISCARD.cards
-    DISCARD.clear()
+    DISCARD.transfer( DECK )
     DECK.shuffle()
 
   # TODO double check the deck...
 
   var card = DECK.draw()
-  print( ID, " // drew card ", card.name )
-  emit_signal( 'drew_card', card )
+  if card:
+    print( ID, " // drew card ", card.name )
+    emit_signal( 'drew_card', card )
 
 func clear_hand():
   print( ID, " // clearing hand" )
