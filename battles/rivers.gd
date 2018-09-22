@@ -12,6 +12,7 @@ var active_momentum = 0 setget ,get_active_momentum
 var active_moves = [ null ] # this expects dicts of { 'card': Card, 'river': String }
 
 func _init( fighter ):
+  # TODO make a name for myself
   FIGHTER = fighter
   for id in BM.RIVER_IDS:
     var riv = _RIVER_.new( fighter, self, id )

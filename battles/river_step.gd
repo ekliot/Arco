@@ -11,6 +11,7 @@ var MOMENTUM_LEVEL = -1 setget ,get_momentum
 var active_card = null setget place_card,get_active_card
 
 func _init( fighter, river, level ):
+  # TODO make a name for myself
   FIGHTER = fighter
   RIVER = river
   MOMENTUM_LEVEL = level
@@ -20,7 +21,7 @@ func _init( fighter, river, level ):
 func place_card( card ):
   # TODO check for current active card
   active_card = card
-  prints( "STEP\t// card", card, 'placed in', self )
+  LOGGER.debug( self, "card %s placed" % card )
   emit_signal( 'card_placed', card )
 
 func clear_card( card ):

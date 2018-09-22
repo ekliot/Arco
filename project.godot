@@ -16,6 +16,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+LOGGER="*res://logger.gd"
 card_suits="*res://cards/suits.gd"
 card_effects="*res://cards/effects.gd"
 BM="*res://battles/battlemaster.gd"

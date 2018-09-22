@@ -19,22 +19,24 @@ func add_card( card ):
   if card:
     cards.push_back( card )
     add_child( card )
+    LOGGER.info( self, '%s added %s' % [get_parent().name if get_parent() else '', card.name] )
     emit_signal( 'card_added', card, get_cards() )
   else:
-    prints( "\t!!!!!! ", self.name, " // Danger! Danger,", get_parent().name, '!' )
+    LOGGER.warning( self, "%s can't add %s" % [get_parent().name(), card.name] )
 
 func remove_card( card ):
   if has( card ):
     cards.erase( card )
     remove_child( card )
-    emit_signal( 'card_removed', card, get_cards() )
+    LOGGER.info( self, "removed %s's card %s" % [get_parent().name, card.name] )
+    emit_signal( 'card_removed', card, cards )
   else:
-    prints( "\t!!!!!! ", self.name, " // Danger! Danger,", get_parent().name, '!' )
+    LOGGER.warning( self, "%s can't remove %s (not in set)" % [get_parent().name(), card.name] )
   return card
 
 func draw():
   if is_empty():
-    prints( self.name, '// I got nuttin!' )
+    LOGGER.warning( self, "%s can't draw from an empty set!" )
     return null
   var draw = cards.front()
   return remove_card( draw )

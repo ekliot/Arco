@@ -13,6 +13,8 @@ const MAX_MOMENTUM = 4
 
 const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 
+const _HERO_ = preload( "res://characters/heroes/hero.gd" )
+
 # == RULES == #
 
 # QUESTION is it worth including global interpreters and queries for game rules here?
@@ -38,6 +40,9 @@ func enemy_move( card, river_id ):
   pass
 
 # == HELPERS == #
+
+func is_player( who ):
+  return who is _HERO_ # lol
 
 # == MODELS == #
 

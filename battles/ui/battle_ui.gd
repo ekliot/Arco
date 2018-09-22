@@ -84,11 +84,12 @@ func _setup_timer( battle ):
 
 func _setup_card_area( battle ):
   # setup deck
-  var deck = get_deck()
-  deck.get_node( "DrawCount" ).text = str(BM.get_hero().DRAW_SIZE)
+  # var deck = get_deck()
+  # deck.get_node( "DrawCount" ).text = str(BM.get_hero().DRAW_SIZE)
   # setup hand
   get_hand().connect_to_hero_hand()
   # setup discard
+  # var discard = get_discard()
 
 # == SIGNAL HANDLING == #
 
@@ -155,7 +156,6 @@ func _on_hero_drew_card( card ):
   pass
 
 func _on_hero_discard_card( card ):
-  # get_hand().remove_card()
   pass
 
 func _on_hero_take_damage( new_hp, old_hp, max_hp ):
@@ -276,6 +276,9 @@ func place_enemy_card( card, river ):
 
 func get_deck():
   return CARD_AREA.get_node( "DeckContainer" ).get_child(0)
+
+func get_discard():
+  return CARD_AREA.get_node( "DiscardContainer" ).get_child(0)
 
 func get_hand():
   return CARD_AREA.get_node( 'Hand' )

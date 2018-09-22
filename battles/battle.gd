@@ -74,14 +74,14 @@ func _ready_up( who ):
   for r in ready_players.values():
     ready = ready and r
   if ready:
-    print( 'all ready' )
+    LOGGER.debug( self, 'all players ready' )
     emit_signal( 'all_ready' )
 
 func _start_turn():
   turn += 1
   $BattleUI.MENU_BAR.get_node( 'TurnCounter' ).text = "Turn: %d" % turn
   print( '===================================================================' )
-  print( 'starting turn %d...' % turn )
+  LOGGER.info( self, 'starting turn %d...' % turn )
   for who in ready_players:
     ready_players[who] = false
   # this needs to be before the turn start signal emits
@@ -143,7 +143,7 @@ func play_card( card, river ):
   var _name = 'player' if who == BM.HERO else 'enemy'
   var fighter = get_fighter( who )
 
-  prints( 'battle.gd\t//', _name, 'is playing card', card, 'into river', river, '...' )
+  LOGGER.debug( self, '%s is playing card %s into river %s...' % [fighter.name, card, river] )
 
   # this method will yield, and wait for the battle to confirm the move
   var play = fighter.play_card( card, river )

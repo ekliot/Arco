@@ -16,6 +16,7 @@ var states = [ null ] # keep track of which cards are in each step
 var max_momentum = 0 setget ,get_max_momentum
 
 func _init( fighter, rivers, id ):
+  # TODO make a name for myself
   FIGHTER = fighter
   RIVERS = rivers
   RIVER_ID = id
@@ -32,7 +33,7 @@ func clear_card( card ):
   var lvl = card.POWER
   states[lvl] = null
 
-  prints( 'RIVER\t//', card, ' cleared for lvl ', lvl )
+  LOGGER.debug( self, '%s cleared for lvl %d' % [card.name, lvl] )
 
   emit_signal( 'card_cleared', card, RIVER_ID )
   _update_momentum()
@@ -41,7 +42,7 @@ func place_card( card ):
   var lvl = card.POWER
   states[lvl] = card
 
-  prints( 'RIVER\t//', card, 'set for lvl', lvl )
+  LOGGER.debug( self, '%s set for lvl %d' % [card.name, lvl] )
 
   get_step( lvl ).place_card( card )
   emit_signal( 'card_placed', card, RIVER_ID )
@@ -55,7 +56,7 @@ func _update_momentum():
       max_momentum = lvl
 
   if last_m != max_momentum:
-    prints( "RIVER\t// momentum updated to", max_momentum, "from", last_m )
+    LOGGER.debug( self, "momentum updated to %d from %d" % [max_momentum, last_m] )
     emit_signal( 'momentum_update', last_m, max_momentum )
 
 # == VALIDATORS == #

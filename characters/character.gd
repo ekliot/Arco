@@ -33,17 +33,8 @@ var SIGNATURE = [] # TODO signature.gd
 var SPRITE = null
 
 func _init( data, rivers, minions ):
-  HAND = _HAND_.new()
-  add_child( HAND )
-  HAND.name = 'Hand'
-
-  DISCARD = _DISCARD_.new()
-  add_child( DISCARD )
-  DISCARD.name = 'Discard'
-
-  connect( 'drew_card', HAND, 'add_card' )
-  # connect( 'play_card', HAND, 'remove_card' )
-  connect( 'discard_card', HAND, 'remove_card' )
+  _set_hand()
+  _set_discard()
 
   slurp_data( data )
 
@@ -62,15 +53,28 @@ func slurp_data( data ):
   HEALTH_MAX = stats.health_max
   DRAW_SIZE = stats.draw_size
 
-  DECK = cards.deck
-  add_child( DECK )
-  DECK.name = 'Deck'
+  _set_deck( cards.deck )
 
   SIGNATURE = cards.signature
 
   SPRITE = data.sprite
   # add_child( SPRITE )
   # SPRITE.name = 'Sprite'
+
+func _set_hand():
+  HAND = _HAND_.new()
+  add_child( HAND )
+  HAND.name = 'Hand'
+
+func _set_deck( deck ):
+  DECK = deck
+  add_child( DECK )
+  DECK.name = 'Deck'
+
+func _set_discard():
+  DISCARD = _DISCARD_.new()
+  add_child( DISCARD )
+  DISCARD.name = 'Discard'
 
 # == SIGNALS == #
 
@@ -84,7 +88,7 @@ func _on_turn_end( battle ):
 # == MOVES == #
 
 func play_card( card, river ):
-  print( ID, ' // ', 'playing card ', card, ' into river ', river )
+  LOGGER.debug( self, "playing card %s into river %s" % [card.ID, river] )
   # remove the card from our hand
   HAND.remove_card( card )
   # place the card into its river
@@ -109,34 +113,36 @@ func draw_hand():
   # TODO make sure there are cards to draw from the deck
   # to_draw = min( DRAW_SIZE, DECK.size() )
   for i in range( DRAW_SIZE ):
-    print( ID, " // drawing card ", i )
+    LOGGER.debug( self, "drawing card %d" % i )
     draw_card()
 
 func draw_card():
   if DECK.is_empty() and not DISCARD.is_empty():
-    print( ID, " // reshuffling discard into deck" )
+    LOGGER.debug( self, "reshuffling discard into deck" )
     # TODO emit a signal here for the UI
     DISCARD.transfer( DECK )
     DECK.shuffle()
 
-  # TODO double check the deck...
+  # TODO double check the deck isn't empty...
 
   var card = DECK.draw()
   if card:
-    print( ID, " // drew card ", card.name )
+    LOGGER.debug( self, "drew card %s" % card.name )
     emit_signal( 'drew_card', card )
+  else:
+    LOGGER.debug( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
 
 func clear_hand():
-  print( ID, " // clearing hand" )
+  LOGGER.debug( self, "clearing hand" )
   for c in HAND.get_cards():
     discard_card( c )
 
 func discard_card( card ):
-  if not HAND.is_empty() and HAND.has( card ):
+  if HAND.has( card ):
     emit_signal( 'discard_card', card )
     var _discard = yield( HAND, 'card_removed' )[0] # card_removed returns [card, hand]
     DISCARD.add_card( _discard )
-    # print( ID, " // discarded card ", _discard.name )
+    LOGGER.debug( self, "discarded card %s" % _discard.name )
 
 func take_damage( amt ):
   HEALTH -= amt
@@ -150,7 +156,7 @@ func heal_damage( amt ):
   # emit_signal( 'heal_damage', HEALTH, old_hp, HEALTH_MAX )
 
 func set_momentum( old, new ):
-  print( ID, ' // ', 'setting momentum to ', new, ' from ', old )
+  LOGGER.debug( self, "setting momentum to %d from %d" % [new, old] )
   MOMENTUM = new
 
   if old < new:
