@@ -16,6 +16,7 @@ func decide_next_move( board ):
   var moves = get_valid_moves()
   if not moves.empty():
     var next = moves[ randi() % moves.size() ]
-    var riv = BM.RIVER_IDS[ randi() % BM.RIVER_IDS.size() ]
-    LOGGER.debug( self, "decided to play %s into river %s" % [next, riv] )
-    BM.play_card( next, riv )
+    var next_c = next['card']
+    var next_r = next['river']
+    LOGGER.debug( self, "decided to play %s into river %s" % [next_c.name, next_r] )
+    BM.play_card( next_c, next_r )

@@ -11,10 +11,10 @@ var MOMENTUM_LEVEL = -1 setget ,get_momentum
 var active_card = null setget place_card,get_active_card
 
 func _init( fighter, river, level ):
-  # TODO make a name for myself
   FIGHTER = fighter
   RIVER = river
   MOMENTUM_LEVEL = level
+  self.name = BM.fighter_id_to_str( FIGHTER ) + "RiverStep" + RIVER.RIVER_ID.to_upper() + String(level)
 
 # == CORE == #
 

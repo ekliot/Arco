@@ -16,10 +16,10 @@ var states = [ null ] # keep track of which cards are in each step
 var max_momentum = 0 setget ,get_max_momentum
 
 func _init( fighter, rivers, id ):
-  # TODO make a name for myself
   FIGHTER = fighter
   RIVERS = rivers
   RIVER_ID = id
+  self.name = BM.fighter_id_to_str( fighter ) + "River" + RIVER_ID.to_upper()
   for i in range( 1, 5 ):
     var step = _STEP_.new( fighter, self, i )
     STEPS.push_back( step )
@@ -81,7 +81,7 @@ func get_steps():
   return STEPS
 
 func get_step( lvl ):
-  return STEPS[ lvl ]
+  return STEPS[lvl]
 
 func get_max_momentum( refresh=False ):
   if refresh:

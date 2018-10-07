@@ -88,7 +88,7 @@ func _on_turn_end( battle ):
 # == MOVES == #
 
 func play_card( card, river ):
-  LOGGER.debug( self, "playing card %s into river %s" % [card.ID, river] )
+  LOGGER.debug( self, "playing card %s into river %s" % [card.name, river] )
   # remove the card from our hand
   HAND.remove_card( card )
   # place the card into its river
@@ -130,19 +130,17 @@ func draw_card():
     LOGGER.debug( self, "drew card %s" % card.name )
     emit_signal( 'drew_card', card )
   else:
-    LOGGER.debug( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
+    LOGGER.error( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
 
 func clear_hand():
-  LOGGER.debug( self, "clearing hand" )
+  LOGGER.debug( self, "clearing hand // " + HAND.to_s() )
   for c in HAND.get_cards():
     discard_card( c )
 
 func discard_card( card ):
   if HAND.has( card ):
-    emit_signal( 'discard_card', card )
-    var _discard = yield( HAND, 'card_removed' )[0] # card_removed returns [card, hand]
-    DISCARD.add_card( _discard )
-    LOGGER.debug( self, "discarded card %s" % _discard.name )
+    HAND.remove_card( card )
+    DISCARD.add_card( card )
 
 func take_damage( amt ):
   HEALTH -= amt
@@ -189,6 +187,8 @@ func get_valid_moves():
 
   for card in HAND.cards:
     if card.POWER <= MOMENTUM + 1:
-      moves.push_back( card )
+      # TODO actually decide shit
+      for river in $Rivers.RIVERS.keys():
+        moves.push_back( {'card': card, 'river': river} )
 
   return moves

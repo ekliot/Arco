@@ -13,6 +13,7 @@ var grow_size = null
 
 var pointer = null
 
+var flipped = false setget, is_flipped
 var hovered = false setget ,is_hovered
 var bigger = false setget ,is_bigger
 var pointing = false setget ,is_pointing
@@ -24,6 +25,9 @@ func _init():
   # TODO connect to UI resizing and set size based on that
   set_size_params()
   set_custom_minimum_size( shrink_size )
+
+func _ready():
+  $Tween.connect( 'tween_completed', self, '_on_tween_complete' )
 
 func _input( ev ):
   if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
@@ -49,6 +53,13 @@ func _on_card_played( card ):
 
 func _on_card_discarded( card ):
   emit_signal( 'card_discarded', card, self )
+
+func _on_tween_complete( obj, key ):
+  if key == "set_custom_minimum_size":
+    if get_custom_minimum_size() == shrink_size:
+      bigger = false
+    elif get_custom_minimum_size() == grow_size:
+      bigger = true
 
 # == ACTIONS == #
 
@@ -91,15 +102,21 @@ func point():
 
 func grow():
   if not bigger:
-    # TODO tween this
-    set_custom_minimum_size( grow_size )
-    bigger = true
+    $Tween.interpolate_method(
+      self, 'set_custom_minimum_size',
+      get_custom_minimum_size(), grow_size,
+      0.1, 0, 0
+    )
+    $Tween.start()
 
 func shrink():
   if bigger:
-    # TODO tween this
-    set_custom_minimum_size( shrink_size )
-    bigger = false
+    $Tween.interpolate_method(
+      self, 'set_custom_minimum_size',
+      get_custom_minimum_size(), shrink_size,
+      0.1, 0, 0
+    )
+    $Tween.start()
 
 # == SETTERS == #
 
@@ -130,3 +147,6 @@ func is_bigger():
 
 func is_pointing():
   return pointing
+
+func is_flipped():
+  return flipped

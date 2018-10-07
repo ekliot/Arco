@@ -19,16 +19,16 @@ func add_card( card ):
   if card:
     cards.push_back( card )
     add_child( card )
-    LOGGER.info( self, '%s added %s' % [get_parent().name if get_parent() else '', card.name] )
+    # LOGGER.info( self, '%s added %s' % [get_parent().name if get_parent() else '', card.name] )
     emit_signal( 'card_added', card, get_cards() )
   else:
-    LOGGER.warning( self, "%s can't add %s" % [get_parent().name(), card.name] )
+    LOGGER.error( self, "%s can't add null" % get_parent().name() )
 
 func remove_card( card ):
   if has( card ):
     cards.erase( card )
     remove_child( card )
-    LOGGER.info( self, "removed %s's card %s" % [get_parent().name, card.name] )
+    # LOGGER.info( self, "removed %s's card %s" % [get_parent().name, card.name] )
     emit_signal( 'card_removed', card, cards )
   else:
     LOGGER.warning( self, "%s can't remove %s (not in set)" % [get_parent().name(), card.name] )
@@ -70,3 +70,12 @@ func set_cards( _cards ):
 
 func get_cards():
   return [] + cards
+
+func to_s():
+  var out = "<"
+  for c in cards:
+    if cards.find(c): # basically, "if c not first in cards"
+      out += ", "
+    out += c.name
+  out += ">"
+  return out

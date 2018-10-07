@@ -31,7 +31,7 @@ func error( src, msg ):
 
 func _log( src, lvl, msg ):
   if lvl < logging_lvl:
-    return 
+    return
   # TODO check for blocking
   print( _format_msg( src, lvl, msg ) )
   last_src = src
@@ -43,6 +43,5 @@ func _format_msg( src, lvl, msg ):
   var prefix = FMT_PREFIX % [pad, who]
   var level = FMT_LEVEL % LVL_STR[lvl]
   var output = FMT_MSG % [prefix, level, msg]
-
 
   return output

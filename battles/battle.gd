@@ -143,7 +143,7 @@ func play_card( card, river ):
   var _name = 'player' if who == BM.HERO else 'enemy'
   var fighter = get_fighter( who )
 
-  LOGGER.debug( self, '%s is playing card %s into river %s...' % [fighter.name, card, river] )
+  LOGGER.debug( self, '%s is playing card %s into river %s...' % [fighter.name, card.name, river] )
 
   # this method will yield, and wait for the battle to confirm the move
   var play = fighter.play_card( card, river )
