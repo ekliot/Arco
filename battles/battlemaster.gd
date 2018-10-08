@@ -72,6 +72,12 @@ func fighter_id_to_str( id ):
 func get_battle_ui():
   return get_battle().get_node( "BattleUI" )
 
+func get_deck_ui():
+  return get_battle_ui().get_deck()
+
+func get_hand_ui():
+  return get_battle_ui().get_hand()
+
 func get_rivers_ui( who ):
   return get_battle_ui().get_rivers( who )
 

@@ -113,7 +113,7 @@ func draw_hand():
   # TODO make sure there are cards to draw from the deck
   # to_draw = min( DRAW_SIZE, DECK.size() )
   for i in range( DRAW_SIZE ):
-    LOGGER.debug( self, "drawing card %d" % i )
+    # LOGGER.debug( self, "drawing card %d" % i )
     draw_card()
 
 func draw_card():
@@ -127,8 +127,8 @@ func draw_card():
 
   var card = DECK.draw()
   if card:
-    LOGGER.debug( self, "drew card %s" % card.name )
-    emit_signal( 'drew_card', card )
+    # LOGGER.debug( self, "drew card %s" % card.name )
+    emit_signal( 'drew_card', card ) # HAND should add a card here
   else:
     LOGGER.error( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
 
@@ -141,6 +141,7 @@ func discard_card( card ):
   if HAND.has( card ):
     HAND.remove_card( card )
     DISCARD.add_card( card )
+    emit_signal( 'discard_card', card )
 
 func take_damage( amt ):
   HEALTH -= amt

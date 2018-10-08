@@ -87,9 +87,10 @@ func _setup_card_area( battle ):
   # var deck = get_deck()
   # deck.get_node( "DrawCount" ).text = str(BM.get_hero().DRAW_SIZE)
   # setup hand
-  get_hand().connect_to_hero_hand()
+  # get_hand().connect_to_hero_hand()
   # setup discard
   # var discard = get_discard()
+  pass
 
 # == SIGNAL HANDLING == #
 

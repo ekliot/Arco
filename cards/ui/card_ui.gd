@@ -1,5 +1,6 @@
 extends TextureRect
 
+signal in_position()
 signal card_played(card, sprite)
 signal card_discarded(card, sprite)
 
@@ -18,16 +19,24 @@ var hovered = false setget ,is_hovered
 var bigger = false setget ,is_bigger
 var pointing = false setget ,is_pointing
 
+var in_position = false
+var discard = false
+
 # == OVERRIDES == #
 
 func _init():
+  # Set invisible for draw tween effect
+  self.visible = false
+
   # TODO set size proportional to UI
   # TODO connect to UI resizing and set size based on that
+  # DEV see hand_ui.add_card()
   set_size_params()
   set_custom_minimum_size( shrink_size )
 
 func _ready():
   $Tween.connect( 'tween_completed', self, '_on_tween_complete' )
+  get_parent().connect( 'sort_children', self, '_on_sorted' )
 
 func _input( ev ):
   if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
@@ -53,13 +62,32 @@ func _on_card_played( card ):
 
 func _on_card_discarded( card ):
   emit_signal( 'card_discarded', card, self )
+  to_discard()
 
 func _on_tween_complete( obj, key ):
-  if key == "set_custom_minimum_size":
+  if key == ":set_custom_minimum_size":
     if get_custom_minimum_size() == shrink_size:
       bigger = false
     elif get_custom_minimum_size() == grow_size:
       bigger = true
+  elif key == ":set_global_position" and not in_position:
+    if not in_position:
+      in_position = true
+      emit_signal( 'in_position' )
+    elif discard:
+      queue_free()
+
+func _on_sorted():
+  if not in_position:
+    var start = BM.get_deck_ui().get_global_position()
+    var final = get_global_position()
+    $Tween.interpolate_method(
+      self, 'set_global_position',
+      start, final,
+      0.3, 0, 0
+    )
+    self.visible = true
+    $Tween.start()
 
 # == ACTIONS == #
 
@@ -105,7 +133,7 @@ func grow():
     $Tween.interpolate_method(
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), grow_size,
-      0.1, 0, 0
+      0.05, 0, 0 # TODO refine these vals
     )
     $Tween.start()
 
@@ -114,9 +142,20 @@ func shrink():
     $Tween.interpolate_method(
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), shrink_size,
-      0.1, 0, 0
+      0.05, 0, 0 # TODO refine these vals
     )
     $Tween.start()
+
+func to_discard():
+  discard = true
+  var start = get_global_position()
+  var final = BM.get_deck_ui().get_global_position()
+  $Tween.interpolate_method(
+    self, 'set_global_position',
+    start, final,
+    0.3, 0, 0
+  )
+  $Tween.start()
 
 # == SETTERS == #
 

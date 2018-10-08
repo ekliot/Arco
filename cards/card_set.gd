@@ -23,6 +23,7 @@ func add_card( card ):
     emit_signal( 'card_added', card, get_cards() )
   else:
     LOGGER.error( self, "%s can't add null" % get_parent().name() )
+  return card
 
 func remove_card( card ):
   if has( card ):
