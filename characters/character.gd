@@ -1,7 +1,7 @@
 extends Node
 
 signal ready(who) # THIS MUST ONLY EMIT ONCE THE CHARACTER IS READY TO BEGIN A NEW TURN
-signal end_turn  # THIS MUST ONLY EMIT AFTER EVERYTHING IS SAID AND DONE
+signal end_turn()  # THIS MUST ONLY EMIT AFTER EVERYTHING IS SAID AND DONE
 signal play_card(card)
 signal drew_card(card)
 signal discard_card(card)
@@ -76,12 +76,24 @@ func _set_discard():
   add_child( DISCARD )
   DISCARD.name = 'Discard'
 
+func _debug_cards():
+  LOGGER.debug( self, "HAND: %s" % HAND.to_s() )
+  LOGGER.debug( self, "DISCARD: %s" % DISCARD.to_s() )
+  # LOGGER.debug( self, "RIVERS: %s" % HAND.to_s() )
+
 # == SIGNALS == #
 
 func _on_turn_start( battle ):
+  """
+  when the battle tells us the turn is starting
+  """
   draw_hand()
+  # _debug_cards()
 
 func _on_turn_end( battle ):
+  """
+  when the battle tells us the turn is over
+  """
   var who = BM.HERO if self.name == BM.fighter_id_to_str( BM.HERO ) else BM.CPU
   emit_signal( 'ready', who )
 
@@ -97,6 +109,8 @@ func play_card( card, river ):
   card.play( BM.get_board(), river )
   # let the world know!
   emit_signal( 'play_card', card )
+  # clear out our hand
+  clear_hand()
   # make sure the battle has confirmed our move and all is well
   yield()
   # tell the world we are done with our turn
@@ -104,7 +118,7 @@ func play_card( card, river ):
 
 # we expect this to be extended by heroes and enemies
 func end_turn():
-  clear_hand()
+  pass
 
 # == ACTIONS == #
 
@@ -133,9 +147,10 @@ func draw_card():
     LOGGER.error( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
 
 func clear_hand():
-  LOGGER.debug( self, "clearing hand // " + HAND.to_s() )
+  # LOGGER.debug( self, "clearing hand // " + HAND.to_s() )
   for c in HAND.get_cards():
     discard_card( c )
+    # yield( self, 'discard_card' )
 
 func discard_card( card ):
   if HAND.has( card ):

@@ -75,6 +75,9 @@ func get_battle_ui():
 func get_deck_ui():
   return get_battle_ui().get_deck()
 
+func get_discard_ui():
+  return get_battle_ui().get_discard()
+
 func get_hand_ui():
   return get_battle_ui().get_hand()
 

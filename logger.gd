@@ -24,6 +24,9 @@ func debug( src, msg ):
   _log( src, DEBUG, msg )
 
 func warn( src, msg ):
+  warning( src, msg )
+
+func warning( src, msg ):
   _log( src, WARN, msg )
 
 func error( src, msg ):

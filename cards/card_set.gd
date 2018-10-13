@@ -32,12 +32,12 @@ func remove_card( card ):
     # LOGGER.info( self, "removed %s's card %s" % [get_parent().name, card.name] )
     emit_signal( 'card_removed', card, cards )
   else:
-    LOGGER.warning( self, "%s can't remove %s (not in set)" % [get_parent().name(), card.name] )
+    LOGGER.warn( self, "%s can't remove %s (not in set)" % [get_parent().name, card.name] )
   return card
 
 func draw():
   if is_empty():
-    LOGGER.warning( self, "%s can't draw from an empty set!" )
+    LOGGER.warn( self, "%s can't draw from an empty set!" )
     return null
   var draw = cards.front()
   return remove_card( draw )

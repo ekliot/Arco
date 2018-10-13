@@ -1,6 +1,6 @@
 extends TextureRect
 
-signal in_position()
+signal tween_complete(key)
 signal card_played(card, sprite)
 signal card_discarded(card, sprite)
 
@@ -19,6 +19,7 @@ var hovered = false setget ,is_hovered
 var bigger = false setget ,is_bigger
 var pointing = false setget ,is_pointing
 
+var last_pos
 var in_position = false
 var discard = false
 
@@ -36,7 +37,15 @@ func _init():
 
 func _ready():
   $Tween.connect( 'tween_completed', self, '_on_tween_complete' )
+  # $Tween.connect( 'tween_step', self, 'debug_tween' )
   get_parent().connect( 'sort_children', self, '_on_sorted' )
+
+func debug_tween( o, k, e, v ):
+  if k == ":set_global_position":
+    LOGGER.debug( $Tween, o.name )
+    LOGGER.debug( $Tween, k )
+    LOGGER.debug( $Tween, e )
+    LOGGER.debug( $Tween, v )
 
 func _input( ev ):
   if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
@@ -57,28 +66,24 @@ func _input( ev ):
       if pointing and not ev.is_pressed():
         drop_me()
 
-func _on_card_played( card ):
-  emit_signal( 'card_played', card, self )
-
-func _on_card_discarded( card ):
-  emit_signal( 'card_discarded', card, self )
-  to_discard()
-
 func _on_tween_complete( obj, key ):
   if key == ":set_custom_minimum_size":
     if get_custom_minimum_size() == shrink_size:
       bigger = false
     elif get_custom_minimum_size() == grow_size:
       bigger = true
-  elif key == ":set_global_position" and not in_position:
-    if not in_position:
+  elif key == ":set_global_position": # and not in_position:
+    if discard:
+      emit_signal( 'tween_complete', key )
+    elif not in_position:
       in_position = true
-      emit_signal( 'in_position' )
-    elif discard:
-      queue_free()
+      emit_signal( 'tween_complete', key )
+  elif key == ":set_modulate":
+    if discard:
+      emit_signal( 'tween_complete', key )
 
 func _on_sorted():
-  if not in_position:
+  if not in_position and not discard:
     var start = BM.get_deck_ui().get_global_position()
     var final = get_global_position()
     $Tween.interpolate_method(
@@ -93,7 +98,7 @@ func _on_sorted():
 
 func build( card ):
   CARD = card
-  self.name = card.get_title() + "_UI"
+  self.name = card.name + "_UI"
   # TODO actually overlay all the elements with data from the card
   return self
 
@@ -146,15 +151,31 @@ func shrink():
     )
     $Tween.start()
 
-func to_discard():
+func remove( reason ):
+  var method = null
+  var start = null
+  var final = null
+  var dur = null
   discard = true
-  var start = get_global_position()
-  var final = BM.get_deck_ui().get_global_position()
+
+  match reason:
+    'discarded':
+      start = get_global_position()
+      final = BM.get_discard_ui().get_global_position()
+      method = 'set_global_position'
+      dur = 0.3
+    'played':
+      start = get_modulate()
+      final = Color(1.0, 1.0, 1.0, 0.0)
+      method = 'set_modulate'
+      dur = 0.3
+
   $Tween.interpolate_method(
-    self, 'set_global_position',
+    self, method,
     start, final,
-    0.3, 0, 0
+    dur, 0, 0
   )
+
   $Tween.start()
 
 # == SETTERS == #
