@@ -1,1 +1,3 @@
-.import
+.import/
+*.pyc
+__pycache__

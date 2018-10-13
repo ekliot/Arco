@@ -1,0 +1,88 @@
+{ "name": "blades_01",
+  "cards": [
+    { "name": "Slash",
+      "suit": "blades",
+      "power": 1,
+      "effects": {
+        "damage": 2
+      }
+    },
+    { "name": "Guarded Strike",
+      "suit": "blades",
+      "power": 1,
+      "effects": {
+        "block": 2,
+        "damage": 1
+      }
+    },
+    { "name": "Observe",
+      "suit": "blades",
+      "power": 1,
+      "effects": {
+        "exploit": 2,
+        "block": 1
+      }
+    },
+    { "name": "Setup",
+      "suit": "blades",
+      "power": 1,
+      "effects": {
+        "block": 1,
+        "stun": 1,
+        "exploit": 2
+      }
+    },
+    { "name": "Thrust",
+      "suit": "blades",
+      "power": 2,
+      "effects": {
+        "pierce": 3,
+        "damage": 2
+      }
+    },
+    { "name": "Razor's Edge",
+      "suit": "blades",
+      "power": 2,
+      "effects": {
+        "bleed": 2,
+        "block": 4
+      }
+    },
+    { "name": "Guiding Slice",
+      "suit": "blades",
+      "power": 2,
+      "effects": {
+        "damage": 4,
+        "exploit": 2,
+        "stun": 1
+      }
+    },
+
+    { "name": "Bait",
+      "suit": "blades",
+      "power": 3,
+      "effects": {
+        "block": 2,
+        "exploit": 3,
+        "stun": 3
+      }
+    },
+    { "name": "Cleave",
+      "suit": "blades",
+      "power": 3,
+      "effects": {
+        "damage_aoe": 3
+      }
+    },
+    { "name": "Vampiric Spear",
+      "suit": "blades",
+      "power": 4,
+      "effects": {
+        "heal": 2,
+        "exploit": 2,
+        "damage": 5,
+        "pierce": 2
+      }
+    }
+  ]
+}
