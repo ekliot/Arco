@@ -1,4 +1,5 @@
-{ "name": "blades_01",
+{
+  "name": "blades_01",
   "cards": [
     { "name": "Slash",
       "suit": "blades",
@@ -11,7 +12,7 @@
       "suit": "blades",
       "power": 1,
       "effects": {
-        "block": 2,
+        "guard": 2,
         "damage": 1
       }
     },
@@ -20,14 +21,14 @@
       "power": 1,
       "effects": {
         "exploit": 2,
-        "block": 1
+        "guard": 1
       }
     },
     { "name": "Setup",
       "suit": "blades",
       "power": 1,
       "effects": {
-        "block": 1,
+        "guard": 1,
         "stun": 1,
         "exploit": 2
       }
@@ -45,7 +46,7 @@
       "power": 2,
       "effects": {
         "bleed": 2,
-        "block": 4
+        "guard": 4
       }
     },
     { "name": "Guiding Slice",
@@ -62,7 +63,7 @@
       "suit": "blades",
       "power": 3,
       "effects": {
-        "block": 2,
+        "guard": 2,
         "exploit": 3,
         "stun": 3
       }

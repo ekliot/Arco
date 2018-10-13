@@ -17,32 +17,32 @@ class Effect(object):
     return aff
 
 CARD_EFFECTS = {
-  'damage':   Effect( 'damage' ),
-  'block':    Effect( 'block' ),
+  'damage':   Effect('damage'),
+  'guard':    Effect('guard'),
 
-  'exploit':  Effect( 'exploit', Suits.BLADES ),
-  'armour':   Effect(  'armour', Suits.BONES ),
-  'draw':     Effect(    'draw', Suits.STARS ),
-  'heal':     Effect(    'heal', Suits.STONES ),
+  'exploit':  Effect('exploit'), #, Suits.BLADES),
+  'armour':   Effect( 'armour'), #, Suits.BONES),
+  'draw':     Effect(   'draw'), #, Suits.STARS),
+  'heal':     Effect(   'heal'), #, Suits.STONES),
 
-  'pierce':   Effect(  'pierce', Suits.BLADES, Suits.STARS ),
-  'bleed':    Effect(   'bleed', Suits.BLADES, Suits.STONES ),
+  'pierce':   Effect( 'pierce', Suits.BLADES, Suits.STARS),
+  'bleed':    Effect(  'bleed', Suits.BLADES, Suits.STONES),
 
-  'reflect':  Effect( 'reflect', Suits.BONES, Suits.STARS ),
-  'stun':     Effect(    'stun', Suits.BONES, Suits.STONES ),
+  'reflect':  Effect('reflect', Suits.BONES, Suits.STARS),
+  'stun':     Effect(   'stun', Suits.BONES, Suits.STONES),
 
-  'freeze':   Effect(  'freeze', Suits.STARS, Suits.BLADES ),
-  'burn':     Effect(    'burn', Suits.STARS, Suits.BONES ),
+  'freeze':   Effect( 'freeze', Suits.STARS, Suits.BLADES),
+  'burn':     Effect(   'burn', Suits.STARS, Suits.BONES),
 
-  'poison':   Effect(  'poison', Suits.STONES, Suits.BONES ),
-  'weak':     Effect(    'weak', Suits.STONES, Suits.BLADES )
+  'poison':   Effect( 'poison', Suits.STONES, Suits.BONES),
+  'weak':     Effect(   'weak', Suits.STONES, Suits.BLADES )
 }
 
 SIGNATURE_EFFECTS = {
-  'focus':    Effect(   'focus', Suits.BLADES, Suits.BONES ),
-  'pin':      Effect(     'pin', Suits.BONES, Suits.BLADES ),
-  'shock':    Effect(   'shock', Suits.STARS, Suits.BLADES ),
-  'minion':   Effect(  'minion', Suits.STONES, Suits.BONES )
+  'focus':    Effect(  'focus', Suits.BLADES, Suits.BONES),
+  'pin':      Effect(    'pin', Suits.BONES, Suits.BLADES),
+  'shock':    Effect(  'shock', Suits.STARS, Suits.BLADES),
+  'minion':   Effect( 'minion', Suits.STONES, Suits.BONES )
 }
 
 MULTS = {
