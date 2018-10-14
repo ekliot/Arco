@@ -26,7 +26,7 @@ func tmp_deck(who):
   for i in range(20):
     card = deal(
       who,
-      card_suits.get_blades_str(),
+      CARD_SUITS.get_blades_str(),
       1,
       "slash"
    )

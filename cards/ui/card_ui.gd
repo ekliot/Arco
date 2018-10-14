@@ -48,8 +48,8 @@ func debug_tween(o, k, e, v):
     LOGGER.debug($Tween, v)
 
 func _input(ev):
-  if ev is InputEventMouseMotion and player_data.can_hold(CARD):
-    hovered = ui_helper.is_mouse_inside(get_global_rect())
+  if ev is InputEventMouseMotion and PLAYER_DATA.can_hold(CARD):
+    hovered = UI_HELPER.is_mouse_inside(get_global_rect())
     if hovered: # and not get_parent().is_examining():
       grow()
       # get_parent().examine_card(self)
@@ -103,11 +103,11 @@ func build(card):
   return self
 
 func pick_up():
-  player_data.pick_up_card(CARD)
+  PLAYER_DATA.pick_up_card(CARD)
   pointer = point()
 
 func drop_me():
-  player_data.drop_card()
+  PLAYER_DATA.drop_card()
 
   if pointer.is_locked():
     if BM.validate_play(CARD, pointer.lockon.get_river_id()):

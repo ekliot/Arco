@@ -11,19 +11,19 @@ config_version=3
 [application]
 
 config/name="Arco"
-run/main_scene="res://battles/Battle.tscn"
+run/main_scene="res://menus/MainMenu.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 LOGGER="*res://logger.gd"
-card_suits="*res://cards/suits.gd"
-card_effects="*res://cards/effects.gd"
+CARD_SUITS="*res://cards/suits.gd"
+CARD_EFFECTS="*res://cards/effects.gd"
 BM="*res://battles/battlemaster.gd"
 DEALER="*res://cards/dealer.gd"
 SPAWNER="*res://characters/spawner.gd"
-player_data="*res://characters/player.gd"
-ui_helper="*res://ui_helper.gd"
+PLAYER_DATA="*res://characters/player.gd"
+UI_HELPER="*res://ui_helper.gd"
 
 [debug]
 

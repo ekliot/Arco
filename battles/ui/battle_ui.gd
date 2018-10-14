@@ -4,7 +4,11 @@ onready var MENU_BAR = $MenuBar
 onready var DUEL_AREA = $DuelArea
 onready var CARD_AREA = $CardArea
 
-# == SETUP == #
+
+"""
+==== SETUP
+"""
+
 
 func setup_ui():
   var battle = get_parent()
@@ -19,6 +23,7 @@ func setup_ui():
   # QUESTION this doesn't work the way I want it to?
   # self.connect('resized', self, '_scaling')
 
+
 func _debug_size(ui, max_depth=0, cur_depth=0):
   if max_depth > 0 and cur_depth > max_depth:
     return
@@ -27,6 +32,7 @@ func _debug_size(ui, max_depth=0, cur_depth=0):
     print(ui.get_name(), ui.get_rect())
     for child in ui.get_children():
       _debug_size(child, max_depth, cur_depth+1)
+
 
 func _scaling():
   var vp_size = get_viewport().get_size()
@@ -45,18 +51,26 @@ func _scaling():
   var e_place_size = e_place.get_minimum_size()
   e_place.set_custom_minimum_size(Vector2(e_place_size.x, d_h))
 
-# ==== menu area
 
-# TODO
-func _setup_menu_area(battle):
+"""
+====-- menu area
+"""
+
+
+func _setup_menu_area(battle): # TODO
   pass
 
-# ==== duel area
+
+"""
+====-- duel area
+"""
+
 
 func _setup_duel_area(battle):
   _setup_rivers(battle)
   _setup_sprites(battle)
   _setup_timer(battle)
+
 
 func _setup_rivers(battle):
   # first, connect the river UIs to their respective models
@@ -67,6 +81,7 @@ func _setup_rivers(battle):
   get_rivers("Enemy").connect_to_model(enemy_rivers)
   get_rivers("Enemy").reverse()
 
+
 func _setup_sprites(battle):
   var sprite_hero  = battle.get_fighter(BM.HERO).get_sprite()
   var sprite_enemy = battle.get_fighter(BM.CPU).get_sprite()
@@ -76,11 +91,15 @@ func _setup_sprites(battle):
 
   # TODO minions
 
-# TODO
-func _setup_timer(battle):
+
+func _setup_timer(battle): # TODO
   pass
 
-# ==== card area
+
+"""
+====-- card area
+"""
+
 
 func _setup_card_area(battle):
   # setup deck
@@ -92,7 +111,11 @@ func _setup_card_area(battle):
   # var discard = get_discard()
   pass
 
-# == SIGNAL HANDLING == #
+
+"""
+==== SIGNAL HANDLING
+"""
+
 
 func _connect_signals(battle):
   # battle state changes
@@ -124,27 +147,39 @@ func _connect_signals(battle):
   # enemy.connect('momentum_dec',   self, '_on_enemy_momentum_dec')
   # enemy.connect('combo_activate', self, '_on_enemy_combo_activate')
 
-# ==== board
+
+"""
+====-- board
+"""
+
 
 func _on_turn_start(battle):
   # enable hero rivers
   # update timer
   pass
 
+
 func _on_turn_end(battle):
   # disable hero rivers
   pass
 
+
 func _on_card_played(card, river):
   pass
+
 
 func _on_card_activated(card, river):
   pass
 
+
 func _on_card_removed(card, river):
   pass
 
-# ==== hero
+
+"""
+====-- hero
+"""
+
 
 # func _on_hero_play_card(card, river):
 #   pass
@@ -156,67 +191,100 @@ func _on_hero_drew_card(card):
   # card_sprite.connect('card_placed', self, '_player_places_card')
   pass
 
+
 func _on_hero_discard_card(card):
   pass
+
 
 func _on_hero_take_damage(new_hp, old_hp, max_hp):
   pass
 
+
 func _on_hero_heal_damage(new_hp, old_hp, max_hp):
   pass
+
 
 func _on_hero_died():
   pass
 
+
 func _on_hero_momentum_inc(old_momentum, new_momentum):
   pass
+
 
 func _on_hero_momentum_dec(old_momentum, new_momentum):
   pass
 
+
 func _on_hero_combo_activate():
   pass
 
-# ==== enemy
+
+"""
+====-- enemy
+"""
+
 
 # func _on_enemy_play_card(card, river):
 #   pass
 
+
 func _on_enemy_drew_card(card):
   pass
+
 
 func _on_enemy_discard_card(card):
   pass
 
+
 func _on_enemy_take_damage(new_hp, old_hp, max_hp):
   pass
+
 
 func _on_enemy_heal_damage(new_hp, old_hp, max_hp):
   pass
 
+
 func _on_enemy_died():
   pass
+
 
 func _on_enemy_momentum_inc(old_momentum, new_momentum):
   pass
 
+
 func _on_enemy_momentum_dec(old_momentum, new_momentum):
   pass
+
 
 func _on_enemy_combo_activate():
   pass
 
-# == UI CONTROL == #
 
-# ==== input handling
+"""
+==== UI CONTROL
+"""
+
+
+"""
+====-- input handling
+"""
+
 
 func _input(ev):
   # check for mouse shit
   pass
 
-# ==== duel area
 
-# ====== general
+"""
+====-- duel area
+"""
+
+
+"""
+====---- general
+"""
+
 
 # set a fighter's sprite in the middle of its container
 func position_fighter(who):
@@ -225,11 +293,16 @@ func position_fighter(who):
     var sprite = placement.get_node(who + "Sprite")
     sprite.set_position(placement.get_size() / 2)
 
+
 func place_card_in_river(who, card, river):
   var rivers = get_rivers(who)
   rivers.play_card(card, river)
 
-# ====== hero
+
+"""
+====---- hero
+"""
+
 
 func place_hero_sprite(sprite):
   var placement = DUEL_AREA.get_node("HeroPlacement")
@@ -238,13 +311,19 @@ func place_hero_sprite(sprite):
     position_hero_sprite()
     placement.connect('resized', self, 'position_hero_sprite')
 
+
 func position_hero_sprite():
   position_fighter("Hero")
+
 
 func place_hero_card(card, river):
   place_card_in_river("Hero", card, river)
 
-# ======= enemy
+
+"""
+====---- enemy
+"""
+
 
 func place_enemy_sprite(sprite):
   var placement = DUEL_AREA.get_node("EnemyPlacement")
@@ -253,17 +332,25 @@ func place_enemy_sprite(sprite):
     position_hero_sprite()
     placement.connect('resized', self, 'position_enemy_sprite')
 
+
 func position_enemy_sprite():
   position_fighter("Enemy")
+
 
 func place_enemy_card(card, river):
   place_card_in_river("Enemy", card, river)
 
-# ====== timer
+
+"""
+====-- timer
+"""
+
 
 # TODO
 
-# ====== river swapping
+"""
+====-- river swapping
+"""
 
 # TODO
 
@@ -273,19 +360,26 @@ func place_enemy_card(card, river):
 # deck
 # hand
 
-# == GETTERS == #
+
+"""
+==== GETTERS
+"""
 
 func get_deck():
   return CARD_AREA.get_node("DeckContainer").get_child(0)
 
+
 func get_discard():
   return CARD_AREA.get_node("DiscardContainer").get_child(0)
+
 
 func get_hand():
   return CARD_AREA.get_node('Hand')
 
+
 func get_placement(who):
   return DUEL_AREA.get_node("%sPlacement" % who)
+
 
 func get_rivers(who=null):
   return DUEL_AREA.get_node("RiverContainer" + ("/%sRivers" % who if who else ""))

@@ -1,4 +1,4 @@
-extends Node
+extends Object
 
 const NAME = ""
 const DESCRIPTION = ""

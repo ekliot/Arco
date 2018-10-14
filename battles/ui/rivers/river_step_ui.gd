@@ -19,7 +19,7 @@ func _ready():
 
 func _input(ev):
   if ev is InputEventMouseMotion:
-    var inside = ui_helper.is_mouse_inside(get_global_rect())
+    var inside = UI_HELPER.is_mouse_inside(get_global_rect())
     if inside and !is_hovered():
       hovered = true
       _pointer_lockon()

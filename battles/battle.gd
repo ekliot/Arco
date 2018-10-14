@@ -15,40 +15,37 @@ var CUR_MOMENTUM = 0
 var turn = 0
 var ready_players = { BM.HERO: false, BM.CPU: false }
 
-# we need to be able to dynamically load different battle scenarios
+# TODO we need to be able to dynamically load different battle scenarios
 
-func _init(scenario=null):
-  SCENARIO = scenario
+func _init():
+  SCENARIO = BM.get_next_scenario()
+
 
 func _ready():
   # TEMP
-  _setup({
-    'enemies': {
-      'root': preload("res://characters/enemies/skeleton.gd"),
-      'minions': { 'a' : null, 'b' : null, 'c' : null, 'd' : null }
-    }
-  })
+  _setup(SCENARIO)
   _start_turn()
 
-func _setup(params):
-  _setup_battle(params)
+
+func _setup(scenario):
+  _setup_battle(scenario)
   $BattleUI.setup_ui()
   _connect_signals()
 
-func _setup_battle(params):
-  var _rivers_ = preload("res://battles/rivers.gd")
 
-  var hero = preload("res://characters/heroes/hero.gd").new(
-    _rivers_.new(BM.HERO),
+func _setup_battle(scenario):
+  var hero = BM._HERO_.new(
+    BM._RIVERS_.new(BM.HERO),
     null # TODO minions
- )
+  )
   add_child(hero, BM.fighter_id_to_str(BM.HERO))
 
-  var opponent = params.enemies.root.new(
-    _rivers_.new(BM.CPU),
-    null # TODO minions
- )
+  var opponent = scenario.get_enemy_root().new(
+    BM._RIVERS_.new(BM.CPU),
+    scenario.get_enemy_minions()
+  )
   add_child(opponent, BM.fighter_id_to_str(BM.CPU))
+
 
 func _connect_signals():
   connect('all_ready', self, '_start_turn')
@@ -66,7 +63,11 @@ func _connect_signals():
   # connect('turn_start', enemy, '_on_turn_start')
   connect('turn_end',   enemy, '_on_turn_end')
 
-# == PRIVATE CORE == #
+
+"""
+==== PRIVATE CORE
+"""
+
 
 func _ready_up(who):
   ready_players[who] = true
@@ -76,6 +77,7 @@ func _ready_up(who):
   if ready:
     LOGGER.debug(self, 'all players ready')
     emit_signal('all_ready')
+
 
 func _start_turn():
   turn += 1
@@ -91,6 +93,7 @@ func _start_turn():
   get_fighter(BM.CPU).decide_next_move(get_board())
   emit_signal('turn_start', get_board())
 
+
 func _end_turn():
   # TODO 'game_over' should happen based on listening for a scenario-completion signal (i.e. character dies) rather than statically in this method
   var result = _resolve_all_moves()
@@ -98,6 +101,7 @@ func _end_turn():
     emit_signal('turn_end', get_board())
   else:
     emit_signal('game_over', result)
+
 
 func _resolve_all_moves():
   """
@@ -136,7 +140,11 @@ func _resolve_all_moves():
       # TEMP actually think though how this logics out
       move.card.activate(self, move.river)
 
-# == FIGHTER MOVES == #
+
+"""
+==== FIGHTER MOVES
+"""
+
 
 func play_card(card, river):
   var who = card.get_owner_id()
@@ -151,13 +159,14 @@ func play_card(card, river):
   emit_signal('card_played', card, river)
   play.resume()
 
-# TODO
-func pass_turn():
+
+func pass_turn(): # TODO
   pass # lol
 
-# TODO
-func swap_rivers():
+
+func swap_rivers(): # TODO
   pass
+
 
 func mulligan():
   var hero = get_fighter(BM.HERO)
@@ -165,7 +174,11 @@ func mulligan():
   hero.draw_hand()
   # TODO flag the mulligan for this turn
 
-# == HELPERS == #
+
+"""
+==== HELPERS
+"""
+
 
 # who will be targeted by an attack in a river vs the enemy or hero
 func target_in_river(vs, river):
@@ -205,7 +218,11 @@ func test_move_outcome(who, card, river):
   # copy board state, make test move, and calculate the resulting board state
   return null
 
-# == GETTERS == #
+
+"""
+==== GETTERS
+"""
+
 
 func get_board():
   var board = {
@@ -238,12 +255,20 @@ func has_minions(who):
 
   return false
 
-# ==== GET by river
+
+"""
+====== GET by river
+"""
+
 
 func get_minion_in_river(who, river):
   return get_minions(who)[river]
 
-# ==== GET by momentum
+
+"""
+====== GET by momentum
+"""
+
 
 # the 'level' is 1-indexed
 func get_move_at_momentum(who, level):
@@ -257,7 +282,10 @@ func get_active_river_at_momentum(who, level):
 func get_card_at_momentum(who, level):
   get_rivers(who).get_card_at_momentum(level)
 
-# == OVERRIDES == #
+
+"""
+==== OVERRIDES
+"""
 
 func add_child(child, name=null):
   """

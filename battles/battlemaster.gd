@@ -13,23 +13,62 @@ const MAX_MOMENTUM = 4
 
 const RIVER_IDS = [ 'a', 'b', 'c', 'd' ]
 
+const _RIVERS_ = preload("res://battles/rivers.gd")
 const _HERO_ = preload("res://characters/heroes/hero.gd")
 
-# == RULES == #
+var next_scenario = null setget set_next_scenario,get_next_scenario
+
+
+"""
+==== CORE
+"""
+
+
+func set_next_scenario(scen_path):
+  next_scenario = scen_path
+
+
+func load_demo_scenario():
+  next_scenario = "res://battles/scenarios/demo.gd"
+
+
+func get_next_scenario():
+  if not next_scenario:
+    load_demo_scenario()
+  var scen = load(next_scenario).new()
+  return scen
+
+
+func load_battle():
+  # TODO background loading
+  # https://godot.readthedocs.io/en/3.0/tutorials/io/background_loading.html#doc-background-loading
+  get_tree().change_scene("res://battles/Battle.tscn")
+
+
+"""
+==== RULES
+"""
+
 
 # QUESTION is it worth including global interpreters and queries for game rules here?
 # e.g. what momentums is a card valid for?
 # NOTE yes, yes it is
 # TODO rule handling
 
+
 func validate_play(card, river_id):
   var who = card.OWNER_ID
   return get_battle().can_place_card(who, card, river_id)
 
-# == MOVES == #
+
+"""
+==== MOVES
+"""
+
 
 func play_card(card, river_id):
   return get_battle().play_card(card, river_id)
+
 
 func enemy_move(card, river_id):
   """
@@ -39,24 +78,36 @@ func enemy_move(card, river_id):
   # TODO do this
   pass
 
-# == HELPERS == #
+
+"""
+==== HELPERS
+"""
+
 
 func is_player(who):
   return who is _HERO_ # lol
 
-# == MODELS == #
+
+"""
+==== MODELS
+"""
+
 
 func get_battle():
   return get_node("/root/Battle")
 
+
 func get_board():
   return get_battle().get_board()
+
 
 func get_hero():
   return get_battle().get_fighter(HERO)
 
+
 func get_enemy():
   return get_battle().get_fighter(CPU)
+
 
 func fighter_id_to_str(id):
   # NOTE match doesn't work here for some reason
@@ -67,25 +118,35 @@ func fighter_id_to_str(id):
       return "Enemy"
   return ""
 
-# == VIEWS == #
+
+"""
+==== VIEWS
+"""
+
 
 func get_battle_ui():
   return get_battle().get_node("BattleUI")
 
+
 func get_deck_ui():
   return get_battle_ui().get_deck()
+
 
 func get_discard_ui():
   return get_battle_ui().get_discard()
 
+
 func get_hand_ui():
   return get_battle_ui().get_hand()
+
 
 func get_rivers_ui(who):
   return get_battle_ui().get_rivers(who)
 
+
 func get_river_ui(who, river_id):
   get_rivers_ui(who).get_river(river_id)
+
 
 func get_river_step_ui(who, river_id, level):
   get_river_ui(who, river_id).get_step(level)

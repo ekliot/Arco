@@ -19,9 +19,9 @@ var PLAYER = {
 }
 
 func _init():
-  setup_test_player_data()
+  setup_test_PLAYER_DATA()
 
-func setup_test_player_data():
+func setup_test_PLAYER_DATA():
   PLAYER.id = 'HERO_TEST'
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100

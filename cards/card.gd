@@ -102,7 +102,7 @@ func get_suit():
   return SUIT
 
 func get_suit_as_str():
-  return card_suits.NAMES[SUIT]
+  return CARD_SUITS.NAMES[SUIT]
 
 func get_power():
   return POWER
