@@ -10,5 +10,5 @@ var PARAMS = {
   'description': null
 }
 
-func _init( owner_id ).( owner_id, PARAMS ):
+func _init(owner_id).(owner_id, PARAMS):
   pass

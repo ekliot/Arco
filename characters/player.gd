@@ -26,11 +26,11 @@ func setup_test_player_data():
   PLAYER.stats.health = 100
   PLAYER.stats.health_max = 100
 
-  PLAYER.cards.deck = DEALER.tmp_deck( BM.HERO )
+  PLAYER.cards.deck = DEALER.tmp_deck(BM.HERO)
 
   PLAYER.sprite = Sprite.new()
-  PLAYER.sprite.name = "%sSprite" % BM.fighter_id_to_str( BM.HERO )
-  PLAYER.sprite.texture = preload( "res://icon.png" )
+  PLAYER.sprite.name = "%sSprite" % BM.fighter_id_to_str(BM.HERO)
+  PLAYER.sprite.texture = preload("res://icon.png")
 
 func get_player_battle_data():
   return PLAYER
@@ -39,18 +39,18 @@ func get_player_battle_data():
 
 var held_card = null
 
-func pick_up_card( card ):
+func pick_up_card(card):
   held_card = card
-  # print( "PLAYER // picked up card ", card )
+  # print("PLAYER // picked up card ", card)
 
 func drop_card():
-  # print( "PLAYER // dropping card ", held_card )
+  # print("PLAYER // dropping card ", held_card)
   held_card = null
 
 func get_held_card():
   return held_card
 
-func can_hold( card ):
+func can_hold(card):
   return held_card == card or held_card == null
 
 func is_holding_card():

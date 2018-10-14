@@ -13,9 +13,9 @@ signal discard_card(card)
 # signal momentum_dec(old, new)
 # signal combo_activate # TODO combo signal args
 
-var _DECK_ = preload( "res://cards/deck.gd" )
-var _HAND_ = preload( "res://cards/hand.gd" )
-var _DISCARD_ = preload( "res://cards/discard.gd" )
+var _DECK_ = preload("res://cards/deck.gd")
+var _HAND_ = preload("res://cards/hand.gd")
+var _DISCARD_ = preload("res://cards/discard.gd")
 
 var ID = 'CHARACTER_'
 
@@ -32,18 +32,18 @@ var SIGNATURE = [] # TODO signature.gd
 
 var SPRITE = null
 
-func _init( data, rivers, minions ):
+func _init(data, rivers, minions):
   _set_hand()
   _set_discard()
 
-  slurp_data( data )
+  slurp_data(data)
 
-  add_child( rivers )
+  add_child(rivers)
   rivers.name = 'Rivers'
-  rivers.connect( 'momentum_update', self, 'set_momentum' )
-  # TODO add_child( minion ) for minion in minions
+  rivers.connect('momentum_update', self, 'set_momentum')
+  # TODO add_child(minion) for minion in minions
 
-func slurp_data( data ):
+func slurp_data(data):
   var stats = data.stats
   var cards = data.cards
 
@@ -53,62 +53,62 @@ func slurp_data( data ):
   HEALTH_MAX = stats.health_max
   DRAW_SIZE = stats.draw_size
 
-  _set_deck( cards.deck )
+  _set_deck(cards.deck)
 
   SIGNATURE = cards.signature
 
   SPRITE = data.sprite
-  # add_child( SPRITE )
+  # add_child(SPRITE)
   # SPRITE.name = 'Sprite'
 
 func _set_hand():
   HAND = _HAND_.new()
-  add_child( HAND )
+  add_child(HAND)
   HAND.name = 'Hand'
 
-func _set_deck( deck ):
+func _set_deck(deck):
   DECK = deck
-  add_child( DECK )
+  add_child(DECK)
   DECK.name = 'Deck'
 
 func _set_discard():
   DISCARD = _DISCARD_.new()
-  add_child( DISCARD )
+  add_child(DISCARD)
   DISCARD.name = 'Discard'
 
 func _debug_cards():
-  LOGGER.debug( self, "HAND: %s" % HAND.to_s() )
-  LOGGER.debug( self, "DISCARD: %s" % DISCARD.to_s() )
-  # LOGGER.debug( self, "RIVERS: %s" % HAND.to_s() )
+  LOGGER.debug(self, "HAND: %s" % HAND.to_s())
+  LOGGER.debug(self, "DISCARD: %s" % DISCARD.to_s())
+  # LOGGER.debug(self, "RIVERS: %s" % HAND.to_s())
 
 # == SIGNALS == #
 
-func _on_turn_start( battle ):
+func _on_turn_start(battle):
   """
   when the battle tells us the turn is starting
   """
   draw_hand()
   # _debug_cards()
 
-func _on_turn_end( battle ):
+func _on_turn_end(battle):
   """
   when the battle tells us the turn is over
   """
-  var who = BM.HERO if self.name == BM.fighter_id_to_str( BM.HERO ) else BM.CPU
-  emit_signal( 'ready', who )
+  var who = BM.HERO if self.name == BM.fighter_id_to_str(BM.HERO) else BM.CPU
+  emit_signal('ready', who)
 
 # == MOVES == #
 
-func play_card( card, river ):
-  LOGGER.debug( self, "playing card %s into river %s" % [card.name, river] )
+func play_card(card, river):
+  LOGGER.debug(self, "playing card %s into river %s" % [card.name, river])
   # remove the card from our hand
-  HAND.remove_card( card )
+  HAND.remove_card(card)
   # place the card into its river
-  $Rivers.place_card( card, river )
+  $Rivers.place_card(card, river)
   # tell the card it's been played
-  card.play( BM.get_board(), river )
+  card.play(BM.get_board(), river)
   # let the world know!
-  emit_signal( 'play_card', card )
+  emit_signal('play_card', card)
   # clear out our hand
   clear_hand()
   # make sure the battle has confirmed our move and all is well
@@ -123,68 +123,68 @@ func end_turn():
 # == ACTIONS == #
 
 func draw_hand():
-  # prints( ID, "// drawing new hand of size", DRAW_SIZE )
+  # prints(ID, "// drawing new hand of size", DRAW_SIZE)
   # TODO make sure there are cards to draw from the deck
-  # to_draw = min( DRAW_SIZE, DECK.size() )
-  for i in range( DRAW_SIZE ):
-    # LOGGER.debug( self, "drawing card %d" % i )
+  # to_draw = min(DRAW_SIZE, DECK.size())
+  for i in range(DRAW_SIZE):
+    # LOGGER.debug(self, "drawing card %d" % i)
     draw_card()
 
 func draw_card():
   if DECK.is_empty() and not DISCARD.is_empty():
-    LOGGER.debug( self, "reshuffling discard into deck" )
+    LOGGER.debug(self, "reshuffling discard into deck")
     # TODO emit a signal here for the UI
-    DISCARD.transfer( DECK )
+    DISCARD.transfer(DECK)
     DECK.shuffle()
 
   # TODO double check the deck isn't empty...
 
   var card = DECK.draw()
   if card:
-    # LOGGER.debug( self, "drew card %s" % card.name )
-    emit_signal( 'drew_card', card ) # HAND should add a card here
+    # LOGGER.debug(self, "drew card %s" % card.name)
+    emit_signal('drew_card', card) # HAND should add a card here
   else:
-    LOGGER.error( self, '!!!!!! DREW null FROM THEIR DECK OH DEAR' )
+    LOGGER.error(self, '!!!!!! DREW null FROM THEIR DECK OH DEAR')
 
 func clear_hand():
-  # LOGGER.debug( self, "clearing hand // " + HAND.to_s() )
+  # LOGGER.debug(self, "clearing hand // " + HAND.to_s())
   for c in HAND.get_cards():
-    discard_card( c )
-    # yield( self, 'discard_card' )
+    discard_card(c)
+    # yield(self, 'discard_card')
 
-func discard_card( card ):
-  if HAND.has( card ):
-    HAND.remove_card( card )
-    DISCARD.add_card( card )
-    emit_signal( 'discard_card', card )
+func discard_card(card):
+  if HAND.has(card):
+    HAND.remove_card(card)
+    DISCARD.add_card(card)
+    emit_signal('discard_card', card)
 
-func take_damage( amt ):
+func take_damage(amt):
   HEALTH -= amt
-  # emit_signal( 'take_damage', HEALTH, HEALTH + amt, HEALTH_MAX )
+  # emit_signal('take_damage', HEALTH, HEALTH + amt, HEALTH_MAX)
   if HEALTH <= 0:
-    emit_signal( 'died' )
+    emit_signal('died')
 
-func heal_damage( amt ):
+func heal_damage(amt):
   var old_hp = HEALTH
-  HEALTH = min( HEALTH + amt, HEALTH_MAX )
-  # emit_signal( 'heal_damage', HEALTH, old_hp, HEALTH_MAX )
+  HEALTH = min(HEALTH + amt, HEALTH_MAX)
+  # emit_signal('heal_damage', HEALTH, old_hp, HEALTH_MAX)
 
-func set_momentum( old, new ):
-  LOGGER.debug( self, "setting momentum to %d from %d" % [new, old] )
+func set_momentum(old, new):
+  LOGGER.debug(self, "setting momentum to %d from %d" % [new, old])
   MOMENTUM = new
 
   if old < new:
-    # emit_signal( 'momentum_dec', MOMENTUM, lvl )
+    # emit_signal('momentum_dec', MOMENTUM, lvl)
     # signature_check()
     pass
   elif old > new:
-    # emit_signal( 'momentum_inc', MOMENTUM, lvl )
+    # emit_signal('momentum_inc', MOMENTUM, lvl)
     pass
 
 # == HELPERS == #
 
-func validate_play( card, river ):
-  return get_rivers().validate_play( card, river )
+func validate_play(card, river):
+  return get_rivers().validate_play(card, river)
 
 func get_rivers():
   return $Rivers
@@ -205,6 +205,6 @@ func get_valid_moves():
     if card.POWER <= MOMENTUM + 1:
       # TODO actually decide shit
       for river in $Rivers.RIVERS.keys():
-        moves.push_back( {'card': card, 'river': river} )
+        moves.push_back({'card': card, 'river': river})
 
   return moves

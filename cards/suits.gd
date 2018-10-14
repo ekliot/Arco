@@ -10,10 +10,10 @@ const NAMES = {
 }
 
 const ICONS = { # TODO
-  BLADES: preload( "res://cards/assets/blades.png" ),
-  BONES:  preload( "res://cards/assets/bones.png" ),
-  STARS:  preload( "res://cards/assets/stars.png" ),
-  STONES: preload( "res://cards/assets/stones.png" )
+  BLADES: preload("res://cards/assets/blades.png"),
+  BONES:  preload("res://cards/assets/bones.png"),
+  STARS:  preload("res://cards/assets/stars.png"),
+  STONES: preload("res://cards/assets/stones.png")
 }
 
 func get_blades_str():
@@ -52,14 +52,14 @@ func get_stars_icon():
 func get_stones_icon():
   return ICONS[STONES]
 
-func get_icon_by_id( id ):
+func get_icon_by_id(id):
   return ICONS[id]
 
-func get_str_by_id( id ):
+func get_str_by_id(id):
   return NAMES[id]
 
-func get_id_by_str( s ):
-  match( s ):
+func get_id_by_str(s):
+  match(s):
     'blades':
       return BLADES
     'bones':
@@ -69,6 +69,6 @@ func get_id_by_str( s ):
     'stones':
       return STONES
 
-func get_icon_by_str( s ):
-  var id = get_id_by_str( s )
+func get_icon_by_str(s):
+  var id = get_id_by_str(s)
   return ICONS[id]

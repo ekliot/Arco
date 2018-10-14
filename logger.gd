@@ -17,29 +17,29 @@ var BLOCKED_GROUPS = []
 var last_src = null
 var logging_lvl = 0 # TODO set this somewhere/somehow
 
-func info( src, msg ):
-  _log( src, INFO, msg )
+func info(src, msg):
+  _log(src, INFO, msg)
 
-func debug( src, msg ):
-  _log( src, DEBUG, msg )
+func debug(src, msg):
+  _log(src, DEBUG, msg)
 
-func warn( src, msg ):
-  warning( src, msg )
+func warn(src, msg):
+  warning(src, msg)
 
-func warning( src, msg ):
-  _log( src, WARN, msg )
+func warning(src, msg):
+  _log(src, WARN, msg)
 
-func error( src, msg ):
-  _log( src, ERROR, msg )
+func error(src, msg):
+  _log(src, ERROR, msg)
 
-func _log( src, lvl, msg ):
+func _log(src, lvl, msg):
   if lvl < logging_lvl:
     return
   # TODO check for blocking
-  print( _format_msg( src, lvl, msg ) )
+  print(_format_msg(src, lvl, msg))
   last_src = src
 
-func _format_msg( src, lvl, msg ):
+func _format_msg(src, lvl, msg):
   var pad = src.name.length() if src == last_src else 0
   var who = src.name if src != last_src else ''
 

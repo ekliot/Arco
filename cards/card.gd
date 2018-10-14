@@ -4,7 +4,7 @@ signal played(card)
 signal activated(card)
 signal cleared(card)
 
-var _TEMPLATE_ = preload( "res://cards/ui/CardUI.tscn" )
+var _TEMPLATE_ = preload("res://cards/ui/CardUI.tscn")
 
 var OWNER_ID = null
 
@@ -16,61 +16,61 @@ var ICON = null setget ,get_icon # Texture for the card's icon (typically, the s
 var ILLUSTRATION = null setget ,get_illustration # Texture for the card's illustration
 var DESCRIPTION = "" setget ,get_description # long string of this card's description (QUESTION should/can this be marked up?)
 
-func _init( owner_id, card_params ):
+func _init(owner_id, card_params):
   self.OWNER_ID = owner_id
-  slurp_params( card_params )
+  slurp_params(card_params)
 
-func slurp_params( params ):
+func slurp_params(params):
   # TODO make params a class in dealer
-  if params.has( 'id' ):
+  if params.has('id'):
     self.ID += params['id']
 
-  if params.has( 'title' ):
+  if params.has('title'):
     self.TITLE += params['title']
 
-  if params.has( 'suit' ):
+  if params.has('suit'):
     self.SUIT = params['suit']
 
-  if params.has( 'power' ):
+  if params.has('power'):
     self.POWER = params['power']
 
-  if params.has( 'icon' ):
+  if params.has('icon'):
     self.ICON= params['icon']
 
-  if params.has( 'illustration' ):
+  if params.has('illustration'):
     self.ILLUSTRATION= params['illustration']
 
-  if params.has( 'description' ):
+  if params.has('description'):
     self.DESCRIPTION= params['description']
 
-func play( board, river ):
-  _onplay( board, river )
-  emit_signal( 'played', self )
+func play(board, river):
+  _onplay(board, river)
+  emit_signal('played', self)
 
-func activate( board, river ):
-  _onactivate( board, river )
-  emit_signal( 'activated', self )
+func activate(board, river):
+  _onactivate(board, river)
+  emit_signal('activated', self)
 
-func cleared( board, river ):
-  _onclear( board, river )
-  emit_signal( 'cleared', self )
+func cleared(board, river):
+  _onclear(board, river)
+  emit_signal('cleared', self)
 
 # == OVERRIDEABLES == #
 
-func _onplay( board, river ):
+func _onplay(board, river):
   pass
 
-func _onactivate( board, river ):
+func _onactivate(board, river):
   pass
 
-func _onclear( board, river ):
+func _onclear(board, river):
   pass
 
 func _load_template():
   var template = _TEMPLATE_.instance()
   # set up template instance
   # this means overlaying the template with card data, image, modifiers, etc.
-  return template.build( self )
+  return template.build(self)
 
 # == GETTERS == #
 

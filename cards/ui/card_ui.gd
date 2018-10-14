@@ -4,8 +4,8 @@ signal tween_complete(key)
 signal card_played(card, sprite)
 signal card_discarded(card, sprite)
 
-var _POINTER_ = preload( "res://cards/ui/CardPointer.tscn" )
-# var _POINTER_ = preload( "res://cards/ui/card_pointer.gd" ) # this doesn't work for some reason
+var _POINTER_ = preload("res://cards/ui/CardPointer.tscn")
+# var _POINTER_ = preload("res://cards/ui/card_pointer.gd") # this doesn't work for some reason
 
 var CARD = null setget ,get_card
 
@@ -33,26 +33,26 @@ func _init():
   # TODO connect to UI resizing and set size based on that
   # DEV see hand_ui.add_card()
   set_size_params()
-  set_custom_minimum_size( shrink_size )
+  set_custom_minimum_size(shrink_size)
 
 func _ready():
-  $Tween.connect( 'tween_completed', self, '_on_tween_complete' )
-  # $Tween.connect( 'tween_step', self, 'debug_tween' )
-  get_parent().connect( 'sort_children', self, '_on_sorted' )
+  $Tween.connect('tween_completed', self, '_on_tween_complete')
+  # $Tween.connect('tween_step', self, 'debug_tween')
+  get_parent().connect('sort_children', self, '_on_sorted')
 
-func debug_tween( o, k, e, v ):
+func debug_tween(o, k, e, v):
   if k == ":set_global_position":
-    LOGGER.debug( $Tween, o.name )
-    LOGGER.debug( $Tween, k )
-    LOGGER.debug( $Tween, e )
-    LOGGER.debug( $Tween, v )
+    LOGGER.debug($Tween, o.name)
+    LOGGER.debug($Tween, k)
+    LOGGER.debug($Tween, e)
+    LOGGER.debug($Tween, v)
 
-func _input( ev ):
-  if ev is InputEventMouseMotion and player_data.can_hold( CARD ):
-    hovered = ui_helper.is_mouse_inside( get_global_rect() )
+func _input(ev):
+  if ev is InputEventMouseMotion and player_data.can_hold(CARD):
+    hovered = ui_helper.is_mouse_inside(get_global_rect())
     if hovered: # and not get_parent().is_examining():
       grow()
-      # get_parent().examine_card( self )
+      # get_parent().examine_card(self)
     elif not pointing:
       shrink()
 
@@ -66,7 +66,7 @@ func _input( ev ):
       if pointing and not ev.is_pressed():
         drop_me()
 
-func _on_tween_complete( obj, key ):
+func _on_tween_complete(obj, key):
   if key == ":set_custom_minimum_size":
     if get_custom_minimum_size() == shrink_size:
       bigger = false
@@ -74,13 +74,13 @@ func _on_tween_complete( obj, key ):
       bigger = true
   elif key == ":set_global_position": # and not in_position:
     if discard:
-      emit_signal( 'tween_complete', key )
+      emit_signal('tween_complete', key)
     elif not in_position:
       in_position = true
-      emit_signal( 'tween_complete', key )
+      emit_signal('tween_complete', key)
   elif key == ":set_modulate":
     if discard:
-      emit_signal( 'tween_complete', key )
+      emit_signal('tween_complete', key)
 
 func _on_sorted():
   if not in_position and not discard:
@@ -90,28 +90,28 @@ func _on_sorted():
       self, 'set_global_position',
       start, final,
       0.3, 0, 0
-    )
+   )
     self.visible = true
     $Tween.start()
 
 # == ACTIONS == #
 
-func build( card ):
+func build(card):
   CARD = card
   self.name = card.name + "_UI"
   # TODO actually overlay all the elements with data from the card
   return self
 
 func pick_up():
-  player_data.pick_up_card( CARD )
+  player_data.pick_up_card(CARD)
   pointer = point()
 
 func drop_me():
   player_data.drop_card()
 
   if pointer.is_locked():
-    if BM.validate_play( CARD, pointer.lockon.get_river_id() ):
-      BM.play_card( CARD, pointer.lockon.get_river_id() )
+    if BM.validate_play(CARD, pointer.lockon.get_river_id()):
+      BM.play_card(CARD, pointer.lockon.get_river_id())
 
   else:
     reset()
@@ -122,14 +122,14 @@ func reset():
   shrink()
 
 func point():
-  # var ptr = _POINTER_.new( self, get_pointer_origin() )
+  # var ptr = _POINTER_.new(self, get_pointer_origin())
   var ptr = _POINTER_.instance()
-  add_child( ptr )
-  ptr.point_to( get_viewport().get_mouse_position() )
+  add_child(ptr)
+  ptr.point_to(get_viewport().get_mouse_position())
   pointing = true
 
   # connect pointer to valid river nodes
-  BM.get_rivers_ui( 'Hero' ).connect_to_card_pointer( CARD, ptr )
+  BM.get_rivers_ui('Hero').connect_to_card_pointer(CARD, ptr)
 
   return ptr
 
@@ -139,7 +139,7 @@ func grow():
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), grow_size,
       0.05, 0, 0 # TODO refine these vals
-    )
+   )
     $Tween.start()
 
 func shrink():
@@ -148,10 +148,10 @@ func shrink():
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), shrink_size,
       0.05, 0, 0 # TODO refine these vals
-    )
+   )
     $Tween.start()
 
-func remove( reason ):
+func remove(reason):
   var method = null
   var start = null
   var final = null
@@ -174,13 +174,13 @@ func remove( reason ):
     self, method,
     start, final,
     dur, 0, 0
-  )
+ )
 
   $Tween.start()
 
 # == SETTERS == #
 
-func set_size_params( _min=null, _max=null ):
+func set_size_params(_min=null, _max=null):
   if _min:
     shrink_size = _min
   else:
@@ -197,7 +197,7 @@ func get_card():
   return CARD
 
 func get_pointer_origin():
-  return Vector2( rect_size.x / 2, 0 )
+  return Vector2(rect_size.x / 2, 0)
 
 func is_hovered():
   return hovered
