@@ -1,0 +1,6 @@
+extends 'res://cards/effect.gd'
+
+const NAME = "{name}"
+const DESCRIPTION = "{description}"
+const SUIT_PRIMARY = "{suit_primary}"
+const SUIT_SECONDARY = "{suit_secondary}"

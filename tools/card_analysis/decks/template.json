@@ -1,0 +1,12 @@
+{
+  "name": "DECK",
+  "cards": [
+    { "name": "CARD",
+      "suit": "SUIT",
+      "power": -1,
+      "effects": {
+        "EFFECT": -1
+      }
+    }
+  ]
+}
