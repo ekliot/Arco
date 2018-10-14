@@ -1,10 +1,12 @@
-extends PanelContainer
+extends Control
 
 signal tween_complete(key)
 signal card_played(card, sprite)
 signal card_discarded(card, sprite)
 
+var _PIP_ = preload("res://cards/ui/Pip.tscn")
 var _POINTER_ = preload("res://cards/ui/CardPointer.tscn")
+var _DUMMY_ILLUSTRATION_ = preload("res://cards/assets/dummy_illustration.png")
 
 var CARD = null setget ,get_card
 
@@ -29,17 +31,14 @@ var discard = false
 func _init():
   # Set invisible for draw tween effect
   self.visible = false
-  print( 'a' )
 
 
 func _ready():
   # TODO set size proportional to UI
   # TODO connect to UI resizing and set size based on that
   # DEV see hand_ui.add_card()
-  print( 'b' )
   set_size_params()
   set_custom_minimum_size(shrink_size)
-  print( 'c' )
 
   $Tween.connect('tween_completed', self, '_on_tween_complete')
   # $Tween.connect('tween_step', self, 'debug_tween')
@@ -112,16 +111,14 @@ func build(card):
   self.name = card.name + "_UI"
   # TODO actually overlay all the elements with data from the card
 
-  print( 'd' )
-
   var pips = get_pips()
   for i in range(card.POWER):
-    var trect = TextureRect.new()
-    trect.texture = card.ICON
-    pips.add_child(trect)
+    var pip = _PIP_.instance()
+    pip.texture = card.ICON
+    pips.add_child(pip)
 
   var illustration = get_illustration()
-  illustration.texture = card.ILLUSTRATION
+  illustration.texture = card.ILLUSTRATION if card.ILLUSTRATION else _DUMMY_ILLUSTRATION_
 
   var desc = get_description()
   for effect in card.EFFECTS:
@@ -216,18 +213,10 @@ func remove(reason):
 # == SETTERS == #
 
 
-func set_size_params(_min=null, _max=null):
-  if _min:
-    shrink_size = _min
-  else:
-    print( get_children() )
-    shrink_size = get_node("Template").get_size()
-    # shrink_size = texture.get_size()
-
-  if _max:
-    grow_size = _max
-  else:
-    grow_size = shrink_size * 2
+func set_size_params():
+  var texture_size = get_node("Template").texture.get_size()
+  shrink_size = texture_size
+  grow_size = shrink_size * 2
 
 
 """
@@ -243,8 +232,13 @@ func get_pointer_origin():
   return Vector2(rect_size.x / 2, 0)
 
 
+# func get_margins():
+#   return $Margins
+
+
 func get_contents():
-  return $Contents
+  # return get_margins().get_node("Contents")
+  return get_node("Contents")
 
 
 func get_pips():
