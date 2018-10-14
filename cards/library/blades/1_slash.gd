@@ -7,7 +7,8 @@ var PARAMS = {
   'power': 1,
   'icon': CARD_SUITS.get_blades_icon(),
   'illustration': null,
-  'description': null
+  'description': null,
+  'effects': []
 }
 
 func _init(owner_id).(owner_id, PARAMS):

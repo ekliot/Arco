@@ -3,7 +3,7 @@
 [ext_resource path="res://battles/ui/rivers/river_step_ui.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
-[node name="RiverStepUI" type="CenterContainer" index="0"]
+[node name="RiverStepUI" type="CenterContainer"]
 
 anchor_left = 0.0
 anchor_top = 0.0

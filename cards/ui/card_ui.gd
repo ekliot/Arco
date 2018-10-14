@@ -1,11 +1,10 @@
-extends TextureRect
+extends PanelContainer
 
 signal tween_complete(key)
 signal card_played(card, sprite)
 signal card_discarded(card, sprite)
 
 var _POINTER_ = preload("res://cards/ui/CardPointer.tscn")
-# var _POINTER_ = preload("res://cards/ui/card_pointer.gd") # this doesn't work for some reason
 
 var CARD = null setget ,get_card
 
@@ -23,22 +22,29 @@ var last_pos
 var in_position = false
 var discard = false
 
+
 # == OVERRIDES == #
+
 
 func _init():
   # Set invisible for draw tween effect
   self.visible = false
+  print( 'a' )
 
+
+func _ready():
   # TODO set size proportional to UI
   # TODO connect to UI resizing and set size based on that
   # DEV see hand_ui.add_card()
+  print( 'b' )
   set_size_params()
   set_custom_minimum_size(shrink_size)
+  print( 'c' )
 
-func _ready():
   $Tween.connect('tween_completed', self, '_on_tween_complete')
   # $Tween.connect('tween_step', self, 'debug_tween')
   get_parent().connect('sort_children', self, '_on_sorted')
+
 
 func debug_tween(o, k, e, v):
   if k == ":set_global_position":
@@ -46,6 +52,7 @@ func debug_tween(o, k, e, v):
     LOGGER.debug($Tween, k)
     LOGGER.debug($Tween, e)
     LOGGER.debug($Tween, v)
+
 
 func _input(ev):
   if ev is InputEventMouseMotion and PLAYER_DATA.can_hold(CARD):
@@ -66,6 +73,7 @@ func _input(ev):
       if pointing and not ev.is_pressed():
         drop_me()
 
+
 func _on_tween_complete(obj, key):
   if key == ":set_custom_minimum_size":
     if get_custom_minimum_size() == shrink_size:
@@ -82,6 +90,7 @@ func _on_tween_complete(obj, key):
     if discard:
       emit_signal('tween_complete', key)
 
+
 func _on_sorted():
   if not in_position and not discard:
     var start = BM.get_deck_ui().get_global_position()
@@ -90,21 +99,41 @@ func _on_sorted():
       self, 'set_global_position',
       start, final,
       0.3, 0, 0
-   )
+    )
     self.visible = true
     $Tween.start()
 
+
 # == ACTIONS == #
+
 
 func build(card):
   CARD = card
   self.name = card.name + "_UI"
   # TODO actually overlay all the elements with data from the card
+
+  print( 'd' )
+
+  var pips = get_pips()
+  for i in range(card.POWER):
+    var trect = TextureRect.new()
+    trect.texture = card.ICON
+    pips.add_child(trect)
+
+  var illustration = get_illustration()
+  illustration.texture = card.ILLUSTRATION
+
+  var desc = get_description()
+  for effect in card.EFFECTS:
+    desc.text += effect.get_desc_text() + "\n"
+
   return self
+
 
 func pick_up():
   PLAYER_DATA.pick_up_card(CARD)
   pointer = point()
+
 
 func drop_me():
   PLAYER_DATA.drop_card()
@@ -116,10 +145,12 @@ func drop_me():
   else:
     reset()
 
+
 func reset():
   pointer.queue_free()
   pointing = false
   shrink()
+
 
 func point():
   # var ptr = _POINTER_.new(self, get_pointer_origin())
@@ -133,14 +164,16 @@ func point():
 
   return ptr
 
+
 func grow():
   if not bigger:
     $Tween.interpolate_method(
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), grow_size,
       0.05, 0, 0 # TODO refine these vals
-   )
+    )
     $Tween.start()
+
 
 func shrink():
   if bigger:
@@ -148,8 +181,9 @@ func shrink():
       self, 'set_custom_minimum_size',
       get_custom_minimum_size(), shrink_size,
       0.05, 0, 0 # TODO refine these vals
-   )
+    )
     $Tween.start()
+
 
 func remove(reason):
   var method = null
@@ -174,39 +208,68 @@ func remove(reason):
     self, method,
     start, final,
     dur, 0, 0
- )
+  )
 
   $Tween.start()
 
+
 # == SETTERS == #
+
 
 func set_size_params(_min=null, _max=null):
   if _min:
     shrink_size = _min
   else:
-    shrink_size = texture.get_size()
+    print( get_children() )
+    shrink_size = get_node("Template").get_size()
+    # shrink_size = texture.get_size()
 
   if _max:
     grow_size = _max
   else:
     grow_size = shrink_size * 2
 
-# == GETTERS == #
+
+"""
+==== GETTERS == #
+"""
+
 
 func get_card():
   return CARD
 
+
 func get_pointer_origin():
   return Vector2(rect_size.x / 2, 0)
+
+
+func get_contents():
+  return $Contents
+
+
+func get_pips():
+  return get_contents().get_node("Pips")
+
+
+func get_illustration():
+  return get_contents().get_node("Illustration")
+
+
+func get_description():
+  return get_contents().get_node("DescriptionContainer/Description")
+
 
 func is_hovered():
   return hovered
 
+
 func is_bigger():
   return bigger
 
+
 func is_pointing():
   return pointing
+
 
 func is_flipped():
   return flipped

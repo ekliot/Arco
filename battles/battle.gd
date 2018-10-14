@@ -80,8 +80,7 @@ func _ready_up(who):
 
 
 func _start_turn():
-  turn += 1
-  $BattleUI.MENU_BAR.get_node('TurnCounter').text = "Turn: %d" % turn
+  _increment_turn()
   print('===================================================================')
   LOGGER.info(self, 'starting turn %d...' % turn)
   for who in ready_players:
@@ -92,6 +91,11 @@ func _start_turn():
   # TODO make this more... elegant. currently, the enemy is disconnected from the turn_start signal, and decide_next_move() handles that instead
   get_fighter(BM.CPU).decide_next_move(get_board())
   emit_signal('turn_start', get_board())
+
+
+func _increment_turn():
+  turn += 1
+  $BattleUI.MENU_BAR.get_node('TurnCounter').text = "Turn: %d" % turn
 
 
 func _end_turn():
@@ -113,17 +117,15 @@ func _resolve_all_moves():
   # for each momentum M in 1..4
   #  resolve momentum M card for hero
   #  resolve momentum M card for enemy
-  var move = null
   var winner = null
 
-  for m in range(CUR_MOMENTUM):
-    # momentum methods are 1-indexed, and m will be reset at each iteration
-    m += 1
+  for m in range(1, get_highest_momentum()+1):
+    var hero_move = get_move_at_momentum(BM.HERO, m)
+    var enemy_move = get_move_at_momentum(BM.CPU, m)
 
-    move = get_move_at_momentum(BM.HERO, m)
-    if move:
+    if hero_move:
       # TEMP actually think though how this logics out
-      move.card.activate(self, move.river)
+      hero_move.card.activate(self, hero_move.river)
 
       # TODO check for mini-combo satisfaction
       # for combo in player.combos:
@@ -131,14 +133,15 @@ func _resolve_all_moves():
       #     combo.activate()
 
       # activate signature if final hit
-      if m == 4:
+      if m == BM.MAX_MOMENTUM:
         # TODO do signature shit
         pass
 
-    move = get_move_at_momentum(BM.CPU, m)
-    if move:
+    if enemy_move:
       # TEMP actually think though how this logics out
-      move.card.activate(self, move.river)
+      enemy_move.card.activate(self, enemy_move.river)
+
+  return winner
 
 
 """
@@ -205,16 +208,17 @@ func target_in_river(vs, river):
 
   return get_fighter(vs)
 
-# TODO
-func available_moves(who):
+
+func available_moves(who): # TODO
   # return the river steps that can have cards played in them
   return null
+
 
 func can_place_card(who, card, river):
   return get_fighter(who).validate_play(card, river)
 
-# TODO
-func test_move_outcome(who, card, river):
+
+func test_move_outcome(who, card, river): # TODO
   # copy board state, make test move, and calculate the resulting board state
   return null
 
@@ -231,20 +235,31 @@ func get_board():
   }
   return board
 
+
+func get_highest_momentum():
+  var hero = get_current_momentum(BM.HERO)
+  var cpu = get_current_momentum(BM.CPU)
+  return max(hero, cpu)
+
 func get_fighter(who):
   return get_node(BM.fighter_id_to_str(who))
+
 
 func get_active_moves(who):
   return get_rivers(who).get_active_moves()
 
+
 func get_current_momentum(who):
   return get_rivers(who).get_active_momentum()
+
 
 func get_rivers(who):
   return get_fighter(who).get_rivers()
 
+
 # func get_minions(who):
 #   return BOARD[who].minions
+
 
 func has_minions(who):
   var minions = get_minions(who)
@@ -274,9 +289,11 @@ func get_minion_in_river(who, river):
 func get_move_at_momentum(who, level):
   get_rivers(who).get_move_at_momentum(level)
 
+
 # the 'level' is 1-indexed
 func get_active_river_at_momentum(who, level):
   get_rivers(who).get_active_river_at_momentum(level)
+
 
 # the 'level' is 1-indexed
 func get_card_at_momentum(who, level):

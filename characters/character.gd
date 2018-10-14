@@ -32,6 +32,7 @@ var SIGNATURE = [] # TODO signature.gd
 
 var SPRITE = null
 
+
 func _init(data, rivers, minions):
   _set_hand()
   _set_discard()
@@ -42,6 +43,7 @@ func _init(data, rivers, minions):
   rivers.name = 'Rivers'
   rivers.connect('momentum_update', self, 'set_momentum')
   # TODO add_child(minion) for minion in minions
+
 
 func slurp_data(data):
   var stats = data.stats
@@ -61,27 +63,35 @@ func slurp_data(data):
   # add_child(SPRITE)
   # SPRITE.name = 'Sprite'
 
+
 func _set_hand():
   HAND = _HAND_.new()
   add_child(HAND)
   HAND.name = 'Hand'
+
 
 func _set_deck(deck):
   DECK = deck
   add_child(DECK)
   DECK.name = 'Deck'
 
+
 func _set_discard():
   DISCARD = _DISCARD_.new()
   add_child(DISCARD)
   DISCARD.name = 'Discard'
+
 
 func _debug_cards():
   LOGGER.debug(self, "HAND: %s" % HAND.to_s())
   LOGGER.debug(self, "DISCARD: %s" % DISCARD.to_s())
   # LOGGER.debug(self, "RIVERS: %s" % HAND.to_s())
 
-# == SIGNALS == #
+
+"""
+==== SIGNALS
+"""
+
 
 func _on_turn_start(battle):
   """
@@ -90,14 +100,18 @@ func _on_turn_start(battle):
   draw_hand()
   # _debug_cards()
 
+
 func _on_turn_end(battle):
   """
   when the battle tells us the turn is over
   """
-  var who = BM.HERO if self.name == BM.fighter_id_to_str(BM.HERO) else BM.CPU
-  emit_signal('ready', who)
+  emit_signal('ready', whoami())
 
-# == MOVES == #
+
+"""
+==== MOVES
+"""
+
 
 func play_card(card, river):
   LOGGER.debug(self, "playing card %s into river %s" % [card.name, river])
@@ -116,11 +130,16 @@ func play_card(card, river):
   # tell the world we are done with our turn
   end_turn()
 
+
 # we expect this to be extended by heroes and enemies
 func end_turn():
   pass
 
-# == ACTIONS == #
+
+"""
+==== ACTIONS
+"""
+
 
 func draw_hand():
   # prints(ID, "// drawing new hand of size", DRAW_SIZE)
@@ -129,6 +148,7 @@ func draw_hand():
   for i in range(DRAW_SIZE):
     # LOGGER.debug(self, "drawing card %d" % i)
     draw_card()
+
 
 func draw_card():
   if DECK.is_empty() and not DISCARD.is_empty():
@@ -146,11 +166,13 @@ func draw_card():
   else:
     LOGGER.error(self, '!!!!!! DREW null FROM THEIR DECK OH DEAR')
 
+
 func clear_hand():
   # LOGGER.debug(self, "clearing hand // " + HAND.to_s())
   for c in HAND.get_cards():
     discard_card(c)
     # yield(self, 'discard_card')
+
 
 func discard_card(card):
   if HAND.has(card):
@@ -158,16 +180,19 @@ func discard_card(card):
     DISCARD.add_card(card)
     emit_signal('discard_card', card)
 
+
 func take_damage(amt):
   HEALTH -= amt
   # emit_signal('take_damage', HEALTH, HEALTH + amt, HEALTH_MAX)
   if HEALTH <= 0:
     emit_signal('died')
 
+
 func heal_damage(amt):
   var old_hp = HEALTH
   HEALTH = min(HEALTH + amt, HEALTH_MAX)
   # emit_signal('heal_damage', HEALTH, old_hp, HEALTH_MAX)
+
 
 func set_momentum(old, new):
   LOGGER.debug(self, "setting momentum to %d from %d" % [new, old])
@@ -181,22 +206,35 @@ func set_momentum(old, new):
     # emit_signal('momentum_inc', MOMENTUM, lvl)
     pass
 
-# == HELPERS == #
+
+"""
+==== HELPERS
+"""
+
+
+func whoami():
+  return BM.HERO if self.name == BM.fighter_id_to_str(BM.HERO) else BM.CPU
+
 
 func validate_play(card, river):
   return get_rivers().validate_play(card, river)
 
+
 func get_rivers():
   return $Rivers
+
 
 func get_sprite():
   return SPRITE
 
+
 func get_hand():
   return HAND.cards
 
+
 func get_deck():
   return DECK.cards
+
 
 func get_valid_moves():
   var moves = []

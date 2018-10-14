@@ -10,13 +10,18 @@ var MOMENTUM_LEVEL = -1 setget ,get_momentum
 
 var active_card = null setget place_card,get_active_card
 
+
 func _init(fighter, river, level):
   FIGHTER = fighter
   RIVER = river
   MOMENTUM_LEVEL = level
   self.name = BM.fighter_id_to_str(FIGHTER) + "RiverStep" + RIVER.RIVER_ID.to_upper() + String(level)
 
-# == CORE == #
+
+"""
+==== CORE
+"""
+
 
 func place_card(card):
   # TODO check for current active card
@@ -24,33 +29,47 @@ func place_card(card):
   LOGGER.debug(self, "card %s placed" % card)
   emit_signal('card_placed', card)
 
+
 func clear_card(card):
   active_card = null
   emit_signal('card_cleared', card)
+
 
 func activate_card(card):
   card.activate()
   emit_signal('card_activated', card)
 
-# == VALIDATORS == #
+
+"""
+==== VALIDATORS
+"""
+
 
 func valid_for(card):
   var valid = MOMENTUM_LEVEL == card.POWER
   return valid
 
-# == GETTERS == #
+
+"""
+==== GETTERS
+"""
+
 
 func get_active_card():
   return active_card
 
+
 func get_river():
   return RIVER
+
 
 func get_river_id():
   return get_river().RIVER_ID
 
+
 func get_fighter():
   return FIGHTER
+
 
 func get_momentum():
   return MOMENTUM_LEVEL

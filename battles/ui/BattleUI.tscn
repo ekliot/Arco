@@ -415,7 +415,7 @@ _sections_unfolded = [ "Size Flags" ]
 margin_left = 30.0
 margin_right = 70.0
 margin_bottom = 60.0
-_sections_unfolded = [ "Grow Direction", "Margin", "Mouse", "Rect", "Size Flags" ]
+_sections_unfolded = [ "Grow Direction", "Margin", "Mouse", "Rect", "Size Flags", "Visibility" ]
 
 [node name="Hand" parent="CardArea" index="1" instance=ExtResource( 4 )]
 

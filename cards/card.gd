@@ -16,55 +16,72 @@ var ICON = null setget ,get_icon # Texture for the card's icon (typically, the s
 var ILLUSTRATION = null setget ,get_illustration # Texture for the card's illustration
 var DESCRIPTION = "" setget ,get_description # long string of this card's description (QUESTION should/can this be marked up?)
 
+var EFFECTS = [] setget ,get_effects
+
+
 func _init(owner_id, card_params):
   self.OWNER_ID = owner_id
   slurp_params(card_params)
 
+
 func slurp_params(params):
   # TODO make params a class in dealer
-  if params.has('id'):
+  if 'id' in params:
     self.ID += params['id']
 
-  if params.has('title'):
+  if 'title' in params:
     self.TITLE += params['title']
 
-  if params.has('suit'):
+  if 'suit' in params:
     self.SUIT = params['suit']
 
-  if params.has('power'):
+  if 'power' in params:
     self.POWER = params['power']
 
-  if params.has('icon'):
+  if 'icon' in params:
     self.ICON= params['icon']
 
-  if params.has('illustration'):
-    self.ILLUSTRATION= params['illustration']
+  if 'illustration' in params:
+    self.ILLUSTRATION = params['illustration']
 
-  if params.has('description'):
-    self.DESCRIPTION= params['description']
+  if 'description' in params:
+    self.DESCRIPTION = params['description']
+
+  if 'effects' in params:
+    self.EFFECTS = params['effects']
+
 
 func play(board, river):
   _onplay(board, river)
   emit_signal('played', self)
 
-func activate(board, river):
-  _onactivate(board, river)
+
+func activate(board, river, against):
+  _onactivate(board, river, against)
   emit_signal('activated', self)
+
 
 func cleared(board, river):
   _onclear(board, river)
   emit_signal('cleared', self)
 
-# == OVERRIDEABLES == #
+
+"""
+==== OVERRIDEABLES
+"""
+
 
 func _onplay(board, river):
   pass
 
-func _onactivate(board, river):
+
+func _onactivate(board, river, against):
   pass
+
 
 func _onclear(board, river):
   pass
+
 
 func _load_template():
   var template = _TEMPLATE_.instance()
@@ -72,7 +89,11 @@ func _load_template():
   # this means overlaying the template with card data, image, modifiers, etc.
   return template.build(self)
 
-# == GETTERS == #
+
+"""
+==== GETTERS
+"""
+
 
 func get_packed_data():
   var data = {
@@ -86,32 +107,46 @@ func get_packed_data():
   }
   return data
 
+
 func get_as_ui_element():
   return _load_template()
+
 
 func get_owner_id():
   return OWNER_ID
 
+
 func get_card_id():
   return ID
+
 
 func get_title():
   return TITLE
 
+
 func get_suit():
   return SUIT
+
 
 func get_suit_as_str():
   return CARD_SUITS.NAMES[SUIT]
 
+
 func get_power():
   return POWER
+
 
 func get_icon():
   return ICON
 
+
 func get_illustration():
   return ILLUSTRATION
 
+
 func get_description():
   return DESCRIPTION
+
+
+func get_effects():
+  return EFFECTS
